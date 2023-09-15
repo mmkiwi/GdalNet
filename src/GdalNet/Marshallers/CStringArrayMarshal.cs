@@ -55,7 +55,7 @@ internal unsafe static partial class CStringArrayMarshal
                 ReadOnlySpan<byte> currString = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(currStringPtr);
                 int equalLoc = currString.IndexOf("="u8);
                 string key = Encoding.UTF8.GetString(currString[..equalLoc]);
-                string value = Encoding.UTF8.GetString(currString[equalLoc..]);
+                string value = Encoding.UTF8.GetString(currString[(equalLoc + 1)..]);
                 results[key] = value;
                 i++;
             }

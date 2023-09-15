@@ -5,7 +5,7 @@
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(Marshal<GdalDataset>))]
-public sealed partial class GdalDataset : GdalSafeHandle
+public sealed partial class GdalDataset
 {
     protected override bool ReleaseHandle()
     {
@@ -14,7 +14,7 @@ public sealed partial class GdalDataset : GdalSafeHandle
     }
 
     [CLSCompliant(false)]
-    internal static partial class Interop
+    internal static new partial class Interop
     {
         static Interop() => GdalError.EnsureInitialize();
 

@@ -6,7 +6,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalDataset
+public sealed partial class GdalDataset: GdalMajorObject
 {
     private GdalDataset()
     {
@@ -22,6 +22,5 @@ public sealed partial class GdalDataset
     public GdalBandCollection RasterBands { get; }
     public int RasterXSize => Interop.GDALGetRasterXSize(this);
     public int RasterYSize => Interop.GDALGetRasterYSize(this);
-
 }
 
