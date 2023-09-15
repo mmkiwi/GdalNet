@@ -35,4 +35,18 @@ public sealed class GdalRasterBandTests : IDisposable
         foreach (var band in GdalDataset.RasterBands)
             band.DataType.Should().Be(GdalDataType.Byte);
     }
+
+    [Fact]
+    public void ThrowOnNegativeIndex()
+    {
+        var action = () => GdalDataset.RasterBands[-1];
+        action.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void ThrowOnLargeIndex()
+    {
+        var action = () => GdalDataset.RasterBands[GdalDataset.RasterBands.Count + 1];
+        action.Should().Throw<ArgumentOutOfRangeException>();
+    }
 }

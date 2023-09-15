@@ -2,8 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Data;
-
 using FluentAssertions.Execution;
 
 namespace MMKiwi.GdalNet.UnitTests;
@@ -65,7 +63,7 @@ public sealed class GdalMajorObjectTests : IDisposable
         using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
 
         dataset.GetMetadata("IntegrationTests").Should().BeNull();
-        dataset.SetMetadataItem("Test1", "Value1", "IntegrationTests");
+        dataset.SetMetadata(new Dictionary<string, string> { { "Test1", "Value1" } }, "IntegrationTests");
         dataset.GetMetadata("IntegrationTests").Should().BeEquivalentTo(new Dictionary<string, string> { { "Test1", "Value1" } });
     }
 
@@ -90,6 +88,34 @@ public sealed class GdalMajorObjectTests : IDisposable
         dataset.GetMetadata("").Should().BeNull();
         dataset.SetMetadataItem("Test1", "Value1", "");
         dataset.GetMetadata("").Should().BeEquivalentTo(new Dictionary<string, string> { { "Test1", "Value1" } });
+    }
+
+    [Fact]
+    public void SetMetadataThrowIfNull()
+    {
+        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+
+        var action = () => dataset.SetMetadataItem(null!, "");
+        action.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void SetMetadataItemThrowIfNull()
+    {
+        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+
+        var action = () => dataset.SetMetadataItem(null!, "Value1", "");
+        action.Should().Throw<ArgumentNullException>();
+    }
+
+
+    [Fact]
+    public void SetNotThrowOnNullValue()
+    {
+        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+
+        var action = () => dataset.SetMetadataItem("test", null!, "");
+        action.Should().NotThrow();
     }
 
     [Fact]
