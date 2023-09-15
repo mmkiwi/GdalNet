@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.Marshalling;
 
 using FluentAssertions.Execution;
 
+using MMKiwi.GdalNet.CHelpers;
 using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet.UnitTests;
@@ -65,14 +66,21 @@ public unsafe class DoubleNullTerminatedStringMarshalTests
         }
     }
 
-    /*[Theory]
+    [Theory]
     [MemberData(nameof(TestStrings))]
     public void TestUnmanagedToManaged(string[] data)
     {
-        throw new NotImplementedException();
+        CStringList csl = CStringList.Create(data[0]);
+        for (int i = 1; i < data.Length; i++)
+        {
+            csl = csl.AddString(data[i]);
+        }
 
-    }*/
-#warning TODO test vs. cpl_string.h methods
+        string[]? result = CStringArrayMarshal.ConvertToManaged(csl.HandlePointer)?.ToArray();
+
+        result.Should().BeEquivalentTo(data);
+
+    }
 
     [Fact]
     public void TestUnmanagedToManagedNull()
@@ -93,7 +101,7 @@ public unsafe class DoubleNullTerminatedStringMarshalTests
 
     public static IEnumerable<object[]> TestStrings =>
 
-        new List<object[]>() { 
+        new List<object[]>() {
             new object[] { TestData.AsciiOnly },
             new object[] { TestData.MixedUnicode }
         };

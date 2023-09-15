@@ -25,7 +25,7 @@ public sealed class GdalRasterBandTests : IDisposable
 
     public void Dispose()
     {
-        GdalDataset.Close();
+        GdalDataset.Dispose();
         File.Delete(FilePath);
     }
 

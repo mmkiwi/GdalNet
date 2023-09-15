@@ -7,6 +7,7 @@ using System.Text;
 namespace MMKiwi.GdalNet.Marshallers;
 
 [CustomMarshaller(typeof(string[]), MarshalMode.Default, typeof(CStringArrayMarshal))]
+[CustomMarshaller(typeof(IEnumerable<string>), MarshalMode.Default, typeof(CStringArrayMarshal))]
 [CustomMarshaller(typeof(string[]), MarshalMode.ManagedToUnmanagedOut, typeof(FreeReturn))]
 internal unsafe static partial class CStringArrayMarshal
 {
@@ -34,21 +35,29 @@ internal unsafe static partial class CStringArrayMarshal
     }
 
     public static byte** ConvertToUnmanaged(string[]? managed) => ConvertToUnmanagedCore(managed);
-    public static byte** ConvertToUnmanaged(IList<string>? managed) => ConvertToUnmanagedCore(managed);
+    public static byte** ConvertToUnmanaged(IEnumerable<string>? managed) => ConvertToUnmanagedCore(managed);
 
-    internal static byte** ConvertToUnmanagedCore(IList<string>? managed)
+    internal static byte** ConvertToUnmanagedCore(IEnumerable<string>? managed)
     {
         if (managed is null || !managed.Any())
             return default;
 
-        byte** mem = (byte**)NativeMemory.Alloc((nuint)managed.Count + 1);
-
-        for (int i = 0; i < managed.Count; i++)
+        if(!managed.TryGetNonEnumeratedCount(out int count))
         {
-            mem[i] = Utf8StringMarshaller.ConvertToUnmanaged(managed[i]);
+            managed = managed.ToArray();
         }
 
-        mem[managed.Count] = null;
+        byte** mem = (byte**)NativeMemory.Alloc((nuint)count + 1);
+
+        int i = 0;
+        foreach (string item in managed)
+        {
+            mem[i] = Utf8StringMarshaller.ConvertToUnmanaged(item);
+            i++;
+        }
+        
+
+        mem[count] = null; // The last pointer in the array needs to be null
 
         return mem;
     }

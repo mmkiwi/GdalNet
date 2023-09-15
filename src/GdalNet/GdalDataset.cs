@@ -8,7 +8,7 @@ namespace MMKiwi.GdalNet;
 
 public sealed partial class GdalDataset
 {
-    private GdalDataset()
+    private GdalDataset(bool ownsHandle): base(ownsHandle)
     {
         RasterBands = new(this);
     }
