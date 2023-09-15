@@ -22,13 +22,13 @@ namespace MMKiwi.GdalNet.CHelpers;
 /// </remarks>
 internal unsafe sealed partial class CStringList : GdalSafeHandle
 {
+    private CStringList() { }
+    private CStringList(nint pointer) => SetHandle(pointer);
+
     public static CStringList Create(string firstString)
     {
-        return Interop.CSLAddString(null, firstString);
+        return new(Interop.CSLAddString(null, firstString));
     }
-
-    private CStringList()
-    { }
 
     protected override bool ReleaseHandle()
     {
@@ -38,8 +38,12 @@ internal unsafe sealed partial class CStringList : GdalSafeHandle
 
     public byte** HandlePointer => (byte**)Handle;
 
-    public CStringList AddString(string value)
+    public void AddString(string value)
     {
-        return Interop.CSLAddString(this, value);
+        nint newHandle = Interop.CSLAddStringMayFail(this, value);
+        if (newHandle != 0)
+        {
+            SetHandle(newHandle);
+        }
     }
 }

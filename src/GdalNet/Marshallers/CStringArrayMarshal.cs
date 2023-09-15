@@ -7,7 +7,7 @@ using System.Text;
 namespace MMKiwi.GdalNet.Marshallers;
 
 [CustomMarshaller(typeof(string[]), MarshalMode.Default, typeof(CStringArrayMarshal))]
-[CustomMarshaller(typeof(IEnumerable<string>), MarshalMode.Default, typeof(Enumerable))]
+[CustomMarshaller(typeof(IEnumerable<string>), MarshalMode.Default, typeof(EnumerableMarshal))]
 [CustomMarshaller(typeof(Dictionary<string,string>), MarshalMode.Default, typeof(DictionaryMarshal))]
 [CustomMarshaller(typeof(string[]), MarshalMode.ManagedToUnmanagedOut, typeof(FreeReturn))]
 internal unsafe static partial class CStringArrayMarshal
@@ -62,24 +62,33 @@ internal unsafe static partial class CStringArrayMarshal
 
             return results;
         }
+
+        public static byte** ConvertToUnmanaged(Dictionary<string, string>? managed)
+        {
+            return ConvertToUnmanagedCore(managed?.Select(kvp => $"{kvp.Key}={kvp.Value}"), managed?.Count ?? 0);
+        }
     }
 
     public static byte** ConvertToUnmanaged(string[]? managed) => ConvertToUnmanagedCore(managed);
     
-    public static class Enumerable
+    public static class EnumerableMarshal
     {
         public static byte** ConvertToUnmanaged(IEnumerable<string>? managed) => ConvertToUnmanagedCore(managed);
         public static IEnumerable<string>? ConvertToManaged(byte** unmanaged) => CStringArrayMarshal.ConvertToManaged(unmanaged);
     }
 
-    internal static byte** ConvertToUnmanagedCore(IEnumerable<string>? managed)
+    private static byte** ConvertToUnmanagedCore(IEnumerable<string>? managed, int count = -1)
     {
         if (managed is null || !managed.Any())
             return default;
 
-        if(!managed.TryGetNonEnumeratedCount(out int count))
+        if (count == -1)
         {
-            managed = managed.ToArray();
+            if (!managed.TryGetNonEnumeratedCount(out count))
+            {
+                managed = managed.ToArray();
+                count = managed.Count();
+            }
         }
 
         byte** mem = (byte**)NativeMemory.Alloc((nuint)count + 1, (nuint)sizeof(nint));

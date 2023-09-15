@@ -12,10 +12,10 @@ internal partial class CStringList
     public unsafe static partial class Interop
     {
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial CStringList CSLAddString(CStringList? strList, string newString);
+        public static partial nint CSLAddString(CStringList? strList, string newString);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial CStringList? CSLAddStringMayFail(CStringList? strList, string newString);
+        public static partial nint CSLAddStringMayFail(CStringList? strList, string newString);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         public static partial int CSLCount(CStringList? strList);
