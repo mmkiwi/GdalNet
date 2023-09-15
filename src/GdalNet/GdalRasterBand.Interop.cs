@@ -15,7 +15,7 @@ public sealed partial class GdalRasterBand
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return: MarshalUsing(typeof(DoubleNullTerminatedStringMarshal))]
+        [return: MarshalUsing(typeof(CStringArrayMarshal))]
         public static partial string[] GDALGetRasterCategoryNames(GdalRasterBand rasterBand);
 
         [LibraryImport("gdal")]

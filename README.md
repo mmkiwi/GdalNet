@@ -17,5 +17,5 @@ This is licensed under the [MPL 2.0](LICENSE.md).
 ## Building
 
 On Windows, this uses vcpkg to get and build GDAL. Initialize the vcpkg
-submodule and run `.\vcpkg install` from the vcpkg folder. The gdal dlls
-will automatically be copied to the target folder.
+submodule and run `.\vcpkg install --triplet=x64-windows` from the vcpkg folder.
+The gdal dlls will automatically be copied to the target folder.

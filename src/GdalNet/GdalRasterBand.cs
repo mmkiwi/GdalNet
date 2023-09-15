@@ -9,13 +9,12 @@ namespace MMKiwi.GdalNet;
 [NativeMarshalling(typeof(Marshal<GdalRasterBand>))]
 public sealed partial class GdalRasterBand: GdalHandle
 {
-    private GdalRasterBand(): base(false)
+    private GdalRasterBand()
     {
     }
 
     public string[] Categories => Interop.GDALGetRasterCategoryNames(this);
     public GdalDataType DataType => Interop.GDALGetRasterDataType(this);
 
-    protected override bool ReleaseHandle() => true;
 }
 

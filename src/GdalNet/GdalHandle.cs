@@ -4,17 +4,23 @@
 
 namespace MMKiwi.GdalNet;
 
-public abstract class GdalHandle : IDisposable
+/// <summary>
+///   A handle to a GDAL object that we do not have to close
+/// </summary>
+/// <remarks>
+///   For example, an OGR layer should not be disposed of, 
+///   to dispose of one, the underlying dataset should be
+///   disposed of
+/// </remarks>
+public abstract class GdalHandle
 {
-    private bool _disposedValue;
-    private nint _handle;
-
-    protected bool OwnsHandle { get; }
+    private nint Handle { get; set;  }
+    protected void SetHandle(nint handle) => Handle = handle;
 
     [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(Marshal<>))]
     internal static class Marshal<T> where T : GdalHandle
     {
-        public static nint ConvertToUnmanaged(T gdalDataset) => gdalDataset._handle;
+        public static nint ConvertToUnmanaged(T handle) => handle.Handle;
         public static T? ConvertToManaged(nint pointer)
         {
             if (pointer <= 0)
@@ -29,14 +35,20 @@ public abstract class GdalHandle : IDisposable
             }
         }
     }
+}
 
-    protected GdalHandle(bool ownsHandle)
-    {
-        OwnsHandle = ownsHandle;
-    }
-
-    protected void SetHandle(nint handle) => _handle = handle;
-
+/// <summary>
+///  A handle to a GDAL object that requires Disposal.
+/// </summary>
+/// <remarks>
+///   Child classes should call the corresponding GDAL function
+///   to dispose the object in the <see cref="ReleaseHandle"/>
+///   method.
+/// </remarks>
+public abstract class GdalSafeHandle : GdalHandle, IDisposable
+{
+    private bool _disposedValue;
+    
     protected abstract bool ReleaseHandle();
 
     protected virtual void Dispose(bool disposing)
@@ -45,24 +57,21 @@ public abstract class GdalHandle : IDisposable
         {
             if (disposing)
             {
-                // TODO: dispose managed state (managed objects)
+                // No managed objects
             }
 
-            if (OwnsHandle)
-            {
-                // Save last error from P/Invoke in case the implementation of ReleaseHandle
-                // trashes it (important because this ReleaseHandle could occur implicitly
-                // as part of unmarshaling another P/Invoke).
-                int lastError = Marshal.GetLastPInvokeError();
-                ReleaseHandle();
-                Marshal.SetLastPInvokeError(lastError);
-            }
+            // Save last error from P/Invoke in case the implementation of ReleaseHandle
+            // trashes it (important because this ReleaseHandle could occur implicitly
+            // as part of unmarshaling another P/Invoke).
+            int lastError = Marshal.GetLastPInvokeError();
+            ReleaseHandle();
+            Marshal.SetLastPInvokeError(lastError);
 
             _disposedValue = true;
         }
     }
 
-    ~GdalHandle()
+    ~GdalSafeHandle()
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: false);

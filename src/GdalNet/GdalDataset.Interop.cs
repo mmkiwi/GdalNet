@@ -5,7 +5,7 @@
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(Marshal<GdalDataset>))]
-public sealed partial class GdalDataset : GdalHandle
+public sealed partial class GdalDataset : GdalSafeHandle
 {
     protected override bool ReleaseHandle()
     {

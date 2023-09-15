@@ -7,10 +7,7 @@ namespace MMKiwi.GdalNet;
 [NativeMarshalling(typeof(Marshal<OgrLayer>))]
 public partial class OgrLayer : GdalHandle
 {
-    private OgrLayer() : base(false)
-    {
-
-    }
+    private OgrLayer() { }
 
     public string Name => Interop.OGR_L_GetName(this);
 }

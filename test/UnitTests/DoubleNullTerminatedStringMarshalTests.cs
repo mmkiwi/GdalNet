@@ -20,7 +20,7 @@ public unsafe class DoubleNullTerminatedStringMarshalTests
     [MemberData(nameof(TestStrings))]
     public unsafe void TestManagedToUnmanaged(string[] data)
     {
-        byte** marshal = DoubleNullTerminatedStringMarshal.ConvertToUnmanagedCore(data);
+        byte** marshal = CStringArrayMarshal.ConvertToUnmanagedCore(data);
         try
         {
             using AssertionScope _ = new();
@@ -33,35 +33,35 @@ public unsafe class DoubleNullTerminatedStringMarshalTests
         }
         finally
         {
-            DoubleNullTerminatedStringMarshal.Free(marshal);
+            CStringArrayMarshal.Free(marshal);
         }
     }
 
     [Fact]
     public unsafe void TestManagedToUnmanagedNull()
     {
-        byte** marshal = DoubleNullTerminatedStringMarshal.ConvertToUnmanagedCore(null!);
+        byte** marshal = CStringArrayMarshal.ConvertToUnmanagedCore(null!);
         try
         {
             ((nint)marshal).Should().Be(0);
         }
         finally
         {
-            DoubleNullTerminatedStringMarshal.Free(marshal);
+            CStringArrayMarshal.Free(marshal);
         }
     }
 
     [Fact]
     public unsafe void TestManagedToUnmanagedEmpty()
     {
-        var marshal = DoubleNullTerminatedStringMarshal.ConvertToUnmanagedCore(ImmutableList<string>.Empty);
+        var marshal = CStringArrayMarshal.ConvertToUnmanagedCore(ImmutableList<string>.Empty);
         try
         {
             ((nint)marshal).Should().Be(0);
         }
         finally
         {
-            DoubleNullTerminatedStringMarshal.Free(marshal);
+            CStringArrayMarshal.Free(marshal);
         }
     }
 
@@ -77,7 +77,7 @@ public unsafe class DoubleNullTerminatedStringMarshalTests
     [Fact]
     public void TestUnmanagedToManagedNull()
     {
-        string[]? result = DoubleNullTerminatedStringMarshal.ConvertToManaged(null)?.ToArray();
+        string[]? result = CStringArrayMarshal.ConvertToManaged(null)?.ToArray();
         result.Should().BeNull();
     }
 
@@ -87,7 +87,7 @@ public unsafe class DoubleNullTerminatedStringMarshalTests
         byte** single = (byte**)NativeMemory.Alloc(1);
         single[0] = null;
 
-        string[]? result = DoubleNullTerminatedStringMarshal.ConvertToManaged(single)?.ToArray();
+        string[]? result = CStringArrayMarshal.ConvertToManaged(single)?.ToArray();
         result.Should().BeEmpty();
     }
 

@@ -8,8 +8,6 @@ namespace MMKiwi.GdalNet;
 
 public partial class OgrLayer
 {
-    protected override bool ReleaseHandle() => true;
-
     internal static partial class Interop
     {
         [LibraryImport("gdal")]

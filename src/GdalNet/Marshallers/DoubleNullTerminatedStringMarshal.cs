@@ -2,14 +2,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Data.SqlTypes;
 using System.Text;
 
 namespace MMKiwi.GdalNet.Marshallers;
 
-[CustomMarshaller(typeof(string[]), MarshalMode.Default, typeof(DoubleNullTerminatedStringMarshal))]
+[CustomMarshaller(typeof(string[]), MarshalMode.Default, typeof(CStringArrayMarshal))]
 [CustomMarshaller(typeof(string[]), MarshalMode.ManagedToUnmanagedOut, typeof(FreeReturn))]
-internal unsafe static partial class DoubleNullTerminatedStringMarshal
+internal unsafe static partial class CStringArrayMarshal
 {
     public static string[]? ConvertToManaged(byte** unmanaged)
     {
@@ -73,9 +72,10 @@ internal unsafe static partial class DoubleNullTerminatedStringMarshal
         NativeMemory.Free(unmanaged);
     }
 
+    [CLSCompliant(false)]
     public static partial class FreeReturn
     {
-        public static string[]? ConvertToManaged(byte** unmanaged) => DoubleNullTerminatedStringMarshal.ConvertToManaged(unmanaged);
+        public static string[]? ConvertToManaged(byte** unmanaged) => CStringArrayMarshal.ConvertToManaged(unmanaged);
 
         public static void Free(byte** unmanaged) => CSLDestroy(unmanaged);
 
