@@ -27,7 +27,8 @@ internal unsafe sealed partial class CStringList : GdalSafeHandle
         return Interop.CSLAddString(null, firstString);
     }
 
-    private CStringList(bool ownsHandle) : base(ownsHandle) { }
+    private CStringList()
+    { }
 
     protected override bool ReleaseHandle()
     {

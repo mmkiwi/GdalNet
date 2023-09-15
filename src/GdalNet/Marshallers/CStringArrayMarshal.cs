@@ -7,7 +7,8 @@ using System.Text;
 namespace MMKiwi.GdalNet.Marshallers;
 
 [CustomMarshaller(typeof(string[]), MarshalMode.Default, typeof(CStringArrayMarshal))]
-[CustomMarshaller(typeof(IEnumerable<string>), MarshalMode.Default, typeof(CStringArrayMarshal))]
+[CustomMarshaller(typeof(IEnumerable<string>), MarshalMode.Default, typeof(Enumerable))]
+[CustomMarshaller(typeof(Dictionary<string,string>), MarshalMode.Default, typeof(DictionaryMarshal))]
 [CustomMarshaller(typeof(string[]), MarshalMode.ManagedToUnmanagedOut, typeof(FreeReturn))]
 internal unsafe static partial class CStringArrayMarshal
 {
@@ -34,8 +35,42 @@ internal unsafe static partial class CStringArrayMarshal
         return results.ToArray();
     }
 
+    public static class DictionaryMarshal
+    {
+        public static Dictionary<string, string>? ConvertToManaged(byte** unmanaged)
+        {
+            
+            int i = 0;
+            if (unmanaged == null)
+                return null;
+
+            Dictionary<string, string> results = new();
+            while (true)
+            {
+                byte* currStringPtr = unmanaged[i];
+
+                if (currStringPtr == null)
+                    break;
+
+                ReadOnlySpan<byte> currString = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(currStringPtr);
+                int equalLoc = currString.IndexOf("="u8);
+                string key = Encoding.UTF8.GetString(currString[..equalLoc]);
+                string value = Encoding.UTF8.GetString(currString[equalLoc..]);
+                results[key] = value;
+                i++;
+            }
+
+            return results;
+        }
+    }
+
     public static byte** ConvertToUnmanaged(string[]? managed) => ConvertToUnmanagedCore(managed);
-    public static byte** ConvertToUnmanaged(IEnumerable<string>? managed) => ConvertToUnmanagedCore(managed);
+    
+    public static class Enumerable
+    {
+        public static byte** ConvertToUnmanaged(IEnumerable<string>? managed) => ConvertToUnmanagedCore(managed);
+        public static IEnumerable<string>? ConvertToManaged(byte** unmanaged) => CStringArrayMarshal.ConvertToManaged(unmanaged);
+    }
 
     internal static byte** ConvertToUnmanagedCore(IEnumerable<string>? managed)
     {
@@ -47,7 +82,7 @@ internal unsafe static partial class CStringArrayMarshal
             managed = managed.ToArray();
         }
 
-        byte** mem = (byte**)NativeMemory.Alloc((nuint)count + 1);
+        byte** mem = (byte**)NativeMemory.Alloc((nuint)count + 1, (nuint)sizeof(nint));
 
         int i = 0;
         foreach (string item in managed)
@@ -70,7 +105,7 @@ internal unsafe static partial class CStringArrayMarshal
         while (true)
         {
             byte* cur = unmanaged[i];
-            if (i == 0)
+            if (cur is null)
                 break;
 
             Utf8StringMarshaller.Free(cur);

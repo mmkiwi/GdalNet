@@ -48,10 +48,6 @@ public abstract class GdalHandle
 /// </remarks>
 public abstract class GdalSafeHandle : GdalHandle, IDisposable
 {
-    private protected GdalSafeHandle(bool ownsHandle)
-    {
-        OwnsHandle = ownsHandle;
-    }
 
     /// <summary>
     /// If <c>true</c>, the caller owns the handle and must call <see cref="Dispose()"/>. 
@@ -65,7 +61,7 @@ public abstract class GdalSafeHandle : GdalHandle, IDisposable
     /// a <see cref="OgrGeometry"/> is owned by a parent feature, dispose of 
     /// the feature to release the memory for the geometry. 
     /// </remarks>
-    public bool OwnsHandle { get; }
+    public bool OwnsHandle { get; protected init; } = true;
 
     private bool _disposedValue;
 
