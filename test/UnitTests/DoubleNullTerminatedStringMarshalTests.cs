@@ -144,7 +144,7 @@ public unsafe class CStringArrayMarshalTests
     [Fact]
     public unsafe void TestManagedToUnmanagedEmptyDictionary()
     {
-        var marshal = CStringArrayMarshal.DictionaryMarshal.ConvertToUnmanaged(new());
+        var marshal = CStringArrayMarshal.DictionaryMarshal.ConvertToUnmanaged(new Dictionary<string,string>());
         try
         {
             ((nint)marshal).Should().Be(0);

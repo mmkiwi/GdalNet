@@ -2,51 +2,56 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System;
+
+using FluentAssertions.Execution;
+
 using MMKiwi.GdalNet;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
-public sealed class GdalRasterBandTests : IDisposable
+public sealed class GdalRasterBandTests:DatasetTestBase
 {
-    public GdalRasterBandTests()
+
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void TestRasterIterate(int index)
     {
-        GdalInfo.RegisterAllDrivers();
-        FilePath = Path.GetTempFileName();
-        using (FileStream sampleFile = File.OpenWrite(FilePath))
-        {
-            sampleFile.Write(SampleData.Resources.Sample_0);
-        }
-        GdalDataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
-    }
+        using var _ = new AssertionScope();
+        var datasetInfo = GetDataset(index);
 
-    GdalDataset GdalDataset { get; }
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
-    string FilePath { get; }
-
-    public void Dispose()
-    {
-        GdalDataset.Dispose();
-        File.Delete(FilePath);
-    }
-
-    [Fact]
-    public void TestRasterIterate()
-    {
-        foreach (var band in GdalDataset.RasterBands)
+        foreach (var band in dataset.RasterBands)
             band.DataType.Should().Be(GdalDataType.Byte);
     }
 
-    [Fact]
-    public void ThrowOnNegativeIndex()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void ThrowOnNegativeIndex(int index)
     {
-        var action = () => GdalDataset.RasterBands[-1];
+        using var _ = new AssertionScope();
+        var datasetInfo = GetDataset(index);
+
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
+
+        var action = () => dataset.RasterBands[-1];
         action.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public void ThrowOnLargeIndex()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void ThrowOnLargeIndex(int index)
     {
-        var action = () => GdalDataset.RasterBands[GdalDataset.RasterBands.Count + 1];
+        using var _ = new AssertionScope();
+        var datasetInfo = GetDataset(index);
+
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
+
+        var action = () => dataset.RasterBands[dataset.RasterBands.Count + 1];
         action.Should().Throw<ArgumentOutOfRangeException>();
     }
 }

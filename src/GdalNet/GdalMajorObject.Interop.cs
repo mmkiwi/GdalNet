@@ -27,7 +27,7 @@ public partial class GdalMajorObject
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial GdalCplErr GDALSetMetadata(GdalMajorObject obj, [MarshalUsing(typeof(CStringArrayMarshal))] Dictionary<string,string>? metadata, string? domain);
+        public static partial GdalCplErr GDALSetMetadata(GdalMajorObject obj, [MarshalUsing(typeof(CStringArrayMarshal))] IReadOnlyDictionary<string,string>? metadata, string? domain);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]

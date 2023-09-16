@@ -6,7 +6,7 @@ namespace MMKiwi.GdalNet;
 
 public enum GdalAccess
 {
-    ReadOnly,
-    ReadWrite
+    ReadOnly = 0,
+    ReadWrite = 1
 }
 

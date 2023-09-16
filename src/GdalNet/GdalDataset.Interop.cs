@@ -2,6 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.Marshallers;
+
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(Marshal<GdalDataset>))]
@@ -24,7 +26,15 @@ public sealed partial class GdalDataset
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial GdalDataset? GDALOpen(string fileName, GdalAccess access);
+        public static partial GdalDataset? GDALOpenEx(string fileName,
+                                                      GdalOpenFlags openFlags,
+                                                      [MarshalUsing(typeof(CStringArrayMarshal))]
+                                                      IEnumerable<string>? allowedDrivers,
+                                                      [MarshalUsing(typeof(CStringArrayMarshal))]
+                                                      IReadOnlyDictionary<string, string>? openOptions,
+                                                      [MarshalUsing(typeof(CStringArrayMarshal))]
+                                                      IEnumerable<string>? siblingFiles);
+
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]

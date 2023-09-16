@@ -2,55 +2,76 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System;
+using System.Collections.Immutable;
+
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.SampleData;
+
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
-public sealed class GdalDatasetTests : IDisposable
+
+public sealed class GdalDatasetTests: DatasetTestBase
 {
-    public GdalDatasetTests()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void TestOpenDoesNotThrow(int index)
     {
-        GdalInfo.RegisterAllDrivers();
-        FilePath = Path.GetTempFileName();
-        using FileStream sampleFile = File.OpenWrite(FilePath);
-        sampleFile.Write(SampleData.Resources.Sample_0);
-    }
-
-    string FilePath { get; }
-
-    public void Dispose()
-    {
-        File.Delete(FilePath);
+        var datasetInfo = GetDataset(index);
+        Action action = () =>
+        {
+            using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+            var dataset = virtualDataset.Dataset;
+        };
+        action.Should().NotThrow($"should exist");
     }
 
     [Fact]
-    public void TestOpenDoesNotThrow()
+    public void TestOpenThrows()
     {
         Action action = () =>
         {
-            using var dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly);
+            using var dataset = GdalDataset.Open("DOESNOTEXIST");
         };
-        action.Should().NotThrow();
+        action.Should().Throw<IOException>();
     }
 
-    [Fact]
-    public void TestRasterCount()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void TestRasterCount(int index)
     {
-        using var dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly);
-        dataset!.RasterBands.Count.Should().Be(3);
+        var datasetInfo = GetDataset(index);
+
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
+
+        dataset!.RasterBands.Count.Should().Be(datasetInfo.Dataset.RasterCount);
     }
 
-    [Fact]
-    public void TestRasterXSize()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void TestRasterXSize(int index)
     {
-        using var dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly);
-        dataset!.RasterXSize.Should().Be(1203);
+        var datasetInfo = GetDataset(index);
+
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
+
+        dataset!.RasterXSize.Should().Be(datasetInfo.Dataset.RasterXSize);
     }
 
-    [Fact]
-    public void TestRasterYSize()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void TestRasterYSize(int index)
     {
-        using var dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly);
-        dataset!.RasterYSize.Should().Be(1593);
+        var datasetInfo = GetDataset(index);
+
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
+
+        dataset!.RasterYSize.Should().Be(datasetInfo.Dataset.RasterYSize);
     }
 }

@@ -2,143 +2,157 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System;
+
 using FluentAssertions.Execution;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
-public sealed class GdalMajorObjectTests : IDisposable
+public sealed class GdalMajorObjectTests : DatasetTestBase
 {
-    public GdalMajorObjectTests()
-    {
-        GdalInfo.RegisterAllDrivers();
-        FilePath = Path.GetTempFileName();
-        using FileStream sampleFile = File.OpenWrite(FilePath);
-        sampleFile.Write(SampleData.Resources.Sample_0);
-    }
-
-    string FilePath { get; }
-
-    public void Dispose()
-    {
-        File.Delete(FilePath);
-    }
-
-    [Fact]
-    public void DescriptionTest()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void DescriptionTest(int index)
     {
         using var _ = new AssertionScope();
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
-
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
         dataset.Description.Should().NotBeNull();
         dataset.Description = "Test 123";
         dataset.Description.Should().Be("Test 123");
     }
 
-    [Fact]
-    public void MetadataItemTest()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void MetadataItemTest(int index)
     {
         using var _ = new AssertionScope();
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
-        dataset.GetMetadataItem("Test1", "IntegrationTests").Should().BeNull();
         dataset.SetMetadataItem("Test1", "Value1", "IntegrationTests");
         dataset.GetMetadataItem("Test1", "IntegrationTests").Should().Be("Value1");
     }
 
-    [Fact]
-    public void MetadataItemNullDomainTest()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void MetadataItemNullDomainTest(int index)
     {
         using var _ = new AssertionScope();
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
-        dataset.GetMetadataItem("Test1").Should().BeNull();
         dataset.SetMetadataItem("Test1", "Value1");
         dataset.GetMetadataItem("Test1").Should().Be("Value1");
     }
 
-    [Fact]
-    public void MetadataTest()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void MetadataTest(int index)
     {
         using var _ = new AssertionScope();
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
-        dataset.GetMetadata("IntegrationTests").Should().BeNull();
         dataset.SetMetadata(new Dictionary<string, string> { { "Test1", "Value1" } }, "IntegrationTests");
-        dataset.GetMetadata("IntegrationTests").Should().BeEquivalentTo(new Dictionary<string, string> { { "Test1", "Value1" } });
+        dataset.GetMetadata("IntegrationTests").Should().Contain(new KeyValuePair<string, string>("Test1", "Value1"));
     }
 
-    [Fact]
-    public void MetadataNulLDomainTest()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void MetadataNulLDomainTest(int index)
     {
         using var _ = new AssertionScope();
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
-        dataset.GetMetadata().Should().BeNull();
         dataset.SetMetadataItem("Test1", "Value1");
-        dataset.GetMetadata().Should().BeEquivalentTo(new Dictionary<string, string> { { "Test1", "Value1" } });
+        dataset.GetMetadata().Should().Contain(new KeyValuePair<string, string>("Test1", "Value1"));
     }
 
-    [Fact]
-    public void MetadataEmptyDomainTest()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void MetadataEmptyDomainTest(int index)
     {
         using var _ = new AssertionScope();
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
-        dataset.GetMetadata("").Should().BeNull();
         dataset.SetMetadataItem("Test1", "Value1", "");
-        dataset.GetMetadata("").Should().BeEquivalentTo(new Dictionary<string, string> { { "Test1", "Value1" } });
+        dataset.GetMetadata("").Should().ContainEquivalentOf(new KeyValuePair<string, string>("Test1", "Value1"));
     }
 
-    [Fact]
-    public void SetMetadataThrowIfNull()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void SetMetadataThrowIfNull(int index)
     {
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
         var action = () => dataset.SetMetadataItem(null!, "");
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Fact]
-    public void SetMetadataItemThrowIfNull()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void SetMetadataItemThrowIfNull(int index)
     {
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
         var action = () => dataset.SetMetadataItem(null!, "Value1", "");
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Fact]
-    public void SetNotThrowOnNullValue()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void SetNotThrowOnNullValue(int index)
     {
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
         var action = () => dataset.SetMetadataItem("test", null!, "");
         action.Should().NotThrow();
     }
 
-    [Fact]
-    public void MetadataMultipleDomainsTest()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void MetadataMultipleDomainsTest(int index)
     {
         using var _ = new AssertionScope();
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
-        dataset.GetMetadata().Should().BeNull();
         dataset.SetMetadataItem("Test1", "Value1", "Domain1");
         dataset.SetMetadataItem("Test2", "Value2", "Domain2");
         dataset.GetMetadata("Domain1").Should().BeEquivalentTo(new Dictionary<string, string> { { "Test1", "Value1" } });
         dataset.GetMetadata("Domain2").Should().BeEquivalentTo(new Dictionary<string, string> { { "Test2", "Value2" } });
     }
 
-    [Fact]
-    public void MetadataDomainListTest()
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void MetadataDomainListTest(int index)
     {
         using var _ = new AssertionScope();
-        using GdalMajorObject dataset = GdalDataset.Open(FilePath, GdalAccess.ReadOnly)!;
+        var datasetInfo = GetDataset(index);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
 
         string[] originalDomains = dataset.MetadataDomainList;
         dataset.SetMetadataItem("Test1", "Value1", "Domain1");
         dataset.SetMetadataItem("Test2", "Value2", "Domain2");
 
-        dataset.MetadataDomainList.Should().BeEquivalentTo(["Domain1", "Domain2", ..originalDomains]);
+        dataset.MetadataDomainList.Should().Contain("Domain1");
+        dataset.MetadataDomainList.Should().Contain("Domain2");
     }
 }

@@ -8,7 +8,8 @@ namespace MMKiwi.GdalNet.Marshallers;
 
 [CustomMarshaller(typeof(string[]), MarshalMode.Default, typeof(CStringArrayMarshal))]
 [CustomMarshaller(typeof(IEnumerable<string>), MarshalMode.Default, typeof(EnumerableMarshal))]
-[CustomMarshaller(typeof(Dictionary<string,string>), MarshalMode.Default, typeof(DictionaryMarshal))]
+[CustomMarshaller(typeof(IReadOnlyDictionary<string,string>), MarshalMode.Default, typeof(DictionaryMarshal))]
+[CustomMarshaller(typeof(Dictionary<string, string>), MarshalMode.Default, typeof(DictionaryMarshal))]
 [CustomMarshaller(typeof(string[]), MarshalMode.ManagedToUnmanagedOut, typeof(FreeReturn))]
 internal unsafe static partial class CStringArrayMarshal
 {
@@ -63,7 +64,7 @@ internal unsafe static partial class CStringArrayMarshal
             return results;
         }
 
-        public static byte** ConvertToUnmanaged(Dictionary<string, string>? managed)
+        public static byte** ConvertToUnmanaged(IReadOnlyDictionary<string, string>? managed)
         {
             return ConvertToUnmanagedCore(managed?.Select(kvp => $"{kvp.Key}={kvp.Value}"), managed?.Count ?? 0);
         }

@@ -10,10 +10,10 @@ public class GdalErrorTests
     public void ErrorIsRetrievable()
     {
         GdalInfo.RegisterAllDrivers();
-        using var dataset = GdalDataset.Open("DOESNOTEXIST", GdalAccess.ReadOnly);
+        using var dataset = GdalDataset.Interop.GDALOpenEx("DOESNOTEXIST", new GdalOpenSettings().Flags, null, null, null);
         GdalError.LastError.Should().BeEquivalentTo(new
         {
-            ErrorNum = 4,
+            ErrorNum = GdalError.ErrorCodes.OpenFailed,
             Severity = GdalCplErr.Failure
         });
 
