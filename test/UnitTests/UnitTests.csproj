@@ -29,22 +29,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\GDalNet\GdalNet.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="SampleFiles.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>SampleFiles.resx</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Update="SampleFiles.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>SampleFiles.Designer.cs</LastGenOutput>
-	    <CustomToolNamespace>MMKiwi.GdalNet</CustomToolNamespace>
-	  </EmbeddedResource>
+		<ProjectReference Include="..\SampleData\SampleData.csproj" />
 	</ItemGroup>
 
 

@@ -13,7 +13,7 @@ public sealed class GdalMajorObjectTests : IDisposable
         GdalInfo.RegisterAllDrivers();
         FilePath = Path.GetTempFileName();
         using FileStream sampleFile = File.OpenWrite(FilePath);
-        sampleFile.Write(SampleFiles.Sample_0);
+        sampleFile.Write(SampleData.Resources.Sample_0);
     }
 
     string FilePath { get; }
@@ -78,7 +78,6 @@ public sealed class GdalMajorObjectTests : IDisposable
         dataset.GetMetadata().Should().BeEquivalentTo(new Dictionary<string, string> { { "Test1", "Value1" } });
     }
 
-
     [Fact]
     public void MetadataEmptyDomainTest()
     {
@@ -108,7 +107,6 @@ public sealed class GdalMajorObjectTests : IDisposable
         action.Should().Throw<ArgumentNullException>();
     }
 
-
     [Fact]
     public void SetNotThrowOnNullValue()
     {
@@ -130,7 +128,6 @@ public sealed class GdalMajorObjectTests : IDisposable
         dataset.GetMetadata("Domain1").Should().BeEquivalentTo(new Dictionary<string, string> { { "Test1", "Value1" } });
         dataset.GetMetadata("Domain2").Should().BeEquivalentTo(new Dictionary<string, string> { { "Test2", "Value2" } });
     }
-
 
     [Fact]
     public void MetadataDomainListTest()

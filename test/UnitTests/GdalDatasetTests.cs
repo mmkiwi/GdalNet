@@ -13,7 +13,7 @@ public sealed class GdalDatasetTests : IDisposable
         GdalInfo.RegisterAllDrivers();
         FilePath = Path.GetTempFileName();
         using FileStream sampleFile = File.OpenWrite(FilePath);
-        sampleFile.Write(SampleFiles.Sample_0);
+        sampleFile.Write(SampleData.Resources.Sample_0);
     }
 
     string FilePath { get; }
