@@ -20,7 +20,7 @@ public sealed partial class GdalDataset : GdalMajorObject
         Layers = new(this);
     }
 
-    public static GdalDataset? Open(string fileName,
+    public static GdalDataset Open(string fileName,
                                     GdalOpenSettings? openSettings = null,
                                     IEnumerable<string>? allowedDrivers = null,
                                     IReadOnlyDictionary<string, string>? openOptions = null,
@@ -29,7 +29,7 @@ public sealed partial class GdalDataset : GdalMajorObject
         GdalOpenSettings openFlags = openSettings ?? new();
         var dataset = Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
         GdalError.ThrowIfError();
-        return dataset;
+        return dataset!;
     }
 
     public GdalBandCollection RasterBands { get; }
@@ -60,8 +60,10 @@ public sealed partial class GdalVirtualDataset : GdalSafeHandle
         {
             GdalError.ThrowIfError();
         }
-        virtualDataset.MemoryHandle = pin;
-        virtualDataset.Dataset = GdalDataset.Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
+
+        virtualDataset!.MemoryHandle = pin;
+
+        virtualDataset.Dataset = GdalDataset.Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles)!;
         if (virtualDataset.Dataset is null)
         {
             GdalError.ThrowIfError();
@@ -76,9 +78,8 @@ public sealed partial class GdalVirtualDataset : GdalSafeHandle
 
     }
 
-
     [CLSCompliant(false)]
-    internal static new partial class Interop
+    internal static partial class Interop
     {
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]

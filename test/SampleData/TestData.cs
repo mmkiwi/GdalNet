@@ -22,7 +22,7 @@ public static class TestData
         Layers = ImmutableArray<TestLayer>.Empty,
     };
 
-    public static TestFile GpkgRaster1 => new()
+    public static TestFile Geopackage => new()
     {
         Data = Resources.PublicDomainGpkg,
         Datasets = [
@@ -46,7 +46,7 @@ public static class TestData
         ]
     };
 
-    public static ImmutableArray<TestFile> Files => [Jpeg, GpkgRaster1];
+    public static ImmutableArray<TestFile> Files => [Jpeg, Geopackage];
     public static ImmutableList<DatasetInfo> Datasets { get; } = Files.SelectMany(file => file.Datasets.Select(dataset => new DatasetInfo(file, dataset))).ToImmutableList();
     public static int DatasetCount => Files.Sum(f => f.Datasets.Length);
 
