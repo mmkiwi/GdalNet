@@ -82,13 +82,16 @@ public abstract class GdalSafeHandle : GdalHandle, IDisposable
                 // trashes it (important because this ReleaseHandle could occur implicitly
                 // as part of unmarshaling another P/Invoke).
                 int lastError = Marshal.GetLastPInvokeError();
-                ReleaseHandle();
+                lock (s_releaseInterlock)
+                    ReleaseHandle();
                 Marshal.SetLastPInvokeError(lastError);
             }
 
             _disposedValue = true;
         }
     }
+
+    private static readonly object s_releaseInterlock = new();
 
     ~GdalSafeHandle()
     {

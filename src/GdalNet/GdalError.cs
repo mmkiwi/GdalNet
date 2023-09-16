@@ -24,6 +24,8 @@ public sealed partial record class GdalError
     public string Message { get; }
     public GdalCplErr Severity { get; }
     public ErrorCodes ErrorNum { get; }
+
+    [field: ThreadStatic]
     public static GdalError? LastError { get; private set; }
 
     public static EventHandler<GdalErrorEventArgs>? ErrorRaised { get; }
