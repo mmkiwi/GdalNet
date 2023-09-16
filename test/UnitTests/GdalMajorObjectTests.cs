@@ -8,6 +8,7 @@ using FluentAssertions.Execution;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
+//[Collection("GDAL")]
 public sealed class GdalMajorObjectTests : DatasetTestBase
 {
     [Theory]

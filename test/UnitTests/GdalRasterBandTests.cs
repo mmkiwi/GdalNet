@@ -10,6 +10,7 @@ using MMKiwi.GdalNet;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
+//[Collection("GDAL")]
 public sealed class GdalRasterBandTests:DatasetTestBase
 {
 

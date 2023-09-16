@@ -13,7 +13,7 @@ using Xunit.Sdk;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
-
+//[Collection("GDAL")]
 public sealed class GdalDatasetTests: DatasetTestBase
 {
     [Theory]
@@ -35,6 +35,10 @@ public sealed class GdalDatasetTests: DatasetTestBase
         Action action = () =>
         {
             using var dataset = GdalDataset.Open("DOESNOTEXIST");
+            if (dataset is not null)
+                throw new Exception(dataset.Description);
+            else
+                throw new Exception("X");
         };
         action.Should().Throw<IOException>();
     }
@@ -73,5 +77,17 @@ public sealed class GdalDatasetTests: DatasetTestBase
         var dataset = virtualDataset.Dataset;
 
         dataset!.RasterYSize.Should().Be(datasetInfo.Dataset.RasterYSize);
+    }
+
+    [Theory]
+    [MemberData(nameof(Datasets))]
+    public void TestLayerCount(int index)
+    {
+        var datasetInfo = GetDataset(index);
+
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        var dataset = virtualDataset.Dataset;
+
+        dataset!.Layers.Count.Should().Be(datasetInfo.File.Layers.Length);
     }
 }

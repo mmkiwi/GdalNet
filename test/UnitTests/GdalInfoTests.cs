@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
+//[Collection("GDAL")]
 public partial class GdalInfoTests
 {
     [Fact]

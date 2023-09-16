@@ -10,4 +10,5 @@ public record class TestFile
 {
     public required byte[] Data { get; init; }
     public required ImmutableArray<TestDataset> Datasets {  get; init; }
+    public required ImmutableArray<TestLayer> Layers { get; init; }
 }

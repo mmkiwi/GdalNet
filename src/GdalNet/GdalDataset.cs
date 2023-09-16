@@ -17,6 +17,7 @@ public sealed partial class GdalDataset : GdalMajorObject
     {
         OwnsHandle = true;
         RasterBands = new(this);
+        Layers = new(this);
     }
 
     public static GdalDataset? Open(string fileName,
@@ -32,6 +33,7 @@ public sealed partial class GdalDataset : GdalMajorObject
     }
 
     public GdalBandCollection RasterBands { get; }
+    public OgrLayerCollection Layers { get; }
     public int RasterXSize => Interop.GDALGetRasterXSize(this);
     public int RasterYSize => Interop.GDALGetRasterYSize(this);
 }
@@ -54,17 +56,24 @@ public sealed partial class GdalVirtualDataset : GdalSafeHandle
         string fileName = $"/vsimem/datasource_{Guid.NewGuid()}";
         var pin = buffer.Pin();
         GdalVirtualDataset virtualDataset = Interop.VSIFileFromMemBuffer(fileName, (byte*)pin.Pointer, buffer.Length, false);
+        if (virtualDataset is null)
+        {
+            GdalError.ThrowIfError();
+        }
         virtualDataset.MemoryHandle = pin;
         virtualDataset.Dataset = GdalDataset.Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
-        GdalError.ThrowIfError();
+        if (virtualDataset.Dataset is null)
+        {
+            GdalError.ThrowIfError();
+        }
         return virtualDataset;
     }
-
 
     protected override bool ReleaseHandle()
     {
         Interop.VSIFCloseL(this);
         return true;
+
     }
 
 

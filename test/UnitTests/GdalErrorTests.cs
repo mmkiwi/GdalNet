@@ -4,6 +4,7 @@
 
 namespace MMKiwi.GdalNet.UnitTests;
 
+//[Collection("GDAL")]
 public class GdalErrorTests
 {
     [Fact]
