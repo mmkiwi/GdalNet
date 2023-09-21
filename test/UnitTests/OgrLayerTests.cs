@@ -6,7 +6,7 @@ using MMKiwi.GdalNet;
 using MMKiwi.GdalNet.SampleData;
 using MMKiwi.GdalNet.UnitTests;
 
-namespace UnitTests;
+namespace MMKiwi.GdalNet.UnitTests;
 
 //[Collection("GDAL")]
 public class OgrLayerTests: LayerTestBase

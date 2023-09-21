@@ -43,7 +43,7 @@ public sealed partial class GdalVirtualDataset : GdalSafeHandle
 {
 
     public MemoryHandle MemoryHandle { get; private set; }
-    public GdalDataset Dataset { get; private set; }
+    public GdalDataset Dataset { get; private set; } = null!;
 
     public unsafe static GdalVirtualDataset Open(Memory<byte> buffer,
                                                  GdalOpenSettings? openSettings = null,
