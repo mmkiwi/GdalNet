@@ -6,8 +6,11 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrLayer
+public partial class OgrLayer: IConstructibleHandle<OgrLayer>
 {
+    private OgrLayer(nint pointer): this() => SetHandle(pointer);
+    static OgrLayer IConstructibleHandle<OgrLayer>.Construct(nint pointer) => new(pointer);
+
     internal static partial class Interop
     {
         [LibraryImport("gdal")]

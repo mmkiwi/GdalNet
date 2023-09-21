@@ -23,8 +23,9 @@ public partial class OgrFeatureCollection : IEnumerable<OgrFeature>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public void SetNetByIndex(long index){
-
+    public void SetNetByIndex(long index)
+    {
+        throw new NotImplementedException();
     }
 
     private int _isEnumerating;
@@ -53,7 +54,7 @@ public partial class OgrFeatureCollection : IEnumerable<OgrFeature>
 
         public bool MoveNext()
         {
-            Current = OgrLayer.Interop.OGR_L_GetNextFeature(OgrFeatureCollection.Layer);
+            Current = OgrLayer.Interop.OGR_L_GetNextFeature(OgrFeatureCollection.Layer)!;
             return Current != null;
         }
 

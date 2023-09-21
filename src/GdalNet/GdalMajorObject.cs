@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal<GdalMajorObject>))]
+[NativeMarshalling(typeof(MarshalAbstract<GdalMajorObject>))]
 public abstract partial class GdalMajorObject : GdalSafeHandle
 {
     protected override abstract bool ReleaseHandle();

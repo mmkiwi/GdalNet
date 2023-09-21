@@ -5,4 +5,8 @@
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(Marshal<OgrGeometry>))]
-public partial class OgrGeometry : GdalHandle;
+public partial class OgrGeometry : GdalHandle,IConstructibleHandle<OgrGeometry>
+{
+    private OgrGeometry(nint pointer) => SetHandle(pointer);
+    public static OgrGeometry Construct(nint pointer) => new(pointer);
+}

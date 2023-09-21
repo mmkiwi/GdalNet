@@ -5,4 +5,8 @@
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(Marshal<OgrGeomFieldDefn>))]
-public partial class OgrGeomFieldDefn : GdalHandle;
+public partial class OgrGeomFieldDefn : GdalHandle,IConstructibleHandle<OgrGeomFieldDefn>
+{
+    private OgrGeomFieldDefn(nint pointer) => SetHandle(pointer);
+    public static OgrGeomFieldDefn Construct(nint pointer) => new(pointer);
+}

@@ -22,9 +22,6 @@ namespace MMKiwi.GdalNet.CHelpers;
 /// </remarks>
 internal unsafe sealed partial class CStringList : GdalSafeHandle
 {
-    private CStringList() { }
-    private CStringList(nint pointer) => SetHandle(pointer);
-
     public static CStringList Create(string firstString)
     {
         return new(Interop.CSLAddString(null, firstString));

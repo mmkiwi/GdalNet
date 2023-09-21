@@ -2,12 +2,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.CHelpers;
 using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalRasterBand
+public sealed partial class GdalRasterBand: IConstructibleHandle<GdalRasterBand>
 {
+    private GdalRasterBand(nint pointer) => SetHandle(pointer);
+    public static GdalRasterBand Construct(nint pointer) => new(pointer);
+
     [CLSCompliant(false)]
     internal static partial class Interop
     {

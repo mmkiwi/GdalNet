@@ -5,4 +5,8 @@
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(Marshal<OgrFeature>))]
-public partial class OgrFeature : GdalHandle;
+public partial class OgrFeature : GdalHandle, IConstructibleHandle<OgrFeature>
+{
+    private OgrFeature(nint pointer) => SetHandle(pointer);
+    public static OgrFeature Construct(nint pointer) => new(pointer);
+}

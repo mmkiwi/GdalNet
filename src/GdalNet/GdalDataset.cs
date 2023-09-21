@@ -39,7 +39,7 @@ public sealed partial class GdalDataset : GdalMajorObject
 }
 
 [NativeMarshalling(typeof(Marshal<GdalVirtualDataset>))]
-public sealed partial class GdalVirtualDataset : GdalSafeHandle
+public sealed partial class GdalVirtualDataset : GdalSafeHandle,IConstructibleHandle<GdalVirtualDataset>
 {
 
     public MemoryHandle MemoryHandle { get; private set; }

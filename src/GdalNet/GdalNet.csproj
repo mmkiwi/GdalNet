@@ -1,25 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-    <LangVersion>preview</LangVersion>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<AssemblyName>MMKiwi.$(MSBuildProjectName)</AssemblyName>
-		<RootNamespace>MMKiwi.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>preview</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AssemblyName>MMKiwi.$(MSBuildProjectName)</AssemblyName>
+        <RootNamespace>MMKiwi.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<None Include="..\..\vcpkg_installed\x64-windows\bin\*.dll" LinkBase="dependencies">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>%(Filename)%(Extension)</TargetPath>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="..\..\vcpkg_installed\x64-windows\bin\*.pdb" LinkBase="dependencies">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>%(Filename)%(Extension)</TargetPath>
-		</None>
-	</ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\vcpkg_installed\x64-windows\bin\*.dll" LinkBase="dependencies">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>%(Filename)%(Extension)</TargetPath>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\vcpkg_installed\x64-windows\bin\*.pdb" LinkBase="dependencies">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>%(Filename)%(Extension)</TargetPath>
+        </None>
+    </ItemGroup>
 </Project>

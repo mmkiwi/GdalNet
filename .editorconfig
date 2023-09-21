@@ -12,6 +12,7 @@ indent_size = 2
 # C# files
 [*.cs]
 
+dotnet_diagnostic.CS3019.severity = none # Need this to prevent warning on interop classes for UnmanagedCallConvAttribute
 dotnet_diagnostic.IDE0290.severity = none # Not using primary constructors until read-only is implemented
 dotnet_diagnostic.IDE0073.severity = warning
 

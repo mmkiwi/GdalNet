@@ -19,22 +19,19 @@ public abstract class GdalHandle
     protected void SetHandle(nint handle) => Handle = handle;
 
     [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(Marshal<>))]
-    private protected static class Marshal<T> where T : GdalHandle
+    private protected static class Marshal<T> where T : GdalHandle, IConstructibleHandle<T>
     {
         public static nint ConvertToUnmanaged(T? handle) => handle is null ? 0 : handle.Handle;
         public static T? ConvertToManaged(nint pointer)
         {
-            if (pointer <= 0)
-            {
-                return null;
-            }
-            else
-            {
-                T? handle = Activator.CreateInstance(typeof(T), true) as T;
-                handle?.SetHandle(pointer);
-                return handle;
-            }
+            return pointer <= 0 ? null : T.Construct(pointer);
         }
+    }
+
+    [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(MarshalAbstract<>))]
+    private protected static class MarshalAbstract<T> where T : GdalHandle
+    {
+        public static nint ConvertToUnmanaged(T? handle) => handle is null ? 0 : handle.Handle;
     }
 }
 
