@@ -14,33 +14,33 @@ public partial class GdalMajorObject
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        public static partial string? GDALGetDescription(GdalMajorObject obj);
+        public static partial string? GDALGetDescription([MarshalUsing(typeof(MarshalIn<GdalMajorObject>))] GdalMajorObject obj);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial void GDALSetDescription(GdalMajorObject obj, string? description);
+        public static partial void GDALSetDescription([MarshalUsing(typeof(MarshalIn<GdalMajorObject>))] GdalMajorObject obj, string? description);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
         [return: MarshalUsing(typeof(CStringArrayMarshal))]
-        public static partial Dictionary<string, string> GDALGetMetadata(GdalMajorObject obj, string? domain);
+        public static partial Dictionary<string, string> GDALGetMetadata([MarshalUsing(typeof(MarshalIn<GdalMajorObject>))] GdalMajorObject obj, string? domain);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial GdalCplErr GDALSetMetadata(GdalMajorObject obj, [MarshalUsing(typeof(CStringArrayMarshal))] IReadOnlyDictionary<string,string>? metadata, string? domain);
+        public static partial GdalCplErr GDALSetMetadata([MarshalUsing(typeof(MarshalIn<GdalMajorObject>))] GdalMajorObject obj, [MarshalUsing(typeof(CStringArrayMarshal))] IReadOnlyDictionary<string,string>? metadata, string? domain);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial GdalCplErr GDALSetMetadataItem(GdalMajorObject obj, string name, string? value, string? domain);
+        public static partial GdalCplErr GDALSetMetadataItem([MarshalUsing(typeof(MarshalIn<GdalMajorObject>))] GdalMajorObject obj, string name, string? value, string? domain);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
         [return: MarshalUsing(typeof(CStringArrayMarshal))]
-        public static partial string[] GDALGetMetadataDomainList(GdalMajorObject obj);
+        public static partial string[] GDALGetMetadataDomainList([MarshalUsing(typeof(MarshalIn<GdalMajorObject>))] GdalMajorObject obj);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        public static partial string GDALGetMetadataItem(GdalMajorObject obj, string name, string? domain);
+        public static partial string GDALGetMetadataItem([MarshalUsing(typeof(MarshalIn<GdalMajorObject>))] GdalMajorObject obj, string name, string? domain);
     }
 }

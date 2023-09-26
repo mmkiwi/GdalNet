@@ -6,14 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal<OgrLayer>))]
-public partial class OgrLayer : GdalHandle
+public partial class OgrLayer
 {
-    private OgrLayer()
-    {
-        Features = new OgrFeatureCollection(this);
-    }
-
     public string Name
     {
         get

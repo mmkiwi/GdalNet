@@ -24,7 +24,7 @@ internal unsafe sealed partial class CStringList : GdalSafeHandle
 {
     public static CStringList Create(string firstString)
     {
-        return new(Interop.CSLAddString(null, firstString));
+        return new(Interop.CSLAddString(null, firstString), true);
     }
 
     protected override bool ReleaseHandle()
@@ -40,7 +40,7 @@ internal unsafe sealed partial class CStringList : GdalSafeHandle
         nint newHandle = Interop.CSLAddStringMayFail(this, value);
         if (newHandle != 0)
         {
-            SetHandle(newHandle);
+            Handle = newHandle;
         }
     }
 }

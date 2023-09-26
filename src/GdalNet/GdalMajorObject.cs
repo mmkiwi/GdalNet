@@ -4,9 +4,10 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(MarshalAbstract<GdalMajorObject>))]
 public abstract partial class GdalMajorObject : GdalSafeHandle
 {
+    private protected GdalMajorObject(nint pointer, bool ownsHandle) : base(pointer, ownsHandle) { }
+
     protected override abstract bool ReleaseHandle();
 
     public string? Description

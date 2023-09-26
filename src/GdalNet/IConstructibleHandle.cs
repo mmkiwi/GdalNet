@@ -6,5 +6,5 @@ namespace MMKiwi.GdalNet;
 
 public interface IConstructibleHandle<T> where T:IConstructibleHandle<T>
 {
-    public static abstract T Construct(nint pointer);
+    public static abstract T Construct(nint pointer, bool ownsHandle);
 }

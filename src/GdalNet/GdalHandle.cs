@@ -13,25 +13,41 @@ namespace MMKiwi.GdalNet;
 /// </remarks>
 public abstract class GdalHandle
 {
-    private protected GdalHandle() { }
+    private protected GdalHandle(nint pointer) { Handle = pointer; }
 
-    protected nint Handle { get; private set; }
-    protected void SetHandle(nint handle) => Handle = handle;
+    internal nint Handle { get; private protected set; }
 
-    [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(Marshal<>))]
-    private protected static class Marshal<T> where T : GdalHandle, IConstructibleHandle<T>
+    protected static void ThrowIfOwnsHandle(bool ownsHandle, string caller)
+    {
+        if (ownsHandle)
+            throw new NotSupportedException($"{caller} can never own a handle");
+    }
+
+
+    [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(MarshalDoesNotOwnHandle<>))]
+    private protected static class MarshalDoesNotOwnHandle<T> where T : GdalHandle, IConstructibleHandle<T>
     {
         public static nint ConvertToUnmanaged(T? handle) => handle is null ? 0 : handle.Handle;
         public static T? ConvertToManaged(nint pointer)
         {
-            return pointer <= 0 ? null : T.Construct(pointer);
+            return pointer <= 0 ? null : T.Construct(pointer, false);
         }
     }
 
-    [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(MarshalAbstract<>))]
-    private protected static class MarshalAbstract<T> where T : GdalHandle
+    [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(MarshalIn<>))]
+    private protected static class MarshalIn<T> where T : GdalHandle
     {
         public static nint ConvertToUnmanaged(T? handle) => handle is null ? 0 : handle.Handle;
+    }
+
+    [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(MarshalOwnsHandle<>))]
+    internal static class MarshalOwnsHandle<T> where T : GdalSafeHandle, IConstructibleHandle<T>
+    {
+        public static nint ConvertToUnmanaged(T? handle) => handle is null ? 0 : handle.Handle;
+        public static T? ConvertToManaged(nint pointer)
+        {
+            return pointer <= 0 ? null : T.Construct(pointer, true);
+        }
     }
 }
 
@@ -45,7 +61,10 @@ public abstract class GdalHandle
 /// </remarks>
 public abstract class GdalSafeHandle : GdalHandle, IDisposable
 {
-
+    private protected GdalSafeHandle(nint pointer, bool ownsHandle) : base(pointer)
+    {
+        OwnsHandle = ownsHandle;
+    }
     /// <summary>
     /// If <c>true</c>, the caller owns the handle and must call <see cref="Dispose()"/>. 
     /// If <c>false</c>, the caller does not own the handle and calling
@@ -58,7 +77,7 @@ public abstract class GdalSafeHandle : GdalHandle, IDisposable
     /// a <see cref="OgrGeometry"/> is owned by a parent feature, dispose of 
     /// the feature to release the memory for the geometry. 
     /// </remarks>
-    public bool OwnsHandle { get; protected init; } = true;
+    public bool OwnsHandle { get; }
 
     private bool _disposedValue;
 

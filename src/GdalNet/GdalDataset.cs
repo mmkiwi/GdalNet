@@ -13,9 +13,8 @@ namespace MMKiwi.GdalNet;
 
 public sealed partial class GdalDataset : GdalMajorObject
 {
-    private GdalDataset()
+    private GdalDataset(nint pointer, bool ownsHandle):base(pointer,ownsHandle)
     {
-        OwnsHandle = true;
         RasterBands = new(this);
         Layers = new(this);
     }
@@ -38,8 +37,7 @@ public sealed partial class GdalDataset : GdalMajorObject
     public int RasterYSize => Interop.GDALGetRasterYSize(this);
 }
 
-[NativeMarshalling(typeof(Marshal<GdalVirtualDataset>))]
-public sealed partial class GdalVirtualDataset : GdalSafeHandle,IConstructibleHandle<GdalVirtualDataset>
+public sealed partial class GdalVirtualDataset : GdalSafeHandle, IConstructibleHandle<GdalVirtualDataset>
 {
 
     public MemoryHandle MemoryHandle { get; private set; }
@@ -78,21 +76,6 @@ public sealed partial class GdalVirtualDataset : GdalSafeHandle,IConstructibleHa
 
     }
 
-    [CLSCompliant(false)]
-    internal static partial class Interop
-    {
-        [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public unsafe static partial GdalVirtualDataset VSIFileFromMemBuffer(string fileName,
-                                                                byte* buffer,
-                                                                long buffSize,
-                                                                [MarshalAs(UnmanagedType.Bool)] bool takeOwnership);
-
-        [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial int VSIFCloseL(GdalVirtualDataset dataset);
-    }
-
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
@@ -102,4 +85,11 @@ public sealed partial class GdalVirtualDataset : GdalSafeHandle,IConstructibleHa
             this.Dataset.Dispose();
         }
     }
+
+    public GdalVirtualDataset(nint pointer, bool ownsHandle): base(pointer, ownsHandle)
+    {
+    }
+
+    static GdalVirtualDataset IConstructibleHandle<GdalVirtualDataset>.Construct(nint pointer, bool ownsHandle) 
+        => new(pointer, ownsHandle);
 }

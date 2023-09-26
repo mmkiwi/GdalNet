@@ -4,9 +4,12 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal<OgrFieldDomain>))]
 public partial class OgrFieldDomain : GdalHandle, IConstructibleHandle<OgrFieldDomain>
 {
-    private OgrFieldDomain(nint pointer) => SetHandle(pointer);
-    public static OgrFieldDomain Construct(nint pointer) => new(pointer);
+    private OgrFieldDomain(nint pointer) : base(pointer) { }
+    public static OgrFieldDomain Construct(nint pointer, bool ownsHandle)
+    {
+        ThrowIfOwnsHandle(ownsHandle, nameof(OgrFieldDomain));
+        return new(pointer);
+    }
 }

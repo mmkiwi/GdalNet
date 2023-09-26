@@ -6,11 +6,8 @@ using Microsoft.Win32.SafeHandles;
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal<GdalRasterBand>))]
-public sealed partial class GdalRasterBand : GdalHandle
+public sealed partial class GdalRasterBand
 {
-    private GdalRasterBand() { }
-
     public string[] Categories => Interop.GDALGetRasterCategoryNames(this);
     public GdalDataType DataType => Interop.GDALGetRasterDataType(this);
 

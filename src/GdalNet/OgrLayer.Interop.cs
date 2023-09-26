@@ -6,69 +6,80 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrLayer: IConstructibleHandle<OgrLayer>
+public partial class OgrLayer : GdalHandle, IConstructibleHandle<OgrLayer>
 {
-    private OgrLayer(nint pointer): this() => SetHandle(pointer);
-    static OgrLayer IConstructibleHandle<OgrLayer>.Construct(nint pointer) => new(pointer);
+    private OgrLayer(nint pointer) : base(pointer)
+    {
+        Features = new OgrFeatureCollection(this);
+    }
+
+    static OgrLayer IConstructibleHandle<OgrLayer>.Construct(nint pointer, bool ownsHandle)
+    {
+        ThrowIfOwnsHandle(ownsHandle, nameof(OgrLayer));
+        return new(pointer);
+    }
 
     internal static partial class Interop
     {
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        public static partial string OGR_L_GetName(OgrLayer layer);
+        public static partial string OGR_L_GetName([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer);
 
         [LibraryImport("gdal")]
-        public static partial OgrFeature? OGR_L_GetNextFeature(OgrLayer layer);
+        [return: MarshalUsing(typeof(MarshalOwnsHandle<OgrFeature>))]
+        public static partial OgrFeature? OGR_L_GetNextFeature([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_L_ResetReading(OgrLayer layer);
+        public static partial void OGR_L_ResetReading([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer);
 
         [LibraryImport("gdal")]
-        public static partial OgrError OGR_L_SetNextByIndex(OgrLayer layer, long index);
+        public static partial OgrError OGR_L_SetNextByIndex([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, long index);
 
         [LibraryImport("gdal")]
-        public static partial OgrFeature? OGR_L_GetFeature(OgrLayer layer, long index);
+        [return: MarshalUsing(typeof(MarshalOwnsHandle<OgrFeature>))]
+        public static partial OgrFeature? OGR_L_GetFeature([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, long index);
 
         [LibraryImport("gdal")]
-        public static partial OgrWkbGeometryType OGR_L_GetGeomType(OgrLayer layer);
+        public static partial OgrWkbGeometryType OGR_L_GetGeomType([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer);
 
         [LibraryImport("gdal")]
-        public static partial nint OGR_L_GetGeometryTypes(OgrLayer layer, int geomField, int flags, out int entryCount, nint progressFunc, nint progressData);
+        public static partial nint OGR_L_GetGeometryTypes([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, int geomField, int flags, out int entryCount, nint progressFunc, nint progressData);
 
         [LibraryImport("gdal")]
-        public static partial OgrGeometry? OGR_L_GetSpatialFilter(OgrLayer layer);
+        [return: MarshalUsing(typeof(MarshalDoesNotOwnHandle<OgrGeometry>))]
+        public static partial OgrGeometry? OGR_L_GetSpatialFilter([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_L_SetSpatialFilter(OgrLayer layer, OgrGeometry? geometry);
+        public static partial void OGR_L_SetSpatialFilter([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, [MarshalUsing(typeof(MarshalIn<OgrGeometry>))] OgrGeometry? geometry);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_L_SetSpatialFilterEx(OgrLayer layer, int geomField, OgrGeometry? geometry);
+        public static partial void OGR_L_SetSpatialFilterEx([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, int geomField, [MarshalUsing(typeof(MarshalIn<OgrGeometry>))] OgrGeometry? geometry);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial OgrError OGR_L_SetAttributeFilter(OgrLayer layer, string? query);
+        public static partial OgrError OGR_L_SetAttributeFilter([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, string? query);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial OgrError OGR_L_SetFeature(OgrLayer layer, OgrFeature feature);
+        public static partial OgrError OGR_L_SetFeature([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, [MarshalUsing(typeof(MarshalIn<OgrFeature>))] OgrFeature feature);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial OgrError OGR_L_CreateFeature(OgrLayer layer, OgrFeature feature);
+        public static partial OgrError OGR_L_CreateFeature([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, [MarshalUsing(typeof(MarshalIn<OgrFeature>))] OgrFeature feature);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial OgrError OGR_L_DeleteFeature(OgrLayer layer, long featureId);
+        public static partial OgrError OGR_L_DeleteFeature([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, long featureId);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial OgrError OGR_L_UpsertFeature(OgrLayer layer, OgrFeature feature);
+        public static partial OgrError OGR_L_UpsertFeature([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer, [MarshalUsing(typeof(MarshalIn<OgrFeature>))] OgrFeature feature);
 
         [LibraryImport("gdal")]
-        public static partial OgrError OGR_L_UpdateFeature(OgrLayer layer,
-                                                           OgrFeature feature,
+        public static partial OgrError OGR_L_UpdateFeature([MarshalUsing(typeof(MarshalIn<OgrLayer>))] OgrLayer layer,
+                                                           [MarshalUsing(typeof(MarshalIn<OgrFeature>))] OgrFeature feature,
                                                            int updatedFieldsCount,
                                                            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex=2)]
                                                            int[] updatedFieldsIndexes,
                                                            int updateGeomFieldCount,
                                                            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex=4)]
                                                            int[] updatedGeomFieldIndexes,
-                                                           [MarshalAs(UnmanagedType.Bool)] 
+                                                           [MarshalAs(UnmanagedType.Bool)]
                                                            bool updateStyleString);
     }
 }
