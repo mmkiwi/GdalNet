@@ -4,12 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrGeomFieldDefn : GdalHandle, IConstructibleHandle<OgrGeomFieldDefn>
+[SourceGenerators.GenerateGdalMarshal]
+public partial class OgrGeomFieldDefn : GdalHandle
 {
-    private OgrGeomFieldDefn(nint pointer) : base(pointer) { }
-    public static OgrGeomFieldDefn Construct(nint pointer, bool ownsHandle)
-    {
-        ThrowIfOwnsHandle(ownsHandle, nameof(OgrGeomFieldDefn));
-        return new(pointer);
-    }
 }

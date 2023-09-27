@@ -9,8 +9,22 @@
         <AssemblyName>MMKiwi.$(MSBuildProjectName)</AssemblyName>
         <RootNamespace>MMKiwi.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
         <IsAotCompatible>true</IsAotCompatible>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>SG_Outputs</CompilerGeneratedFilesOutputPath>
+        <DefineConstants>GDAL_GENERATE_STUBS_DISABLED</DefineConstants>
     </PropertyGroup>
 
+
+    <ItemGroup>
+        <!-- Exclude the output of source generators from the compilation, except the stub files -->
+        <Compile Remove="$(CompilerGeneratedFilesOutputPath)/**/*.cs" />
+        <Compile Include="$(CompilerGeneratedFilesOutputPath)/**/stub/**/*.cs" />
+    </ItemGroup>
+
+    <Target Name="GenerateStubs" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild">
+        <Exec Command="..\..\artifacts\bin\GdalStubGenerator\debug\GdalStubGenerator.exe $(MSBuildProjectDirectory)" />
+    </Target>
+    
     <ItemGroup>
         <None Include="..\..\vcpkg_installed\x64-windows\bin\*.dll" LinkBase="dependencies">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -22,5 +36,8 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <TargetPath>%(Filename)%(Extension)</TargetPath>
         </None>
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\GdalSourceGenerators\GdalSourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 </Project>

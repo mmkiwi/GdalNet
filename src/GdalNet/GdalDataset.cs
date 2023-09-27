@@ -13,7 +13,7 @@ namespace MMKiwi.GdalNet;
 
 public sealed partial class GdalDataset : GdalMajorObject
 {
-    private GdalDataset(nint pointer, bool ownsHandle):base(pointer,ownsHandle)
+    private GdalDataset(nint pointer, bool ownsHandle) : base(pointer, ownsHandle)
     {
         RasterBands = new(this);
         Layers = new(this);
@@ -37,7 +37,8 @@ public sealed partial class GdalDataset : GdalMajorObject
     public int RasterYSize => Interop.GDALGetRasterYSize(this);
 }
 
-public sealed partial class GdalVirtualDataset : GdalSafeHandle, IConstructibleHandle<GdalVirtualDataset>
+[SourceGenerators.GenerateGdalMarshal]
+public sealed partial class GdalVirtualDataset : GdalSafeHandle
 {
 
     public MemoryHandle MemoryHandle { get; private set; }
@@ -85,11 +86,4 @@ public sealed partial class GdalVirtualDataset : GdalSafeHandle, IConstructibleH
             this.Dataset.Dispose();
         }
     }
-
-    public GdalVirtualDataset(nint pointer, bool ownsHandle): base(pointer, ownsHandle)
-    {
-    }
-
-    static GdalVirtualDataset IConstructibleHandle<GdalVirtualDataset>.Construct(nint pointer, bool ownsHandle) 
-        => new(pointer, ownsHandle);
 }

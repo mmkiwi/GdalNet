@@ -7,15 +7,9 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalRasterBand: GdalHandle, IConstructibleHandle<GdalRasterBand>
+[SourceGenerators.GenerateGdalMarshal]
+public sealed partial class GdalRasterBand: GdalHandle
 {
-    private GdalRasterBand(nint pointer) : base(pointer) { }
-    public static GdalRasterBand Construct(nint pointer, bool ownsHandle)
-    {
-        ThrowIfOwnsHandle(ownsHandle, nameof(GdalRasterBand));
-        return new(pointer);
-    }
-
     [CLSCompliant(false)]
     internal static partial class Interop
     {
@@ -24,10 +18,10 @@ public sealed partial class GdalRasterBand: GdalHandle, IConstructibleHandle<Gda
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
         [return: MarshalUsing(typeof(CStringArrayMarshal))]
-        public static partial string[] GDALGetRasterCategoryNames([MarshalUsing(typeof(MarshalIn<GdalRasterBand>))] GdalRasterBand rasterBand);
+        public static partial string[] GDALGetRasterCategoryNames(GdalRasterBand rasterBand);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial GdalDataType GDALGetRasterDataType([MarshalUsing(typeof(MarshalIn<GdalRasterBand>))] GdalRasterBand rasterBand);
+        public static partial GdalDataType GDALGetRasterDataType(GdalRasterBand rasterBand);
     }
 }

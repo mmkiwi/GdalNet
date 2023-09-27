@@ -16,39 +16,6 @@ public abstract class GdalHandle
     private protected GdalHandle(nint pointer) { Handle = pointer; }
 
     internal nint Handle { get; private protected set; }
-
-    protected static void ThrowIfOwnsHandle(bool ownsHandle, string caller)
-    {
-        if (ownsHandle)
-            throw new NotSupportedException($"{caller} can never own a handle");
-    }
-
-
-    [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(MarshalDoesNotOwnHandle<>))]
-    private protected static class MarshalDoesNotOwnHandle<T> where T : GdalHandle, IConstructibleHandle<T>
-    {
-        public static nint ConvertToUnmanaged(T? handle) => handle is null ? 0 : handle.Handle;
-        public static T? ConvertToManaged(nint pointer)
-        {
-            return pointer <= 0 ? null : T.Construct(pointer, false);
-        }
-    }
-
-    [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(MarshalIn<>))]
-    private protected static class MarshalIn<T> where T : GdalHandle
-    {
-        public static nint ConvertToUnmanaged(T? handle) => handle is null ? 0 : handle.Handle;
-    }
-
-    [CustomMarshaller(typeof(CustomMarshallerAttribute.GenericPlaceholder), MarshalMode.Default, typeof(MarshalOwnsHandle<>))]
-    internal static class MarshalOwnsHandle<T> where T : GdalSafeHandle, IConstructibleHandle<T>
-    {
-        public static nint ConvertToUnmanaged(T? handle) => handle is null ? 0 : handle.Handle;
-        public static T? ConvertToManaged(nint pointer)
-        {
-            return pointer <= 0 ? null : T.Construct(pointer, true);
-        }
-    }
 }
 
 /// <summary>
@@ -122,4 +89,5 @@ public abstract class GdalSafeHandle : GdalHandle, IDisposable
         GC.SuppressFinalize(this);
     }
 }
+
 

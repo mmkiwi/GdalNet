@@ -2,8 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace MMKiwi.GdalNet;
-[SourceGenerators.GenerateGdalMarshal]
-public partial class OgrGeometry : GdalHandle
+namespace MMKiwi.GdalNet.SourceGenerators;
+
+public enum MarshalBaseType: byte
 {
+    Unknown, 
+    GdalHandle,
+    GdalSafeHandle
 }

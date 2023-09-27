@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Source Generator": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\GDalNet\\GdalNet.csproj"
+    }
+  }
+}

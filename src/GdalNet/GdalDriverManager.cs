@@ -6,12 +6,7 @@ using MMKiwi.GdalNet.CHelpers;
 
 namespace MMKiwi.GdalNet;
 
-public partial class GdalDriverManager : GdalHandle, IConstructibleHandle<GdalDriverManager>
+[SourceGenerators.GenerateGdalMarshal]
+public partial class GdalDriverManager : GdalHandle
 {
-    private GdalDriverManager(nint pointer) : base(pointer) { }
-    public static GdalDriverManager Construct(nint pointer, bool ownsHandle)
-    {
-        ThrowIfOwnsHandle(ownsHandle,nameof(GdalDriverManager));
-        return new(pointer);
-    }
 }

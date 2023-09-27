@@ -6,12 +6,9 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet.CHelpers;
 
-[NativeMarshalling(typeof(MarshalOwnsHandle<CStringList>))]
-internal partial class CStringList: IConstructibleHandle<CStringList>
+[SourceGenerators.GenerateGdalMarshal]
+internal partial class CStringList
 {
-    private CStringList(nint pointer, bool ownsHandle) : base(pointer, ownsHandle) { }
-    public static CStringList Construct(nint pointer, bool ownsHandle) => new(pointer, ownsHandle);
-
     [CLSCompliant(false)]
     public unsafe static partial class Interop
     {

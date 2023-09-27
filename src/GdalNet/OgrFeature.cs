@@ -6,11 +6,9 @@ using System.Collections;
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrFeature : GdalSafeHandle, IConstructibleHandle<OgrFeature>
+[SourceGenerators.GenerateGdalMarshal]
+public partial class OgrFeature : GdalSafeHandle
 {
-    private OgrFeature(nint pointer, bool ownsHandle) : base(pointer, ownsHandle) { }
-    public static OgrFeature Construct(nint pointer, bool ownsHandle) => new(pointer, ownsHandle);
-
     protected override bool ReleaseHandle()
     {
         if (Handle != nint.Zero)
