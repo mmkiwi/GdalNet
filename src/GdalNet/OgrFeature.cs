@@ -53,6 +53,6 @@ public partial class OgrField
     {
         Feature = feature;
         Index = index;
-        FieldDefinition = OgrFeature.Interop.OGR_F_GetFieldDefnRef(Feature, Index).AsReadOnly();
+        FieldDefinition = OgrFeature.Interop.OGR_F_GetFieldDefnRef(Feature, Index);
     }
 }

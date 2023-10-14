@@ -6,10 +6,8 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace MMKiwi.GdalNet;
 [SourceGenerators.GenerateGdalMarshal]
-public partial class OgrFieldDefinition : GdalHandle
+public partial class OgrFieldDefinition : GdalHandle, IEquatable<OgrFieldDefinition>
 {
-    public virtual bool IsReadOnly { get; } = false;
-
     public virtual OgrFieldType FieldType
     {
         get => Interop.OGR_Fld_GetType(this);
@@ -22,48 +20,81 @@ public partial class OgrFieldDefinition : GdalHandle
         set => Interop.OGR_Fld_SetSubType(this, value);
     }
 
-    internal OgrFieldDefinition AsReadOnly() => new ReadOnly(this);
-
-    public class ReadOnly : OgrFieldDefinition
+    public string Name
     {
-        private ReadOnly(nint pointer) : base(pointer)
-        {
-            _fieldType = new Lazy<OgrFieldType>(() => Interop.OGR_Fld_GetType(this));
-            _subType = new Lazy<OgrFieldSubType>(() => Interop.OGR_Fld_GetSubType(this));
-        }
-        internal ReadOnly(OgrFieldDefinition definition) : this(definition.Handle) { }
-
-        public override bool IsReadOnly => true;
-
-
-        readonly Lazy<OgrFieldType> _fieldType;
-        private readonly Lazy<OgrFieldSubType> _subType;
-
-        public override OgrFieldType FieldType
-        {
-            get => _fieldType.Value;
-            set => throw new NotSupportedException("Cannot edit a field definition that is attached to a feature");
-        }
-
-        public override OgrFieldSubType FieldSubType
-        {
-            get => _subType.Value;
-            set => throw new NotSupportedException("Cannot edit a field definition that is attached to a feature");
-        }
+        get => Interop.OGR_Fld_GetNameRef(this);
+        // No need to check for null; C function will use empty string if null pointer is passed
+        set => Interop.OGR_Fld_SetName(this, value);
     }
 
-    internal static partial class Interop
+    public string AlternativeName
     {
-        [LibraryImport("gdal")]
-        public static partial OgrFieldType OGR_Fld_GetType(OgrFieldDefinition fieldDefinition);
+        get => Interop.OGR_Fld_GetAlternativeNameRef(this);
+        // No need to check for null; C function will use empty string if null pointer is passed
+        set => Interop.OGR_Fld_SetAlternativeName(this, value);
+    }
 
-        [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetType(OgrFieldDefinition fieldDefinition, OgrFieldType subType);
+    public OgrJustification Justification
+    {
+        get => Interop.OGR_Fld_GetJustify(this);
+        set => Interop.OGR_Fld_SetJustify(this, value);
+    }
 
-        [LibraryImport("gdal")]
-        public static partial OgrFieldSubType OGR_Fld_GetSubType(OgrFieldDefinition fieldDefinition);
+    public int Width
+    {
+        get => Interop.OGR_Fld_GetWidth(this);
+        set => Interop.OGR_Fld_SetWidth(this, value);
+    }
 
-        [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetSubType(OgrFieldDefinition fieldDefinition, OgrFieldSubType subType);
+    public int Precision
+    {
+        get => Interop.OGR_Fld_GetPrecision(this);
+        set => Interop.OGR_Fld_SetPrecision(this, value);
+    }
+
+    public OgrTimeZoneFlag TimeZoneFlag
+    {
+        get => Interop.OGR_Fld_GetTZFlag(this);
+        set => Interop.OGR_Fld_SetTZFlag(this, value);
+    }
+
+    public string? DefaultValue
+    {
+        get => Interop.OGR_Fld_GetDefault(this);
+        set => Interop.OGR_Fld_SetDefault(this, value);
+    }
+
+    public bool IsDefaultDriverSpecific => Interop.OGR_Fld_IsDefaultDriverSpecific(this);
+
+    public bool IsIgnored
+    {
+        get => Interop.OGR_Fld_IsIgnored(this);
+        set => Interop.OGR_Fld_SetIgnored(this, value);
+    }
+
+    public bool IsNullable
+    {
+        get => Interop.OGR_Fld_IsNullable(this);
+        set => Interop.OGR_Fld_SetNullable(this, value);
+    }
+
+    public bool IsUnique
+    {
+        get => Interop.OGR_Fld_IsUnique(this);
+        set => Interop.OGR_Fld_SetUnique(this, value);
+    }
+
+    public string DomainName
+    {
+        get => Interop.OGR_Fld_GetDomainName(this);
+        // No need to check for null; C function will use empty string if null pointer is passed
+        set => Interop.OGR_Fld_SetDomainName(this, value);
+    }
+
+    public string GetComment
+    {
+        get => Interop.OGR_Fld_GetComment(this);
+        // No need to check for null; C function will use empty string if null pointer is passed
+        set => Interop.OGR_Fld_SetComment(this, value); 
     }
 }
