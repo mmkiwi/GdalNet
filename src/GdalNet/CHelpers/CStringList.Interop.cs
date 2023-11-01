@@ -6,7 +6,6 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet.CHelpers;
 
-[SourceGenerators.GenerateGdalMarshal]
 internal partial class CStringList
 {
     [CLSCompliant(false)]

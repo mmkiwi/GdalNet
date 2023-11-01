@@ -4,7 +4,9 @@
 
 namespace MMKiwi.GdalNet;
 
-[SourceGenerators.GenerateGdalMarshal]
 public partial class OgrFeatureDefn : GdalHandle
 {
+    private OgrFeatureDefn(nint pointer) : base(pointer)
+    {
+    }
 }

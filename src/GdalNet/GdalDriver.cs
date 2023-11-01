@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-[SourceGenerators.GenerateGdalMarshal]
 public partial class GdalDriver : GdalHandle
 {
+    private GdalDriver(nint handle) : base(handle) { }
 }

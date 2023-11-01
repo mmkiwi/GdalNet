@@ -11,7 +11,7 @@ public sealed partial class GdalVirtualDataset
     {
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return: MarshalUsing(typeof(MarshalOwnsHandle))]
+        [return: MarshalUsing(typeof(Marshal.OwnsHandle))]
         public unsafe static partial GdalVirtualDataset VSIFileFromMemBuffer(string fileName,
                                                                 byte* buffer,
                                                                 long buffSize,

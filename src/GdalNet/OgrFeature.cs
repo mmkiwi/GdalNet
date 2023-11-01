@@ -6,7 +6,6 @@ using System.Collections;
 
 namespace MMKiwi.GdalNet;
 
-[SourceGenerators.GenerateGdalMarshal]
 public partial class OgrFeature : GdalSafeHandle
 {
     protected override bool ReleaseHandle()

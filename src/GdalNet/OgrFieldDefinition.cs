@@ -5,8 +5,7 @@
 using Microsoft.VisualBasic.FileIO;
 
 namespace MMKiwi.GdalNet;
-[SourceGenerators.GenerateGdalMarshal]
-public partial class OgrFieldDefinition : GdalHandle, IEquatable<OgrFieldDefinition>
+public partial class OgrFieldDefinition : GdalHandle
 {
     public virtual OgrFieldType FieldType
     {
