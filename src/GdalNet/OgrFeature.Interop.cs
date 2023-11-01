@@ -54,7 +54,7 @@ public partial class OgrFeature
         public static partial byte[] OGR_F_GetFieldAsBinary(OgrFeature fieldDefinition, int index, out int count);
 
         [LibraryImport("gdal")]
-        [return:MarshalUsing(typeof(OgrFieldDefinition.MarshalDoesNotOwnHandle))]
+        [return:MarshalUsing(typeof(OgrFieldDefinition.Marshal.DoesNotOwnHandle))]
         public static partial OgrFieldDefinition OGR_F_GetFieldDefnRef(OgrFeature feature, int index);
     }
 }

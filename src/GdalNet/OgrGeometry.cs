@@ -3,7 +3,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 namespace MMKiwi.GdalNet;
-[SourceGenerators.GenerateGdalMarshal]
 public partial class OgrGeometry : GdalHandle
 {
+    private OgrGeometry(nint pointer) : base(pointer)
+    {
+    }
 }

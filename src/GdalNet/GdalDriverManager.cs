@@ -6,7 +6,7 @@ using MMKiwi.GdalNet.CHelpers;
 
 namespace MMKiwi.GdalNet;
 
-[SourceGenerators.GenerateGdalMarshal]
 public partial class GdalDriverManager : GdalHandle
 {
+    private GdalDriverManager(nint handle) : base(handle) { }
 }

@@ -2,13 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using MMKiwi.GdalNet.CHelpers;
 using MMKiwi.GdalNet.Marshallers;
-using MMKiwi.GdalNet.SourceGenerators;
 
 namespace MMKiwi.GdalNet;
 
-[GenerateGdalMarshal]
 public sealed partial class GdalDataset
 {
 
@@ -29,7 +26,7 @@ public sealed partial class GdalDataset
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return:MarshalUsing(typeof(MarshalOwnsHandle))]
+        [return:MarshalUsing(typeof(Marshal.OwnsHandle))]
         public static partial GdalDataset? GDALOpenEx(string fileName,
                                                       GdalOpenFlags openFlags,
                                                       [MarshalUsing(typeof(CStringArrayMarshal))]
@@ -54,7 +51,7 @@ public sealed partial class GdalDataset
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return: MarshalUsing(typeof(GdalRasterBand.MarshalDoesNotOwnHandle))]
+        [return: MarshalUsing(typeof(GdalRasterBand.Marshal.DoesNotOwnHandle))]
         public static partial GdalRasterBand? GDALGetRasterBand(GdalDataset dataset, int bandId);
 
         [LibraryImport("gdal")]
@@ -63,12 +60,12 @@ public sealed partial class GdalDataset
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return: MarshalUsing(typeof(OgrLayer.MarshalDoesNotOwnHandle))]
+        [return: MarshalUsing(typeof(OgrLayer.Marshal.DoesNotOwnHandle))]
         public static partial OgrLayer? GDALDatasetGetLayerByName(GdalDataset dataset, string layer);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return: MarshalUsing(typeof(OgrLayer.MarshalDoesNotOwnHandle))]
+        [return: MarshalUsing(typeof(OgrLayer.Marshal.DoesNotOwnHandle))]
         public static partial OgrLayer? GDALDatasetGetLayer(GdalDataset dataset, int layerId);
     }
 }

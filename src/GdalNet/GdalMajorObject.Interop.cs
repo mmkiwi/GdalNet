@@ -6,7 +6,6 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
 
-[SourceGenerators.GenerateGdalMarshal]
 public partial class GdalMajorObject
 {
     [CLSCompliant(false)]

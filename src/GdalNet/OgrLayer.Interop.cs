@@ -5,7 +5,6 @@
 using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
-[SourceGenerators.GenerateGdalMarshal]
 public partial class OgrLayer : GdalHandle
 {
     private OgrLayer(nint pointer) : base(pointer)
@@ -20,7 +19,7 @@ public partial class OgrLayer : GdalHandle
         public static partial string OGR_L_GetName(OgrLayer layer);
 
         [LibraryImport("gdal")]
-        [return: MarshalUsing(typeof(OgrFeature.MarshalOwnsHandle))]
+        [return: MarshalUsing(typeof(OgrFeature.Marshal.OwnsHandle))]
         public static partial OgrFeature? OGR_L_GetNextFeature(OgrLayer layer);
 
         [LibraryImport("gdal")]
@@ -30,7 +29,7 @@ public partial class OgrLayer : GdalHandle
         public static partial OgrError OGR_L_SetNextByIndex(OgrLayer layer, long index);
 
         [LibraryImport("gdal")]
-        [return: MarshalUsing(typeof(OgrFeature.MarshalOwnsHandle))]
+        [return: MarshalUsing(typeof(OgrFeature.Marshal.OwnsHandle))]
         public static partial OgrFeature? OGR_L_GetFeature(OgrLayer layer, long index);
 
         [LibraryImport("gdal")]
@@ -40,7 +39,7 @@ public partial class OgrLayer : GdalHandle
         public static partial nint OGR_L_GetGeometryTypes(OgrLayer layer, int geomField, int flags, out int entryCount, nint progressFunc, nint progressData);
 
         [LibraryImport("gdal")]
-        [return: MarshalUsing(typeof(OgrGeometry.MarshalDoesNotOwnHandle))]
+        [return: MarshalUsing(typeof(OgrGeometry.Marshal.DoesNotOwnHandle))]
         public static partial OgrGeometry? OGR_L_GetSpatialFilter(OgrLayer layer);
 
         [LibraryImport("gdal")]

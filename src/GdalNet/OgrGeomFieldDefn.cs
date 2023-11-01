@@ -4,7 +4,9 @@
 
 namespace MMKiwi.GdalNet;
 
-[SourceGenerators.GenerateGdalMarshal]
 public partial class OgrGeomFieldDefn : GdalHandle
 {
+    private OgrGeomFieldDefn(nint pointer) : base(pointer)
+    {
+    }
 }
