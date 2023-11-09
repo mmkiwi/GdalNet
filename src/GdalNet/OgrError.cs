@@ -4,6 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
+[NativeMarshalling(typeof(GdalError.ThrowMarshal))]
 public enum OgrError
 {
     None = 0,

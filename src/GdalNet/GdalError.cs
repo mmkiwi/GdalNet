@@ -118,6 +118,23 @@ public sealed partial record class GdalError
         else
             Debug.WriteLine($"GDAL Error Severity:{eventArgs.Error.Severity}, Code: {(int)eventArgs.Error.ErrorNum}, {eventArgs.Error.Message}", "GDAL");
     }
+
+    [CustomMarshaller(typeof(OgrError), MarshalMode.ManagedToUnmanagedOut, typeof(ThrowMarshal))]
+    [CustomMarshaller(typeof(GdalCplErr), MarshalMode.ManagedToUnmanagedOut, typeof(ThrowMarshal))]
+    public static class ThrowMarshal
+    {
+        public static OgrError ConvertToManaged(OgrError unmanaged)
+        {
+            ThrowIfError(unmanaged);
+            return unmanaged;
+        }
+
+        public static GdalCplErr ConvertToManaged(GdalCplErr unmanaged)
+        {
+            ThrowIfError(unmanaged);
+            return unmanaged;
+        }
+    }
 }
 
 public sealed class GdalErrorEventArgs : EventArgs
