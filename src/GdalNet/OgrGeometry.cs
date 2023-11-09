@@ -39,7 +39,9 @@ public abstract partial class OgrGeometry : GdalSafeHandle
             stringMarshaller.FromManaged(wkt, stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize]);
             {
                 byte* wktPointer = stringMarshaller.ToUnmanaged();
-                return Interop.OGR_G_CreateFromWkt(out wktPointer, spatialReference, out geometry);
+                var result = Interop.OGR_G_CreateFromWkt(out wktPointer, spatialReference, out geometry);
+                GdalError.ThrowIfError();
+                return result;
             }
         }
         finally
@@ -47,5 +49,79 @@ public abstract partial class OgrGeometry : GdalSafeHandle
             stringMarshaller.Free();
         }
 
+    }
+
+    public int Dimension
+    {
+        get
+        {
+            var dimension = Interop.OGR_G_GetDimension(this);
+            GdalError.ThrowIfError();
+            return dimension;
+        }
+    }
+
+    public int CoordinateDimension
+    {
+        get
+        {
+            int coordDimension = Interop.OGR_G_CoordinateDimension(this);
+            GdalError.ThrowIfError();
+            return coordDimension;
+        }
+    }
+
+    public bool Is3D
+    {
+        get
+        {
+            bool is3D = Interop.OGR_G_Is3D(this);
+            GdalError.ThrowIfError();
+            return is3D;
+        }
+        set
+        {
+            Interop.OGR_G_Set3D(this, value);
+            GdalError.ThrowIfError();
+        }
+    }
+
+    public OgrGeometry Clone()
+    {
+        var clone = Interop.OGR_G_Clone(this);
+        GdalError.ThrowIfError();
+        return clone;
+    }
+
+    public OgrEnvelope Envelope
+    {
+        get
+        {
+            OgrEnvelope? result = null;
+            Interop.OGR_G_GetEnvelope(this, ref result);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+
+    public OgrWkbGeometryType GeometryType
+    {
+        get
+        {
+            OgrWkbGeometryType result = Interop.OGR_G_GetGeometryType(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+
+    public OgrEnvelope3D Envelope3D
+    {
+        get
+        {
+            OgrEnvelope3D? result = null;
+            Interop.OGR_G_GetEnvelope3D(this, ref result);
+            GdalError.ThrowIfError();
+            return result;
+        }
     }
 }

@@ -44,7 +44,7 @@ public record class OgrEnvelope(double MinX, double MaxX, double MinY, double Ma
         => MinX <= other.MaxX && MaxX >= other.MinX &&
            MinY <= other.MaxY && MaxY >= other.MinY;
 
-    public bool Contains(OgrEnvelope other) 
+    public bool Contains(OgrEnvelope other)
         => MinX <= other.MinX && MinY <= other.MinY &&
            MaxX >= other.MaxX && MaxY >= other.MaxY;
 
@@ -54,14 +54,15 @@ public record class OgrEnvelope(double MinX, double MaxX, double MinY, double Ma
         [StructLayout(LayoutKind.Sequential)]
         internal struct OGREnvelopeUnmanaged
         {
-            public readonly double MinX { get; init; }
-            public readonly double MaxX { get; init; }
-            public readonly double MinY { get; init; }
-            public readonly double MaxY { get; init; }
+            public double MinX;
+            public double MaxX;
+            public double MinY;
+            public double MaxY;
         }
 
-        public static OGREnvelopeUnmanaged ConvertToUnmanaged(OgrEnvelope managed)
-            => new OGREnvelopeUnmanaged
+        public static OGREnvelopeUnmanaged ConvertToUnmanaged(OgrEnvelope? managed)
+            => managed is null ? default :
+            new OGREnvelopeUnmanaged
             {
                 MinX = managed.MinX,
                 MaxX = managed.MaxX,
