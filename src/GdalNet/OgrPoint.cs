@@ -4,4 +4,9 @@
 
 namespace MMKiwi.GdalNet;
 
-public static partial class OgrGeometryFactory;
+public partial class OgrPoint:OgrGeometry
+{
+    internal OgrPoint(nint pointer, bool ownsHandle) : base(pointer, ownsHandle)
+    {
+    }
+}
