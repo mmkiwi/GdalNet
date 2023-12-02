@@ -6,37 +6,36 @@ using MMKiwi.GdalNet.CHelpers;
 
 namespace MMKiwi.GdalNet;
 
-public abstract partial class GdalMajorObject : GdalSafeHandle
+public abstract partial class GdalMajorObject
 {
-    private protected GdalMajorObject(nint pointer, bool ownsHandle) : base(pointer, ownsHandle) { }
-
-    protected override abstract bool ReleaseHandle();
+    private SafeHandle Handle { get; }
+    private protected GdalMajorObject(SafeHandle handle) => Handle = handle;
 
     public string? Description
     {
-        get => Interop.GDALGetDescription(this);
-        set => Interop.GDALSetDescription(this, value);
+        get => Interop.GDALGetDescription(Handle);
+        set => Interop.GDALSetDescription(Handle, value);
     }
 
     public Dictionary<string, string> GetMetadata(string? domain = null)
-        => Interop.GDALGetMetadata(this, domain);
+        => Interop.GDALGetMetadata(Handle, domain);
 
     public string GetMetadataItem(string name, string? domain = null)
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        return Interop.GDALGetMetadataItem(this, name, domain);
+        return Interop.GDALGetMetadataItem(Handle, name, domain);
     }
 
     public void SetMetadata(Dictionary<string, string>? metadata, string? domain = null)
-        => Interop.GDALSetMetadata(this, metadata, domain);
+        => Interop.GDALSetMetadata(Handle, metadata, domain);
 
     public void SetMetadataItem(string name, string? value, string? domain = null)
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        Interop.GDALSetMetadataItem(this, name, value, domain);
+        Interop.GDALSetMetadataItem(Handle, name, value, domain);
     }
 
-    public string[] MetadataDomainList => Interop.GDALGetMetadataDomainList(this);
+    public string[] MetadataDomainList => Interop.GDALGetMetadataDomainList(Handle);
 }

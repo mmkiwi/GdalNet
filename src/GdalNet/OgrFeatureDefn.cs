@@ -4,9 +4,6 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrFeatureDefn : GdalHandle
+public partial class OgrFeatureDefn 
 {
-    private OgrFeatureDefn(nint pointer) : base(pointer)
-    {
-    }
 }

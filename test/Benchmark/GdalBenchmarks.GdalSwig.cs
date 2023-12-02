@@ -11,14 +11,16 @@ namespace Benchmark;
 
 public partial class GdalBenchmarks
 {
+    static readonly string[] s_config = ["TABLE=RasterAerial1"];
+
     [Benchmark(Baseline = true)]
     public (int, List<DataType>) GdalSwig()
     {
         GdalConfiguration.ConfigureGdal();
 
-        List<DataType> dataTypes = new();
+        List<DataType> dataTypes = [];
 
-        using (Dataset dataset = Gdal.OpenEx(FileName, 0, null, new string[] { "TABLE=RasterAerial1" }, null))
+        using (Dataset dataset = Gdal.OpenEx(FileName, 0, null, s_config, null))
         {
 
             for (int i = 0; i < dataset.RasterCount; i++)
@@ -28,9 +30,7 @@ public partial class GdalBenchmarks
             }
         }
 
-        using (var a = Ogr.Open(FileName, 0))
-        {
-            return (a.GetLayerCount(), dataTypes);
-        }
+        using var a = Ogr.Open(FileName, 0);
+        return (a.GetLayerCount(), dataTypes);
     }
 }

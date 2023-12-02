@@ -4,14 +4,8 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrFieldDomain : GdalSafeHandle
+public partial class OgrFieldDomain
 {
-    protected override bool ReleaseHandle()
-    {
-        Interop.OGR_FldDomain_Destroy(this);
-        return true;
-    }
-
     public string Name => Interop.OGR_FldDomain_GetName(this);
     public string Description => Interop.OGR_FldDomain_GetDescription(this);
     public OgrFieldDomainType DomainType => Interop.OGR_FldDomain_GetDomainType(this);

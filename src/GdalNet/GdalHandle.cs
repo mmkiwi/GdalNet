@@ -2,92 +2,28 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Diagnostics;
+
 namespace MMKiwi.GdalNet;
 
-/// <summary>
-///   A handle to a GDAL object that should never be disposed explicitly.
-/// </summary>
-/// <remarks>
-///   For example, an <see cref="OgrLayer"/> should not be disposed of, 
-///   to dispose of one, the underlying dataset should be disposed instead.
-/// </remarks>
-public abstract class GdalHandle
+internal abstract class GdalInternalHandle : SafeHandle
 {
-    private protected GdalHandle(nint pointer) { Handle = pointer; }
-
-    internal nint Handle { get; private protected set; }
-}
-
-/// <summary>
-///  A handle to a GDAL object that requires Disposal.
-/// </summary>
-/// <remarks>
-///   Child classes should call the corresponding GDAL function
-///   to dispose the object in the <see cref="ReleaseHandle"/>
-///   method.
-/// </remarks>
-public abstract class GdalSafeHandle : GdalHandle, IDisposable
-{
-    private protected GdalSafeHandle(nint pointer, bool ownsHandle) : base(pointer)
+    protected GdalInternalHandle(bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
     {
         OwnsHandle = ownsHandle;
     }
-    /// <summary>
-    /// If <c>true</c>, the caller owns the handle and must call <see cref="Dispose()"/>. 
-    /// If <c>false</c>, the caller does not own the handle and calling
-    /// <see cref="Dispose()"/> will not release the handle.
-    /// </summary>
-    /// <remarks>
-    /// Refer to the GDAL documentation for more information. For instance,
-    /// an <see cref="OgrGeometry"/> can be owned by a parent
-    /// <see cref="OgrFeature"/>, or it can be owned by calling code. If 
-    /// a <see cref="OgrGeometry"/> is owned by a parent feature, dispose of 
-    /// the feature to release the memory for the geometry. 
-    /// </remarks>
-    public bool OwnsHandle { get; }
 
-    private bool _disposedValue;
+    public override bool IsInvalid => handle == IntPtr.Zero;
 
-    protected abstract bool ReleaseHandle();
+    internal bool OwnsHandle { get; }
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposedValue)
-        {
-            if (disposing)
-            {
-                // No managed objects
-            }
-
-            if (OwnsHandle)
-            {
-                // Save last error from P/Invoke in case the implementation of ReleaseHandle
-                // trashes it (important because this ReleaseHandle could occur implicitly
-                // as part of unmarshaling another P/Invoke).
-                int lastError = Marshal.GetLastPInvokeError();
-                lock (s_releaseInterlock)
-                    ReleaseHandle();
-                Marshal.SetLastPInvokeError(lastError);
-            }
-
-            _disposedValue = true;
-        }
-    }
-
-    private static readonly object s_releaseInterlock = new();
-
-    ~GdalSafeHandle()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: false);
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
+    public static readonly object ReentrantLock = new();
 }
 
+internal abstract class GdalInternalHandleNeverOwns : GdalInternalHandle
+{
+    protected GdalInternalHandleNeverOwns() : base(false) { }
 
+    protected override bool ReleaseHandle() => true;
+
+}

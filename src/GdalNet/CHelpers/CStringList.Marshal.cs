@@ -4,37 +4,37 @@
 
 namespace MMKiwi.GdalNet.CHelpers;
 
-[NativeMarshalling(typeof(Marshal.In))]
-internal unsafe sealed partial class CStringList
+[NativeMarshalling(typeof(GdalHandleMarshallerIn<CStringList, CStringList.MarshalHandle>))]
+internal unsafe sealed partial class CStringList:IConstructibleWrapper<CStringList, CStringList.MarshalHandle>
 {
-    private CStringList(nint pointer, bool ownsHandle) : base(pointer, ownsHandle) { }
+    internal MarshalHandle Handle { get; private set; }
 
-    internal static partial class Marshal
+    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
+
+    private CStringList(MarshalHandle handle) { Handle = handle; }
+
+    internal sealed partial class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {
-        [CustomMarshaller(typeof(CStringList), MarshalMode.Default, typeof(In))]
-        internal static partial class In
+        public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
-            public static nint ConvertToUnmanaged(CStringList? handle) => handle is null ? 0 : handle.Handle;
-        }
+        } 
 
-        [CustomMarshaller(typeof(CStringList), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(CStringList? handle) => handle is null ? 0 : handle.Handle;
-            public static CStringList? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new CStringList(pointer, false);
-            }
-        }
+        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle) 
+            => new(ownsHandle);
 
-        [CustomMarshaller(typeof(CStringList), MarshalMode.Default, typeof(OwnsHandle))]
-        internal static partial class OwnsHandle
+        protected override bool ReleaseHandle()
         {
-            public static nint ConvertToUnmanaged(CStringList? handle) => handle is null ? 0 : handle.Handle;
-            public static CStringList? ConvertToManaged(nint pointer)
+            lock (ReentrantLock)
             {
-                return pointer <= 0 ? null : new CStringList(pointer, true);
+                if (base.IsInvalid)
+                    return false;
+                GdalError.ResetErrors();
+                Interop.CSLDestroy(handle);
+                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal ;
             }
         }
     }
+
+    static CStringList? IConstructibleWrapper<CStringList, MarshalHandle>.Construct(MarshalHandle handle)
+        => new(handle);
 }

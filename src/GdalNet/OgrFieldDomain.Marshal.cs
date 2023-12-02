@@ -4,37 +4,58 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal.In))]
-public partial class OgrFieldDomain
+[NativeMarshalling(typeof(GdalHandleMarshallerIn<OgrFieldDomain, OgrFieldDomain.MarshalHandle>))]
+public partial class OgrFieldDomain:IConstructibleWrapper<OgrFieldDomain, OgrFieldDomain.MarshalHandle>, IDisposable
 {
-    protected OgrFieldDomain(nint handle, bool ownsHandle):base(handle, ownsHandle) { }
+    private bool _disposedValue;
 
-    internal static partial class Marshal
+    private protected OgrFieldDomain(MarshalHandle handle) { Handle = handle; }
+
+    private protected MarshalHandle Handle { get; }
+
+    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
+
+    static OgrFieldDomain? IConstructibleWrapper<OgrFieldDomain, MarshalHandle>.Construct(MarshalHandle handle)
+        => new(handle);
+
+    internal class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {
-        [CustomMarshaller(typeof(OgrFieldDomain), MarshalMode.Default, typeof(In))]
-        internal static partial class In
+        public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
-            public static nint ConvertToUnmanaged(OgrFieldDomain? handle) => handle is null ? 0 : handle.Handle;
         }
 
-        [CustomMarshaller(typeof(OgrFieldDomain), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(OgrFieldDomain? handle) => handle is null ? 0 : handle.Handle;
-            public static OgrFieldDomain? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new OgrFieldDomain(pointer, false);
-            }
-        }
+        public static MarshalHandle Construct(bool ownsHandle) => new(ownsHandle);
 
-        [CustomMarshaller(typeof(OgrFieldDomain), MarshalMode.Default, typeof(OwnsHandle))]
-        internal static partial class OwnsHandle
+        protected override bool ReleaseHandle()
         {
-            public static nint ConvertToUnmanaged(OgrFieldDomain? handle) => handle is null ? 0 : handle.Handle;
-            public static OgrFieldDomain? ConvertToManaged(nint pointer)
+            lock (ReentrantLock)
             {
-                return pointer <= 0 ? null : new OgrFieldDomain(pointer, true);
+                if (base.IsInvalid)
+                    return false;
+                GdalError.ResetErrors();
+                Interop.OGR_FldDomain_Destroy(handle);
+                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
             }
         }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                ((IDisposable)Handle).Dispose();
+            }
+
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

@@ -6,7 +6,4 @@ namespace MMKiwi.GdalNet;
 
 public partial class OgrPoint:OgrGeometry
 {
-    internal OgrPoint(nint pointer, bool ownsHandle) : base(pointer, ownsHandle)
-    {
-    }
 }

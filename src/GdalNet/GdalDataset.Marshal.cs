@@ -6,34 +6,37 @@ using MMKiwi.GdalNet.CHelpers;
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal.In))]
-public sealed partial class GdalDataset
+[NativeMarshalling(typeof(GdalHandleMarshallerIn<GdalDataset, GdalDataset.MarshalHandle>))]
+public sealed partial class GdalDataset :IConstructibleWrapper<GdalDataset, GdalDataset.MarshalHandle>
 {
-    internal static new partial class Marshal
+    private GdalDataset(MarshalHandle handle) : base(handle)
     {
-        [CustomMarshaller(typeof(GdalDataset), MarshalMode.Default, typeof(In))]
-        internal static partial class In
+        Handle = handle;
+        RasterBands = new(this);
+        Layers = new(this);
+    }
+    MarshalHandle Handle { get; }
+    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
+
+    static GdalDataset? IConstructibleWrapper<GdalDataset, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
+
+    internal sealed class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    {
+        private MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
-            public static nint ConvertToUnmanaged(GdalDataset? handle) => handle is null ? 0 : handle.Handle;
         }
 
-        [CustomMarshaller(typeof(GdalDataset), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(GdalDataset? handle) => handle is null ? 0 : handle.Handle;
-            public static GdalDataset? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new GdalDataset(pointer, false);
-            }
-        }
+        public static MarshalHandle Construct(bool ownsHandle) => new(ownsHandle);
 
-        [CustomMarshaller(typeof(GdalDataset), MarshalMode.Default, typeof(OwnsHandle))]
-        internal static partial class OwnsHandle
+        protected override bool ReleaseHandle()
         {
-            public static nint ConvertToUnmanaged(GdalDataset? handle) => handle is null ? 0 : handle.Handle;
-            public static GdalDataset? ConvertToManaged(nint pointer)
+            lock (ReentrantLock)
             {
-                return pointer <= 0 ? null : new GdalDataset(pointer, true);
+                if (base.IsInvalid)
+                    return false;
+                GdalError.ResetErrors();
+                Interop.GDALClose(handle);
+                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
             }
         }
     }

@@ -8,6 +8,5 @@ namespace MMKiwi.GdalNet;
 
 public sealed partial class OgrCodedFieldDomain : OgrFieldDomain
 {
-    private OgrCodedFieldDomain(nint handle, bool ownsHandle) : base(handle, ownsHandle) { }
     public static OgrCodedFieldDomain Create(string name, string description, FieldType fieldType, OgrFieldSubType fieldSubType) => throw new NotImplementedException();
 }

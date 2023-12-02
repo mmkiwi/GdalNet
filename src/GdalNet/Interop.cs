@@ -11,104 +11,104 @@ public partial class OgrFieldDefinition
     internal static partial class Interop
     {
         [LibraryImport("gdal")]
-        public static partial OgrFieldType OGR_Fld_GetType(OgrFieldDefinition fieldDefinition);
+        public static partial OgrFieldType OGR_Fld_GetType(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetType(OgrFieldDefinition fieldDefinition, OgrFieldType subType);
+        public static partial void OGR_Fld_SetType(MarshalHandle fieldDefinition, OgrFieldType subType);
 
         [LibraryImport("gdal")]
-        public static partial OgrFieldSubType OGR_Fld_GetSubType(OgrFieldDefinition fieldDefinition);
+        public static partial OgrFieldSubType OGR_Fld_GetSubType(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetSubType(OgrFieldDefinition fieldDefinition, OgrFieldSubType subType);
+        public static partial void OGR_Fld_SetSubType(MarshalHandle fieldDefinition, OgrFieldSubType subType);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial void OGR_Fld_SetName(OgrFieldDefinition fieldDefinition, string? name);
+        public static partial void OGR_Fld_SetName(MarshalHandle fieldDefinition, string? name);
 
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        public static partial string OGR_Fld_GetNameRef(OgrFieldDefinition fieldDefinition);
+        public static partial string OGR_Fld_GetNameRef(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial void OGR_Fld_SetAlternativeName(OgrFieldDefinition fieldDefinition, string? name);
+        public static partial void OGR_Fld_SetAlternativeName(MarshalHandle fieldDefinition, string? name);
 
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        public static partial string OGR_Fld_GetAlternativeNameRef(OgrFieldDefinition fieldDefinition);
+        public static partial string OGR_Fld_GetAlternativeNameRef(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
-        public static partial int OGR_Fld_GetWidth(OgrFieldDefinition fieldDefinition);
+        public static partial int OGR_Fld_GetWidth(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetWidth(OgrFieldDefinition fieldDefinition, int width);
+        public static partial void OGR_Fld_SetWidth(MarshalHandle fieldDefinition, int width);
 
         [LibraryImport("gdal")]
-        public static partial int OGR_Fld_GetPrecision(OgrFieldDefinition fieldDefinition);
+        public static partial int OGR_Fld_GetPrecision(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetPrecision(OgrFieldDefinition fieldDefinition, int width);
+        public static partial void OGR_Fld_SetPrecision(MarshalHandle fieldDefinition, int width);
 
         [LibraryImport("gdal")]
-        public static partial OgrJustification OGR_Fld_GetJustify(OgrFieldDefinition fieldDefinition);
+        public static partial OgrJustification OGR_Fld_GetJustify(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetJustify(OgrFieldDefinition fieldDefinition, OgrJustification justification);
+        public static partial void OGR_Fld_SetJustify(MarshalHandle fieldDefinition, OgrJustification justification);
 
         [LibraryImport("gdal")]
-        public static partial OgrTimeZoneFlag OGR_Fld_GetTZFlag(OgrFieldDefinition fieldDefinition);
+        public static partial OgrTimeZoneFlag OGR_Fld_GetTZFlag(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetTZFlag(OgrFieldDefinition fieldDefinition, OgrTimeZoneFlag justification);
-
-        [LibraryImport("gdal")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool OGR_Fld_IsIgnored(OgrFieldDefinition fieldDefinition);
-
-        [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetIgnored(OgrFieldDefinition fieldDefinition, [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
+        public static partial void OGR_Fld_SetTZFlag(MarshalHandle fieldDefinition, OgrTimeZoneFlag justification);
 
         [LibraryImport("gdal")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool OGR_Fld_IsNullable(OgrFieldDefinition fieldDefinition);
+        public static partial bool OGR_Fld_IsIgnored(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetNullable(OgrFieldDefinition fieldDefinition, [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
+        public static partial void OGR_Fld_SetIgnored(MarshalHandle fieldDefinition, [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
 
         [LibraryImport("gdal")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool OGR_Fld_IsUnique(OgrFieldDefinition fieldDefinition);
+        public static partial bool OGR_Fld_IsNullable(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
-        public static partial void OGR_Fld_SetUnique(OgrFieldDefinition fieldDefinition, [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
+        public static partial void OGR_Fld_SetNullable(MarshalHandle fieldDefinition, [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
+
+        [LibraryImport("gdal")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool OGR_Fld_IsUnique(MarshalHandle fieldDefinition);
+
+        [LibraryImport("gdal")]
+        public static partial void OGR_Fld_SetUnique(MarshalHandle fieldDefinition, [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
 
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        public static partial string? OGR_Fld_GetDefault(OgrFieldDefinition fieldDefinition);
+        public static partial string? OGR_Fld_GetDefault(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial void OGR_Fld_SetDefault(OgrFieldDefinition fieldDefinition, string? name);
+        public static partial void OGR_Fld_SetDefault(MarshalHandle fieldDefinition, string? name);
 
         [LibraryImport("gdal")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool OGR_Fld_IsDefaultDriverSpecific(OgrFieldDefinition fieldDefinition);
+        public static partial bool OGR_Fld_IsDefaultDriverSpecific(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        public static partial string OGR_Fld_GetDomainName(OgrFieldDefinition fieldDefinition);
+        public static partial string OGR_Fld_GetDomainName(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial void OGR_Fld_SetDomainName(OgrFieldDefinition fieldDefinition, string? name);
+        public static partial void OGR_Fld_SetDomainName(MarshalHandle fieldDefinition, string? name);
 
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        public static partial string OGR_Fld_GetComment(OgrFieldDefinition fieldDefinition);
+        public static partial string OGR_Fld_GetComment(MarshalHandle fieldDefinition);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial void OGR_Fld_SetComment(OgrFieldDefinition fieldDefinition, string? name);
+        public static partial void OGR_Fld_SetComment(MarshalHandle fieldDefinition, string? name);
 
         [LibraryImport("gdal")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool OGR_AreTypeSubTypeCompatible(OgrFieldDefinition fieldDefinition);
+        public static partial bool OGR_AreTypeSubTypeCompatible(MarshalHandle fieldDefinition);
 
     }
 }

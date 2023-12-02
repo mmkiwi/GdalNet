@@ -4,10 +4,6 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal.In))]
-public partial class OgrSpatialReference : GdalHandle
+public partial class OgrSpatialReference
 {
-    public OgrSpatialReference(nint pointer) : base(pointer)
-    {
-    }
 }

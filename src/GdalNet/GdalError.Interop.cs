@@ -14,11 +14,11 @@ public unsafe partial record class GdalError
         static Interop() => EnsureInitialize();
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial CplErrHandle CPLSetErrorHandler(CplErrHandle newHandler);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial void CPLErrorReset();
     }
 

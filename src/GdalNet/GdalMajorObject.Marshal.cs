@@ -4,15 +4,6 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal.In))]
 public abstract partial class GdalMajorObject
 {
-    internal static partial class Marshal
-    {
-        [CustomMarshaller(typeof(GdalMajorObject), MarshalMode.Default, typeof(In))]
-        internal static partial class In
-        {
-            public static nint ConvertToUnmanaged(GdalMajorObject? handle) => handle is null ? 0 : handle.Handle;
-        }
-    }
 }

@@ -3,19 +3,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 namespace MMKiwi.GdalNet;
-public abstract partial class OgrGeometry : GdalSafeHandle
+public abstract partial class OgrGeometry
 {
-    protected OgrGeometry(nint pointer, bool ownsHandle) : base(pointer, ownsHandle)
-    {
-    }
-
-    protected override bool ReleaseHandle()
-    {
-        Interop.OGR_G_DestroyGeometry(this);
-        GdalError.ThrowIfError();
-        return true;
-    }
-
     public static OgrGeometry CreateFromWkb(ReadOnlySpan<byte> wkb, OgrSpatialReference? spatialReference = null)
     {
         var err = Interop.OGR_G_CreateFromWkb(wkb, spatialReference, out OgrGeometry result, wkb.Length);
@@ -48,7 +37,6 @@ public abstract partial class OgrGeometry : GdalSafeHandle
         {
             stringMarshaller.Free();
         }
-
     }
 
     public int Dimension

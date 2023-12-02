@@ -11,7 +11,7 @@ public partial class OgrFeature
     internal unsafe static partial class Interop
     {
         [LibraryImport("gdal")]
-        public static partial void OGR_F_Destroy(OgrFeature feature);
+        public static partial void OGR_F_Destroy(nint feature);
 
         [LibraryImport("gdal")]
         public static partial int OGR_F_GetFieldCount(OgrFeature feature);
@@ -54,7 +54,6 @@ public partial class OgrFeature
         public static partial byte[] OGR_F_GetFieldAsBinary(OgrFeature fieldDefinition, int index, out int count);
 
         [LibraryImport("gdal")]
-        [return:MarshalUsing(typeof(OgrFieldDefinition.Marshal.DoesNotOwnHandle))]
         public static partial OgrFieldDefinition OGR_F_GetFieldDefnRef(OgrFeature feature, int index);
     }
 }

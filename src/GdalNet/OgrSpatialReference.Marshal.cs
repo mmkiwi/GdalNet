@@ -4,21 +4,20 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrSpatialReference
+[NativeMarshalling(typeof(GdalHandleMarshaller<OgrSpatialReference, MarshalHandle>))]
+public partial class OgrSpatialReference:IConstructibleWrapper<OgrSpatialReference, OgrSpatialReference.MarshalHandle>
 {
-    internal static partial class Marshal
-    {
-        [CustomMarshaller(typeof(OgrSpatialReference), MarshalMode.Default, typeof(In))]
-        internal static partial class In
-        {
-            public static nint ConvertToUnmanaged(OgrSpatialReference? handle) => handle is null ? 0 : handle.Handle;
-        }
+    private OgrSpatialReference(MarshalHandle handle) => Handle = handle;
 
-        [CustomMarshaller(typeof(OgrSpatialReference), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(OgrSpatialReference? handle) => handle is null ? 0 : handle.Handle;
-            public static OgrSpatialReference? ConvertToManaged(nint pointer) => pointer <= 0 ? null : new OgrSpatialReference(pointer);
-        }
+    internal MarshalHandle Handle { get; }
+
+    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
+
+    static OgrSpatialReference? IConstructibleWrapper<OgrSpatialReference, MarshalHandle>.Construct(MarshalHandle handle)
+        => new(handle);
+
+    internal class MarshalHandle:GdalInternalHandleNeverOwns
+    {
+
     }
 }

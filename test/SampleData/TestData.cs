@@ -19,7 +19,7 @@ public static class TestData
             RasterXSize = 1203,
             RasterYSize = 1593
         }],
-        Layers = ImmutableArray<TestLayer>.Empty,
+        Layers = [],
     };
 
     public static TestFile Geopackage => new()

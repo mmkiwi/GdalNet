@@ -4,36 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal.In))]
-public partial class OgrPoint
+public partial class OgrPoint:OgrGeometry
 {
-    new internal partial class Marshal
-    {
-        [CustomMarshaller(typeof(OgrPoint), MarshalMode.Default, typeof(In))]
-        internal static partial class In
-        {
-            public static nint ConvertToUnmanaged(OgrPoint? handle) => handle is null ? 0 : handle.Handle;
-        }
-
-
-        [CustomMarshaller(typeof(OgrPoint), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(OgrPoint? handle) => handle is null ? 0 : handle.Handle;
-            public static OgrPoint? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new OgrPoint(pointer, false);
-            }
-        }
-
-        [CustomMarshaller(typeof(OgrPoint), MarshalMode.Default, typeof(OwnsHandle))]
-        internal static partial class OwnsHandle
-        {
-            public static nint ConvertToUnmanaged(OgrPoint? handle) => handle is null ? 0 : handle.Handle;
-            public static OgrPoint? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new OgrPoint(pointer, true);
-            }
-        }
-    }
+    internal OgrPoint(MarshalHandle handle) : base(handle) { }
 }

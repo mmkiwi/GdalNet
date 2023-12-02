@@ -4,26 +4,19 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal.In))]
-public sealed partial class GdalRasterBand
-{
-    private GdalRasterBand(nint pointer) : base(pointer) { }
-    internal static partial class Marshal
-    {
-        [CustomMarshaller(typeof(GdalRasterBand), MarshalMode.Default, typeof(In))]
-        internal static partial class In
-        {
-            public static nint ConvertToUnmanaged(GdalRasterBand? handle) => handle is null ? 0 : handle.Handle;
-        }
+[NativeMarshalling(typeof(GdalHandleMarshaller<GdalRasterBand, GdalRasterBand.MarshalHandle>))]
 
-        [CustomMarshaller(typeof(GdalRasterBand), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(GdalRasterBand? handle) => handle is null ? 0 : handle.Handle;
-            public static GdalRasterBand? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new GdalRasterBand(pointer);
-            }
-        }
+public sealed partial class GdalRasterBand: IConstructibleWrapper<GdalRasterBand, GdalRasterBand.MarshalHandle>
+{
+    private GdalRasterBand(MarshalHandle handle) => Handle = handle;
+
+    internal MarshalHandle Handle { get; }
+
+    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
+
+    static GdalRasterBand? IConstructibleWrapper<GdalRasterBand, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
+
+    internal class MarshalHandle : GdalInternalHandleNeverOwns
+    {
     }
 }

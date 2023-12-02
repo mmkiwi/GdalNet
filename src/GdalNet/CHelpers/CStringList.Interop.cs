@@ -12,20 +12,22 @@ internal partial class CStringList
     public unsafe static partial class Interop
     {
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial nint CSLAddString(CStringList? strList, string newString);
+        [return: MarshalUsing(typeof(GdalHandleMarshallerOutOwns<CStringList, MarshalHandle>))]
+        public static partial CStringList CSLAddString(CStringList? strList, string newString);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial nint CSLAddStringMayFail(CStringList? strList, string newString);
+        [return: MarshalUsing(typeof(GdalHandleMarshallerOutOwns<CStringList,MarshalHandle>))]
+        public static partial CStringList CSLAddStringMayFail(CStringList? strList, string newString);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         public static partial int CSLCount(CStringList? strList);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [return:MarshalUsing(typeof(Utf8StringNoFree))]
+        [return: MarshalUsing(typeof(Utf8StringNoFree))]
         public static partial string CSLGetField(CStringList strList, int index);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial void CSLDestroy(CStringList unmanaged);
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial void CSLDestroy(nint unmanaged);
     }
 }

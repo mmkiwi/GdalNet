@@ -4,7 +4,6 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class GdalDriver : GdalHandle
+public partial class GdalDriver
 {
-    private GdalDriver(nint handle) : base(handle) { }
 }
