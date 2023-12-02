@@ -13,29 +13,29 @@ public abstract partial class GdalMajorObject
 
     public string? Description
     {
-        get => Interop.GDALGetDescription(Handle);
-        set => Interop.GDALSetDescription(Handle, value);
+        get => Interop.GDALGetDescription(this);
+        set => Interop.GDALSetDescription(this, value);
     }
 
     public Dictionary<string, string> GetMetadata(string? domain = null)
-        => Interop.GDALGetMetadata(Handle, domain);
+        => Interop.GDALGetMetadata(this, domain);
 
     public string GetMetadataItem(string name, string? domain = null)
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        return Interop.GDALGetMetadataItem(Handle, name, domain);
+        return Interop.GDALGetMetadataItem(this, name, domain);
     }
 
     public void SetMetadata(Dictionary<string, string>? metadata, string? domain = null)
-        => Interop.GDALSetMetadata(Handle, metadata, domain);
+        => Interop.GDALSetMetadata(this, metadata, domain);
 
     public void SetMetadataItem(string name, string? value, string? domain = null)
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        Interop.GDALSetMetadataItem(Handle, name, value, domain);
+        Interop.GDALSetMetadataItem(this, name, value, domain);
     }
 
-    public string[] MetadataDomainList => Interop.GDALGetMetadataDomainList(Handle);
+    public string[] MetadataDomainList => Interop.GDALGetMetadataDomainList(this);
 }

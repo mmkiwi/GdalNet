@@ -23,4 +23,7 @@
             <TargetPath>%(Filename)%(Extension)</TargetPath>
         </None>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\InteropSourceGen\InteropSourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"  />
+    </ItemGroup>
 </Project>
