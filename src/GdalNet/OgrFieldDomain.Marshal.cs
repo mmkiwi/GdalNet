@@ -2,10 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Diagnostics.Contracts;
+
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(GdalHandleMarshallerIn<OgrFieldDomain, OgrFieldDomain.MarshalHandle>))]
-public partial class OgrFieldDomain:IConstructibleWrapper<OgrFieldDomain, OgrFieldDomain.MarshalHandle>, IDisposable
+public partial class OgrFieldDomain:IConstructibleWrapper<OgrFieldDomain, OgrFieldDomain.MarshalHandle>, IDisposable, IHasHandle<OgrFieldDomain.MarshalHandle>
 {
     private bool _disposedValue;
 
@@ -15,16 +16,16 @@ public partial class OgrFieldDomain:IConstructibleWrapper<OgrFieldDomain, OgrFie
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    static OgrFieldDomain? IConstructibleWrapper<OgrFieldDomain, MarshalHandle>.Construct(MarshalHandle handle)
+    static OgrFieldDomain IConstructibleWrapper<OgrFieldDomain, MarshalHandle>.Construct(MarshalHandle handle)
         => new(handle);
 
-    internal class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    internal abstract class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {
         public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
         }
 
-        public static MarshalHandle Construct(bool ownsHandle) => new(ownsHandle);
+        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
 
         protected override bool ReleaseHandle()
         {
@@ -37,6 +38,9 @@ public partial class OgrFieldDomain:IConstructibleWrapper<OgrFieldDomain, OgrFie
                 return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
             }
         }
+
+        public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
+        public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(true) { } }
     }
 
     protected virtual void Dispose(bool disposing)

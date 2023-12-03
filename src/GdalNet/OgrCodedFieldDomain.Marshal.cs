@@ -4,22 +4,22 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(GdalHandleMarshallerIn<OgrCodedFieldDomain, OgrCodedFieldDomain.MarshalHandle>))]
-public sealed partial class OgrCodedFieldDomain: IConstructibleWrapper<OgrCodedFieldDomain, OgrCodedFieldDomain.MarshalHandle>
+public sealed partial class OgrCodedFieldDomain: IConstructibleWrapper<OgrCodedFieldDomain, OgrCodedFieldDomain.MarshalHandle>, IHasHandle<OgrCodedFieldDomain.MarshalHandle>
 {
     private OgrCodedFieldDomain(MarshalHandle handle) : base(handle) { }
     new private MarshalHandle Handle => (MarshalHandle)base.Handle;
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    static OgrCodedFieldDomain? IConstructibleWrapper<OgrCodedFieldDomain, MarshalHandle>.Construct(MarshalHandle handle)
+    static OgrCodedFieldDomain IConstructibleWrapper<OgrCodedFieldDomain, MarshalHandle>.Construct(MarshalHandle handle)
         => new(handle);
 
-    new internal class MarshalHandle: OgrFieldDomain.MarshalHandle, IConstructibleHandle<MarshalHandle>
+    new internal abstract class MarshalHandle: OgrFieldDomain.MarshalHandle
     {
         public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
         }
 
-        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle) => new(ownsHandle);
+        new public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
+        new public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(true) { } }
     }
 }

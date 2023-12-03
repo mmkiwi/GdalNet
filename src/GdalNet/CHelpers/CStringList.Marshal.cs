@@ -4,8 +4,7 @@
 
 namespace MMKiwi.GdalNet.CHelpers;
 
-[NativeMarshalling(typeof(GdalHandleMarshallerIn<CStringList, CStringList.MarshalHandle>))]
-internal unsafe sealed partial class CStringList:IConstructibleWrapper<CStringList, CStringList.MarshalHandle>
+internal unsafe sealed partial class CStringList:IConstructibleWrapper<CStringList, CStringList.MarshalHandle>, IHasHandle<CStringList.MarshalHandle>
 {
     internal MarshalHandle Handle { get; private set; }
 
@@ -13,15 +12,13 @@ internal unsafe sealed partial class CStringList:IConstructibleWrapper<CStringLi
 
     private CStringList(MarshalHandle handle) { Handle = handle; }
 
-    internal sealed partial class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    internal abstract partial class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {
         public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
-        } 
+        }
 
-        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle) 
-            => new(ownsHandle);
-
+        public static MarshalHandle Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
         protected override bool ReleaseHandle()
         {
             lock (ReentrantLock)
@@ -33,8 +30,18 @@ internal unsafe sealed partial class CStringList:IConstructibleWrapper<CStringLi
                 return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal ;
             }
         }
+
+        internal sealed class Owns : MarshalHandle
+        {
+            public Owns() : base(true) { }
+        }
+
+        internal sealed class DoesntOwn : MarshalHandle
+        {
+            public DoesntOwn() : base(false) { }
+        }
     }
 
-    static CStringList? IConstructibleWrapper<CStringList, MarshalHandle>.Construct(MarshalHandle handle)
+    static CStringList IConstructibleWrapper<CStringList, MarshalHandle>.Construct(MarshalHandle handle)
         => new(handle);
 }

@@ -6,27 +6,23 @@ using MMKiwi.GdalNet.CHelpers;
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(GdalHandleMarshallerIn<GdalDataset, GdalDataset.MarshalHandle>))]
-public sealed partial class GdalDataset :IConstructibleWrapper<GdalDataset, GdalDataset.MarshalHandle>
+public sealed partial class GdalDataset : IHasHandle<GdalDataset.MarshalHandle>, IConstructibleWrapper<GdalDataset, GdalDataset.MarshalHandle>
 {
     private GdalDataset(MarshalHandle handle) : base(handle)
     {
-        Handle = handle;
         RasterBands = new(this);
         Layers = new(this);
     }
-    MarshalHandle Handle { get; }
+    new MarshalHandle Handle => (MarshalHandle)base.Handle;
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    static GdalDataset? IConstructibleWrapper<GdalDataset, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
+    static GdalDataset IConstructibleWrapper<GdalDataset, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
 
-    internal sealed class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    internal abstract class MarshalHandle : GdalInternalHandle
     {
         private MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
         }
-
-        public static MarshalHandle Construct(bool ownsHandle) => new(ownsHandle);
 
         protected override bool ReleaseHandle()
         {
@@ -38,6 +34,16 @@ public sealed partial class GdalDataset :IConstructibleWrapper<GdalDataset, Gdal
                 Interop.GDALClose(handle);
                 return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
             }
+        }
+
+        internal class DoesNotOwn : MarshalHandle
+        {
+            public DoesNotOwn() : base(false) { }
+        }
+
+        internal class Owns : MarshalHandle
+        {
+            public Owns() : base(false) { }
         }
     }
 }

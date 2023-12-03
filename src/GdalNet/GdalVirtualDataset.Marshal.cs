@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalVirtualDataset : IConstructibleWrapper<GdalVirtualDataset, GdalVirtualDataset.MarshalHandle>, IDisposable
+public sealed partial class GdalVirtualDataset : IConstructibleWrapper<GdalVirtualDataset, GdalVirtualDataset.MarshalHandle>, IDisposable, IHasHandle<GdalVirtualDataset.MarshalHandle>
 {
     private bool _disposedValue;
 
@@ -13,15 +13,13 @@ public sealed partial class GdalVirtualDataset : IConstructibleWrapper<GdalVirtu
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    static GdalVirtualDataset? IConstructibleWrapper<GdalVirtualDataset, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
+    static GdalVirtualDataset IConstructibleWrapper<GdalVirtualDataset, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
 
-    internal class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    internal abstract class MarshalHandle : GdalInternalHandle
     {
         public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
         }
-
-        public static MarshalHandle Construct(bool ownsHandle) => new(ownsHandle);
 
         protected override bool ReleaseHandle()
         {
@@ -32,6 +30,9 @@ public sealed partial class GdalVirtualDataset : IConstructibleWrapper<GdalVirtu
                 return res >= 0 && GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
             }
         }
+
+        public sealed class Owns :MarshalHandle { public Owns() : base(true) { } }
+        public sealed class DoesntOwn :MarshalHandle { public DoesntOwn() : base(true) { } }
     }
 
     private void Dispose(bool disposing)

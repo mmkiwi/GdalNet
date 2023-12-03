@@ -9,6 +9,8 @@
         <AssemblyName>MMKiwi.$(MSBuildProjectName)</AssemblyName>
         <RootNamespace>MMKiwi.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
         <IsAotCompatible>true</IsAotCompatible>
+        <ReportAnalyzer>true</ReportAnalyzer>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     
     <ItemGroup>

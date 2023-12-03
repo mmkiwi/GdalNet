@@ -3,9 +3,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections.Immutable;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Xml.Linq;
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -20,72 +23,97 @@ public class InteropGenerator : IIncrementalGenerator
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource("GdalWrapperMethodAttribute.g.cs",
                                                                       SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
 
-        // Do a simple filter for enums
-        IncrementalValuesProvider<MethodDeclarationSyntax> enumDeclarations = context.SyntaxProvider
-            .CreateSyntaxProvider(
-                predicate: static (s, _) => IsSyntaxTargetForGeneration(s), // select enums with attributes
-                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx)) // sect the enum with the [EnumExtensions] attribute
-            .Where(static m => m is not null)!; // filter out attributed enums that we don't care about
+        // Do a simple filter for methods
+        IncrementalValuesProvider<MethodInfo2> methodDeclarations = context.SyntaxProvider
+            .ForAttributeWithMetadataName(SourceGenerationHelper.MarkerFullName,
+                predicate: (node, _) => node is MethodDeclarationSyntax, // select methods with attributes
+                transform: GetMethodToGenerate) // sect the methods with the [GdalWrapperMethod] attribute
+            .Where(static m => m is not null)!; // filter out attributed methods that we don't care about
 
-        // Combine the selected enums with the `Compilation`
-        IncrementalValueProvider<(Compilation, ImmutableArray<MethodDeclarationSyntax>)> compilationAndEnums
-            = context.CompilationProvider.Combine(enumDeclarations.Collect());
+        // Combine the selected methods with the `Compilation`
+        IncrementalValueProvider<(Compilation, ImmutableArray<MethodInfo2>)> compilationAndMethods
+            = context.CompilationProvider.Combine(methodDeclarations.Collect());
 
-        // Generate the source using the compilation and enums
-        context.RegisterSourceOutput(compilationAndEnums,
-            static (spc, source) => Execute(source.Item1, source.Item2, spc));
+        // Generate the source using the compilation and methods
+        context.RegisterSourceOutput(compilationAndMethods, static (spc, source) => Execute(source.Item1, source.Item2, spc));
     }
 
-    static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is MethodDeclarationSyntax m && m.AttributeLists.Count > 0;
-
-    static MethodDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    static MethodInfo2? GetMethodToGenerate(GeneratorAttributeSyntaxContext context, CancellationToken ct)
     {
-        // we know the node is a EnumDeclarationSyntax thanks to IsSyntaxTargetForGeneration
-        var methodDeclarationSyntax = (MethodDeclarationSyntax)context.Node;
+        // we know the node is a MethodDeclarationSyntax thanks to IsSyntaxTargetForGeneration
+        IMethodSymbol methodSymbol = (IMethodSymbol)context.TargetSymbol;
+        MethodDeclarationSyntax methodSyntax = (MethodDeclarationSyntax)context.TargetNode;
 
-        // loop through all the attributes on the method
-        foreach (AttributeListSyntax attributeListSyntax in methodDeclarationSyntax.AttributeLists)
+        string methodName = methodSymbol.Name;
+
+        foreach (AttributeData attributeData in methodSymbol.GetAttributes())
         {
-            foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
+            if (attributeData.AttributeClass?.Name != SourceGenerationHelper.MarkerClass ||
+                attributeData.AttributeClass.ToDisplayString() != SourceGenerationHelper.MarkerFullName)
             {
-                if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol)
-                {
-                    // weird, we couldn't get the symbol, ignore it
-                    continue;
-                }
+                continue;
+            }
 
-                INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
-                string fullName = attributeContainingTypeSymbol.ToDisplayString();
-
-                // Is the attribute the [EnumExtensions] attribute?
-                if (fullName == SourceGenerationHelper.MarkerFullName)
+            foreach (KeyValuePair<string, TypedConstant> namedArgument in attributeData.NamedArguments)
+            {
+                if (namedArgument.Key == "MethodName" && namedArgument.Value.Value?.ToString() is { } ns)
                 {
-                    // return the enum
-                    return methodDeclarationSyntax;
+                    methodName = ns;
                 }
             }
-        }
 
+            return new(methodSyntax, methodName);
+        }
         // we didn't find the attribute we were looking for
         return null;
     }
 
-    static void Execute(Compilation compilation, ImmutableArray<MethodDeclarationSyntax> enums, SourceProductionContext context)
+    static void Execute(Compilation compilation, ImmutableArray<MethodInfo2> methods, SourceProductionContext context)
     {
-        if (enums.IsDefaultOrEmpty)
+        if (methods.IsDefaultOrEmpty)
         {
             // nothing to do yet
             return;
         }
 
-        // I'm not sure if this is actually necessary, but `[LoggerMessage]` does it, so seems like a good idea!
-        IEnumerable<MethodDeclarationSyntax> distinctEnums = enums.Distinct();
-
-        foreach (var method in distinctEnums)
+        static TypeDeclarationSyntax? GetParentClass(MethodInfo2 method)
         {
-            // generate the source code and add it to the output
-            string result = SourceGenerationHelper.GenerateExtensionClass(method);
-            context.AddSource($"InteropGenerator.{Guid.NewGuid()}.g.cs", SourceText.From(result, Encoding.UTF8));
+            var parent = method.Method.Parent;
+            while (parent is not null or CompilationUnitSyntax)
+            {
+                if (parent is TypeDeclarationSyntax parentType)
+                    return parentType;
+                parent = parent.Parent;
+            }
+            return null;
+        }
+
+        IEnumerable<IGrouping<TypeDeclarationSyntax?, MethodInfo2>> distinctClasses = methods.GroupBy(GetParentClass);
+
+        foreach (var cls in distinctClasses)
+        {
+            if (cls.Key is null)
+            {
+                foreach (var method in cls)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0001",
+                                                                                        "Could not generate method",
+                                                                                        "Could not generate wrapper method for {0} because the parent class could not be found",
+                                                                                        "GDal.SourceGenerator",
+                                                                                        DiagnosticSeverity.Warning,
+                                                                                        true),
+                                                               method.Method.GetLocation(),
+                                                               method.Method.ToDiagString()));
+                }
+            }
+            else
+            {
+                // generate the source code and add it to the output
+                string result = SourceGenerationHelper.GenerateExtensionClass(compilation, cls!, context);
+                context.AddSource($"InteropGenerator.{cls.Key.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
+            }
         }
     }
 }
+
+public record class MethodInfo2(MethodDeclarationSyntax Method, string TargetName);

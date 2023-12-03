@@ -35,10 +35,10 @@ public sealed partial class GdalDataset : GdalMajorObject, IDisposable
     public int RasterYSize => Interop.GDALGetRasterYSize(this);
 }
 
-internal interface IConstructibleWrapper<TRes, THandle> : IHasHandle<THandle>
+internal interface IConstructibleWrapper<TRes, in THandle>
     where THandle : GdalInternalHandle
 {
-    public static abstract TRes? Construct(THandle handle);
+    public static abstract TRes Construct(THandle handle);
 }
 
 internal interface IHasHandle<THandle>
@@ -47,7 +47,7 @@ internal interface IHasHandle<THandle>
 }
 
 internal interface IConstructibleHandle<THandle>
-    where THandle : GdalInternalHandle
+    where THandle:GdalInternalHandle
 {
-    public static abstract THandle Construct(bool ownsHandle);
+    static abstract THandle Construct(bool ownsHandle);
 }

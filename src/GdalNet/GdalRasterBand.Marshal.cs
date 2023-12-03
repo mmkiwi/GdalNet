@@ -2,11 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Diagnostics;
+
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(GdalHandleMarshaller<GdalRasterBand, GdalRasterBand.MarshalHandle>))]
-
-public sealed partial class GdalRasterBand: IConstructibleWrapper<GdalRasterBand, GdalRasterBand.MarshalHandle>
+public sealed partial class GdalRasterBand: IConstructibleWrapper<GdalRasterBand, GdalRasterBand.MarshalHandle>, IHasHandle<GdalRasterBand.MarshalHandle>
 {
     private GdalRasterBand(MarshalHandle handle) => Handle = handle;
 
@@ -14,9 +14,14 @@ public sealed partial class GdalRasterBand: IConstructibleWrapper<GdalRasterBand
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    static GdalRasterBand? IConstructibleWrapper<GdalRasterBand, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
+    static GdalRasterBand IConstructibleWrapper<GdalRasterBand, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
 
-    internal class MarshalHandle : GdalInternalHandleNeverOwns
+    internal class MarshalHandle : GdalInternalHandleNeverOwns, IConstructibleHandle<MarshalHandle>
     {
+        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle)
+        {
+            Debug.Assert(ownsHandle is false); // Should never be true
+            return new();
+        }
     }
 }

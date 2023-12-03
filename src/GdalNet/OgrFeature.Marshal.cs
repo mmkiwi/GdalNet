@@ -3,8 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 namespace MMKiwi.GdalNet;
-[NativeMarshalling(typeof(GdalHandleMarshallerIn<OgrFeature, MarshalHandle>))]
-public sealed partial class OgrFeature : IDisposable, IConstructibleWrapper<OgrFeature, OgrFeature.MarshalHandle>
+public sealed partial class OgrFeature : IDisposable, IConstructibleWrapper<OgrFeature, OgrFeature.MarshalHandle>, IHasHandle<OgrFeature.MarshalHandle>
 {
     private MarshalHandle Handle { get; }
 
@@ -16,17 +15,16 @@ public sealed partial class OgrFeature : IDisposable, IConstructibleWrapper<OgrF
         ((IDisposable)Handle).Dispose();
     }
 
-    static OgrFeature? IConstructibleWrapper<OgrFeature, MarshalHandle>.Construct(MarshalHandle handle)
+    static OgrFeature IConstructibleWrapper<OgrFeature, MarshalHandle>.Construct(MarshalHandle handle)
         => new(handle);
 
     internal class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {
-        public MarshalHandle(bool ownsHandle) : base(ownsHandle)
+        private MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
         }
 
-        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle)
-            => new(ownsHandle);
+        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
 
         protected override bool ReleaseHandle()
         {
@@ -38,6 +36,16 @@ public sealed partial class OgrFeature : IDisposable, IConstructibleWrapper<OgrF
                 Interop.OGR_F_Destroy(handle);
                 return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
             }
+        }
+
+        internal class Owns: MarshalHandle
+        {
+            public Owns() : base(true) { }
+        }
+
+        internal class DoesntOwn : MarshalHandle
+        {
+            public DoesntOwn() : base(true) { }
         }
     }
 }

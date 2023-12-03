@@ -6,11 +6,8 @@ using MMKiwi.GdalNet.CHelpers;
 
 namespace MMKiwi.GdalNet;
 
-public abstract partial class GdalMajorObject
+public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>
 {
-    private SafeHandle Handle { get; }
-    private protected GdalMajorObject(SafeHandle handle) => Handle = handle;
-
     public string? Description
     {
         get => Interop.GDALGetDescription(this);
@@ -38,4 +35,13 @@ public abstract partial class GdalMajorObject
     }
 
     public string[] MetadataDomainList => Interop.GDALGetMetadataDomainList(this);
+
+    GdalInternalHandle IHasHandle<GdalInternalHandle>.Handle => Handle;
+
+    private protected GdalInternalHandle Handle { get; }
+
+    private protected GdalMajorObject(GdalInternalHandle handle)
+    {
+        Handle = handle;
+    }
 }
