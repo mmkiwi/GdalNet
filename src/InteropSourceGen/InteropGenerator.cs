@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections.Immutable;
+using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Xml.Linq;
@@ -21,24 +22,24 @@ public class InteropGenerator : IIncrementalGenerator
     {
         // Add the marker attribute to the compilation
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource("GdalWrapperMethodAttribute.g.cs",
-                                                                      SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
+                                                                      SourceText.From(InteropGenerationHelper.Attribute, Encoding.UTF8)));
 
         // Do a simple filter for methods
-        IncrementalValuesProvider<MethodInfo2> methodDeclarations = context.SyntaxProvider
-            .ForAttributeWithMetadataName(SourceGenerationHelper.MarkerFullName,
+        IncrementalValuesProvider<MethodGenerationInfo> methodDeclarations = context.SyntaxProvider
+            .ForAttributeWithMetadataName(InteropGenerationHelper.MarkerFullName,
                 predicate: (node, _) => node is MethodDeclarationSyntax, // select methods with attributes
                 transform: GetMethodToGenerate) // sect the methods with the [GdalWrapperMethod] attribute
             .Where(static m => m is not null)!; // filter out attributed methods that we don't care about
 
         // Combine the selected methods with the `Compilation`
-        IncrementalValueProvider<(Compilation, ImmutableArray<MethodInfo2>)> compilationAndMethods
+        IncrementalValueProvider<(Compilation, ImmutableArray<MethodGenerationInfo>)> compilationAndMethods
             = context.CompilationProvider.Combine(methodDeclarations.Collect());
 
         // Generate the source using the compilation and methods
         context.RegisterSourceOutput(compilationAndMethods, static (spc, source) => Execute(source.Item1, source.Item2, spc));
     }
 
-    static MethodInfo2? GetMethodToGenerate(GeneratorAttributeSyntaxContext context, CancellationToken ct)
+    static MethodGenerationInfo? GetMethodToGenerate(GeneratorAttributeSyntaxContext context, CancellationToken ct)
     {
         // we know the node is a MethodDeclarationSyntax thanks to IsSyntaxTargetForGeneration
         IMethodSymbol methodSymbol = (IMethodSymbol)context.TargetSymbol;
@@ -48,8 +49,8 @@ public class InteropGenerator : IIncrementalGenerator
 
         foreach (AttributeData attributeData in methodSymbol.GetAttributes())
         {
-            if (attributeData.AttributeClass?.Name != SourceGenerationHelper.MarkerClass ||
-                attributeData.AttributeClass.ToDisplayString() != SourceGenerationHelper.MarkerFullName)
+            if (attributeData.AttributeClass?.Name != InteropGenerationHelper.MarkerClass ||
+                attributeData.AttributeClass.ToDisplayString() != InteropGenerationHelper.MarkerFullName)
             {
                 continue;
             }
@@ -68,7 +69,7 @@ public class InteropGenerator : IIncrementalGenerator
         return null;
     }
 
-    static void Execute(Compilation compilation, ImmutableArray<MethodInfo2> methods, SourceProductionContext context)
+    static void Execute(Compilation compilation, ImmutableArray<MethodGenerationInfo> methods, SourceProductionContext context)
     {
         if (methods.IsDefaultOrEmpty)
         {
@@ -76,7 +77,7 @@ public class InteropGenerator : IIncrementalGenerator
             return;
         }
 
-        static TypeDeclarationSyntax? GetParentClass(MethodInfo2 method)
+        static TypeDeclarationSyntax? GetParentClass(MethodGenerationInfo method)
         {
             var parent = method.Method.Parent;
             while (parent is not null or CompilationUnitSyntax)
@@ -88,7 +89,7 @@ public class InteropGenerator : IIncrementalGenerator
             return null;
         }
 
-        IEnumerable<IGrouping<TypeDeclarationSyntax?, MethodInfo2>> distinctClasses = methods.GroupBy(GetParentClass);
+        IEnumerable<IGrouping<TypeDeclarationSyntax?, MethodGenerationInfo>> distinctClasses = methods.GroupBy(GetParentClass);
 
         foreach (var cls in distinctClasses)
         {
@@ -109,11 +110,9 @@ public class InteropGenerator : IIncrementalGenerator
             else
             {
                 // generate the source code and add it to the output
-                string result = SourceGenerationHelper.GenerateExtensionClass(compilation, cls!, context);
+                string result = InteropGenerationHelper.GenerateExtensionClass(compilation, cls!, context);
                 context.AddSource($"InteropGenerator.{cls.Key.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
             }
         }
     }
 }
-
-public record class MethodInfo2(MethodDeclarationSyntax Method, string TargetName);

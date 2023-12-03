@@ -10,8 +10,6 @@ internal unsafe sealed partial class CStringList:IConstructibleWrapper<CStringLi
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    private CStringList(MarshalHandle handle) { Handle = handle; }
-
     internal abstract partial class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {
         public MarshalHandle(bool ownsHandle) : base(ownsHandle)
@@ -41,7 +39,4 @@ internal unsafe sealed partial class CStringList:IConstructibleWrapper<CStringLi
             public DoesntOwn() : base(false) { }
         }
     }
-
-    static CStringList IConstructibleWrapper<CStringList, MarshalHandle>.Construct(MarshalHandle handle)
-        => new(handle);
 }

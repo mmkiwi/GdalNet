@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace MMKiwi.GdalNet.InteropSourceGen;
 
-public static class SourceGenerationHelper
+public static class InteropGenerationHelper
 {
     public const string MarkerNamespace = "MMKiwi.GdalNet.Interop";
     public const string MarkerClass = "GdalWrapperMethodAttribute";
@@ -58,7 +58,7 @@ namespace {{MarkerNamespace}}
 
     static readonly SymbolDisplayFormat s_symbolDisplayFormat = new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
-    internal static string GenerateExtensionClass(Compilation compilation, IGrouping<TypeDeclarationSyntax, MethodInfo2> classGroup, SourceProductionContext context)
+    internal static string GenerateExtensionClass(Compilation compilation, IGrouping<TypeDeclarationSyntax, MethodGenerationInfo> classGroup, SourceProductionContext context)
     {
         StringBuilder resFile = new();
 
@@ -96,14 +96,13 @@ namespace {{MarkerNamespace}}
         foreach (var cls in parentClasses)
         {
             resFile.AppendLine($$"""
-                [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
                 {{cls.Modifiers}} {{cls.Keyword}} {{cls.Identifier}}
                 { 
                 """);
             cls.Members.OfType<MethodDeclarationSyntax>();
         }
 
-        foreach (MethodInfo2 methodInfo in classGroup)
+        foreach (MethodGenerationInfo methodInfo in classGroup)
         {
             var method = methodInfo.Method;
             if (!method.Modifiers.Any(mod => mod.IsKind(SyntaxKind.PartialKeyword)))
@@ -142,6 +141,7 @@ namespace {{MarkerNamespace}}
             }
 
             resFile.AppendLine($$"""
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
             {{method.Modifiers}} {{method.ReturnType}} {{method.Identifier}}{{method.ParameterList.RemoveAttributes()}}
             {
         {{GenerateMethod(method, interopMethod)}}
@@ -324,7 +324,7 @@ namespace {{MarkerNamespace}}
         return false;
     }
 
-    private static MethodTransformations? FindInteropMethod(TypeDeclarationSyntax parentClass, MethodInfo2 methodInfo, Compilation compilation, SourceProductionContext context)
+    private static MethodTransformations? FindInteropMethod(TypeDeclarationSyntax parentClass, MethodGenerationInfo methodInfo, Compilation compilation, SourceProductionContext context)
     {
         var wrapperMethod = methodInfo.Method;
         //For now, name must be the same. TODO: Add parameter to attribute to override

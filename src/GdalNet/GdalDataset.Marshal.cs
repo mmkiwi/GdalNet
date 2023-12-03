@@ -16,8 +16,6 @@ public sealed partial class GdalDataset : IHasHandle<GdalDataset.MarshalHandle>,
     new MarshalHandle Handle => (MarshalHandle)base.Handle;
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    static GdalDataset IConstructibleWrapper<GdalDataset, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
-
     internal abstract class MarshalHandle : GdalInternalHandle
     {
         private MarshalHandle(bool ownsHandle) : base(ownsHandle)
