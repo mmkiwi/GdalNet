@@ -10,9 +10,6 @@ public sealed partial class OgrCodedFieldDomain: IConstructibleWrapper<OgrCodedF
     new private MarshalHandle Handle => (MarshalHandle)base.Handle;
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    static OgrCodedFieldDomain IConstructibleWrapper<OgrCodedFieldDomain, MarshalHandle>.Construct(MarshalHandle handle)
-        => new(handle);
-
     new internal abstract class MarshalHandle: OgrFieldDomain.MarshalHandle
     {
         public MarshalHandle(bool ownsHandle) : base(ownsHandle)

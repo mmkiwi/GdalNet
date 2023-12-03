@@ -19,9 +19,6 @@ public sealed partial class OgrLayer : IConstructibleWrapper<OgrLayer, OgrLayer.
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    static OgrLayer IConstructibleWrapper<OgrLayer, MarshalHandle>.Construct(MarshalHandle handle) 
-        => new(handle);
-
     internal class MarshalHandle : GdalInternalHandleNeverOwns, IConstructibleHandle<MarshalHandle>
     {
         static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle)

@@ -64,13 +64,10 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
         };
     }
 
-    private class UnknownGeometry : OgrGeometry, IConstructibleWrapper<UnknownGeometry, OgrGeometry.MarshalHandle>
+    private partial class UnknownGeometry : OgrGeometry, IConstructibleWrapper<UnknownGeometry, OgrGeometry.MarshalHandle>
     {
         public UnknownGeometry(MarshalHandle handle) : base(handle)
         {
         }
-
-        static UnknownGeometry IConstructibleWrapper<UnknownGeometry, MarshalHandle>.Construct(MarshalHandle handle)
-            => new(handle);
     }
 }

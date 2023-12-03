@@ -8,13 +8,9 @@ namespace MMKiwi.GdalNet;
 
 public sealed partial class GdalRasterBand: IConstructibleWrapper<GdalRasterBand, GdalRasterBand.MarshalHandle>, IHasHandle<GdalRasterBand.MarshalHandle>
 {
-    private GdalRasterBand(MarshalHandle handle) => Handle = handle;
-
     internal MarshalHandle Handle { get; }
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    static GdalRasterBand IConstructibleWrapper<GdalRasterBand, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
 
     internal class MarshalHandle : GdalInternalHandleNeverOwns, IConstructibleHandle<MarshalHandle>
     {

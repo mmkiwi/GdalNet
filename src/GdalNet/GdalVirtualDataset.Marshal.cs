@@ -8,12 +8,9 @@ public sealed partial class GdalVirtualDataset : IConstructibleWrapper<GdalVirtu
 {
     private bool _disposedValue;
 
-    private GdalVirtualDataset(MarshalHandle handle) => Handle = handle;
     private MarshalHandle Handle { get; }
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    static GdalVirtualDataset IConstructibleWrapper<GdalVirtualDataset, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
 
     internal abstract class MarshalHandle : GdalInternalHandle
     {

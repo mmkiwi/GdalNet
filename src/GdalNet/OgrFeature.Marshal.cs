@@ -15,9 +15,6 @@ public sealed partial class OgrFeature : IDisposable, IConstructibleWrapper<OgrF
         ((IDisposable)Handle).Dispose();
     }
 
-    static OgrFeature IConstructibleWrapper<OgrFeature, MarshalHandle>.Construct(MarshalHandle handle)
-        => new(handle);
-
     internal class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {
         private MarshalHandle(bool ownsHandle) : base(ownsHandle)

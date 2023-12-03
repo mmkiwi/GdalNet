@@ -10,14 +10,11 @@ public partial class OgrFieldDomain:IConstructibleWrapper<OgrFieldDomain, OgrFie
 {
     private bool _disposedValue;
 
-    private protected OgrFieldDomain(MarshalHandle handle) { Handle = handle; }
+    private protected OgrFieldDomain(MarshalHandle handle) => Handle = handle;
 
     private protected MarshalHandle Handle { get; }
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    static OgrFieldDomain IConstructibleWrapper<OgrFieldDomain, MarshalHandle>.Construct(MarshalHandle handle)
-        => new(handle);
 
     internal abstract class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {

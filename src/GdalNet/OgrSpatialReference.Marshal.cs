@@ -14,9 +14,6 @@ public partial class OgrSpatialReference: IConstructibleWrapper<OgrSpatialRefere
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    static OgrSpatialReference IConstructibleWrapper<OgrSpatialReference, MarshalHandle>.Construct(MarshalHandle handle)
-        => new(handle);
-
     internal class MarshalHandle : GdalInternalHandleNeverOwns, IConstructibleHandle<MarshalHandle>
     {
         static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle)
