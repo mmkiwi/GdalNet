@@ -8,7 +8,7 @@ using MMKiwi.GdalNet.InteropAttributes;
 namespace MMKiwi.GdalNet;
 
 [GdalGenerateWrapper]
-public sealed partial class GdalDataset : IHasHandle<GdalDataset.MarshalHandle>, IConstructibleWrapper<GdalDataset, GdalDataset.MarshalHandle>
+public sealed partial class GdalDataset : IHasHandle<GdalDataset.MarshalHandle>, IConstructableWrapper<GdalDataset, GdalDataset.MarshalHandle>
 {
     private GdalDataset(MarshalHandle handle) : base(handle)
     {

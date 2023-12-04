@@ -45,44 +45,95 @@ public class ConstructGenerator : IIncrementalGenerator
 
         AttributeData attribute = context.Attributes.First();
 
-        string visibility = "private";
+        MemberVisibility ctorVisibility = MemberVisibility.Private;
+        MemberVisibility handleVisibility = MemberVisibility.Internal;
+        MemberVisibility handleSetVisibility = MemberVisibility.DoNotGenerate;
 
         foreach (KeyValuePair<string, TypedConstant> namedArgument in attribute.NamedArguments)
         {
-            if (namedArgument.Key == nameof(ConstructorVisibility) && namedArgument.Value.Value is int cv)
+            if (namedArgument.Key == nameof(GdalGenerateWrapperAttribute.ConstructorVisibility) && namedArgument.Value.Value is int cv)
             {
-                visibility = ((ConstructorVisibility)cv).ToStringFast();
+                ctorVisibility = (MemberVisibility)cv;
+            }
+            else if(namedArgument.Key == nameof(GdalGenerateWrapperAttribute.HandleVisibility) && namedArgument.Value.Value is int hv)
+            {
+                handleVisibility = (MemberVisibility)hv;
+            }
+            else if (namedArgument.Key == nameof(GdalGenerateWrapperAttribute.HandleSetVisibility) && namedArgument.Value.Value is int mh)
+            {
+                handleSetVisibility = (MemberVisibility)mh;
             }
         }
 
-        string? wrapperTypeStr = null;
+        string wrapperTypeStr = classSymbol.ToDisplayString();
         string? handleTypeStr = null;
-        bool needsConstructor = false;
-        bool needsConstructMethod = false;
+
+
+        // Only needed iif the class implements IConstructableWrapper, so start by assuming they aren't needed
+        // until that interface is encountered
+        bool hasConstructMethod = true;
+
+        // Only needed iif the class implements IHasHandle, so start by assuming they aren't needed
+        // until that interface is encountered
+        bool hasConstructor = true;
+        bool hasExplicitHandle = true;
+        bool hasImplicitHandle = true;
+
         foreach (INamedTypeSymbol baseInterface in classSymbol.Interfaces)
         {
-            if (baseInterface.IsGenericType && baseInterface.ConstructedFrom.ToDisplayString() is "MMKiwi.GdalNet.IConstructibleWrapper<TRes, THandle>")
+            if (baseInterface.IsGenericType && baseInterface.ConstructedFrom.ToDisplayString() is "MMKiwi.GdalNet.IConstructableWrapper<TRes, THandle>")
             {
+                hasConstructMethod = false;
                 foreach (ISymbol member in baseInterface.GetMembers())
                 {
                     if (member is IMethodSymbol methodSymbol)
                     {
-                        // Get handle type
                         ITypeSymbol handleType = baseInterface.TypeArguments[1];
-                        needsConstructor |= !classSymbol.Constructors.Any(c => c.Parameters.Length == 1 && c.Parameters[0].Type.Equals(handleType, SymbolEqualityComparer.Default));
 
-                        var receiver = (INamedTypeSymbol)methodSymbol.ReceiverType!;
+                        handleTypeStr = handleType.ToDisplayString();
 
-                        wrapperTypeStr = receiver.TypeArguments[0].ToDisplayString();
-                        handleTypeStr = receiver.TypeArguments[1].ToDisplayString();
+                        hasConstructMethod |= classSymbol.FindImplementationForInterfaceMember(member) is not null;
+                    }
+                }
+            }
 
-                        needsConstructMethod |= classSymbol.FindImplementationForInterfaceMember(member) is null;
+            if (baseInterface.IsGenericType && baseInterface.ConstructedFrom.ToDisplayString() is "MMKiwi.GdalNet.IHasHandle<THandle>")
+            {
+                // These are only true if it implements IHasHandle
+                hasExplicitHandle = false;
+                hasConstructor = false;
+                hasImplicitHandle = false;
+                foreach (ISymbol member in baseInterface.GetMembers())
+                {
+                    if (member is IPropertySymbol methodSymbol)
+                    {
+                        // Get handle type
+                        ITypeSymbol handleType = baseInterface.TypeArguments[0];
+                        handleTypeStr = handleType.ToDisplayString();
+
+                        hasExplicitHandle |= classSymbol.FindImplementationForInterfaceMember(member) is not null;
+
+                        foreach (IMethodSymbol implementedCtor in classSymbol.Constructors)
+                        {
+                            if (implementedCtor.Parameters.Length == 1 && implementedCtor.Parameters[0].Type.Equals(handleType, SymbolEqualityComparer.Default))
+                            {
+                                hasConstructor = true;
+                            }
+                        }
+
+                        foreach (var implementedMember in classSymbol.GetMembers().OfType<IPropertySymbol>())
+                        {
+                            if(implementedMember.Name == "Handle" && implementedMember.Type.Equals(handleType, SymbolEqualityComparer.IncludeNullability))
+                            {
+                                hasImplicitHandle = true;
+                            }
+                        }
                     }
                 }
             }
         }
 
-        if (wrapperTypeStr == null || handleTypeStr == null)
+        if (handleTypeStr == null)
         {
             return null;
         }
@@ -90,11 +141,15 @@ public class ConstructGenerator : IIncrementalGenerator
         return new()
         {
             ClassSymbol = classSyntax,
-            NeedsConstructor = needsConstructor,
-            NeedsConstructMethod = needsConstructMethod,
-            ConstructorVisibility = visibility,
+            NeedsConstructor = !hasConstructor,
+            NeedsConstructMethod = !hasConstructMethod && ctorVisibility != MemberVisibility.DoNotGenerate,
+            ConstructorVisibility = ctorVisibility.ToStringFast(),
             HandleType = handleTypeStr,
             WrapperType = wrapperTypeStr,
+            NeedsExplicitHandle = !hasExplicitHandle,
+            NeedsImplicitHandle = !hasImplicitHandle && handleVisibility != MemberVisibility.DoNotGenerate,
+            HandleVisibility = handleVisibility.ToStringFast(),
+            HandleSetVisibility = handleSetVisibility.ToStringFast()
         };
     }
 
@@ -125,6 +180,11 @@ public class ConstructGenerator : IIncrementalGenerator
         public required string ConstructorVisibility { get; init; }
         public required bool NeedsConstructor { get; init; }
         public required bool NeedsConstructMethod { get; init; }
+        public required bool NeedsExplicitHandle { get; init; }
+        public required bool NeedsImplicitHandle { get; init; }
+
+        public required string HandleVisibility { get; init; }
+        public required string? HandleSetVisibility { get; init; }
 
         public override int GetHashCode()
         {

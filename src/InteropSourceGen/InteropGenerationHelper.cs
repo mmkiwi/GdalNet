@@ -390,7 +390,7 @@ public static class InteropGenerationHelper
             parent = parent.BaseType;
         }
 
-        foreach (var handleType in wrapperTypeSymbol.Interfaces.Where(i => i.Name is "IConstructibleWrapper"))
+        foreach (var handleType in wrapperTypeSymbol.Interfaces.Where(i => i.Name is "IConstructableWrapper"))
         {
             if (hierarchy.Contains(handleType.TypeArguments[1]))
             {

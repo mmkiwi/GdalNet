@@ -4,6 +4,6 @@
 
 namespace MMKiwi.GdalNet;
 
-internal interface IConstructibleWrapper<T>
+internal interface IConstructableWrapper<T>
 {
 }

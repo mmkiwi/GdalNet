@@ -10,7 +10,7 @@ using MMKiwi.GdalNet.InteropAttributes;
 namespace MMKiwi.GdalNet;
 
 [GdalGenerateWrapper]
-public sealed partial class OgrLayer : IConstructibleWrapper<OgrLayer, OgrLayer.MarshalHandle>, IHasHandle<OgrLayer.MarshalHandle>
+public sealed partial class OgrLayer : IConstructableWrapper<OgrLayer, OgrLayer.MarshalHandle>, IHasHandle<OgrLayer.MarshalHandle>
 {
     internal OgrLayer(MarshalHandle handle)
     {
@@ -18,13 +18,9 @@ public sealed partial class OgrLayer : IConstructibleWrapper<OgrLayer, OgrLayer.
         Features = new(this);
     }
 
-    internal MarshalHandle Handle { get; }
-
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    internal class MarshalHandle : GdalInternalHandleNeverOwns, IConstructibleHandle<MarshalHandle>
+    internal class MarshalHandle : GdalInternalHandleNeverOwns, IConstructableHandle<MarshalHandle>
     {
-        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle)
+        static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle)
         {
             Debug.Assert(ownsHandle is false); // Should never be true
             return new();

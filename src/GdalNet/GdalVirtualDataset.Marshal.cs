@@ -7,13 +7,9 @@ using MMKiwi.GdalNet.InteropAttributes;
 namespace MMKiwi.GdalNet;
 
 [GdalGenerateWrapper]
-public sealed partial class GdalVirtualDataset : IConstructibleWrapper<GdalVirtualDataset, GdalVirtualDataset.MarshalHandle>, IDisposable, IHasHandle<GdalVirtualDataset.MarshalHandle>
+public sealed partial class GdalVirtualDataset : IConstructableWrapper<GdalVirtualDataset, GdalVirtualDataset.MarshalHandle>, IDisposable, IHasHandle<GdalVirtualDataset.MarshalHandle>
 {
     private bool _disposedValue;
-
-    private MarshalHandle Handle { get; }
-
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
     internal abstract class MarshalHandle : GdalInternalHandle
     {

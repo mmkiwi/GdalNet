@@ -6,14 +6,10 @@ using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet.CHelpers;
 
-[GdalGenerateWrapper]
-internal unsafe sealed partial class CStringList : IConstructibleWrapper<CStringList, CStringList.MarshalHandle>, IHasHandle<CStringList.MarshalHandle>
+[GdalGenerateWrapper(HandleSetVisibility = MemberVisibility.Private)]
+internal unsafe sealed partial class CStringList : IConstructableWrapper<CStringList, CStringList.MarshalHandle>, IHasHandle<CStringList.MarshalHandle>
 {
-    internal MarshalHandle Handle { get; private set; }
-
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    internal abstract partial class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    internal abstract partial class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
     {
         public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {

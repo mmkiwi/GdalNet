@@ -7,7 +7,7 @@ using MMKiwi.GdalNet.InteropAttributes;
 namespace MMKiwi.GdalNet;
 
 [GdalGenerateWrapper]
-public sealed partial class OgrCodedFieldDomain: IConstructibleWrapper<OgrCodedFieldDomain, OgrCodedFieldDomain.MarshalHandle>, IHasHandle<OgrCodedFieldDomain.MarshalHandle>
+public sealed partial class OgrCodedFieldDomain: IConstructableWrapper<OgrCodedFieldDomain, OgrCodedFieldDomain.MarshalHandle>, IHasHandle<OgrCodedFieldDomain.MarshalHandle>
 {
     private OgrCodedFieldDomain(MarshalHandle handle) : base(handle) { }
     new private MarshalHandle Handle => (MarshalHandle)base.Handle;

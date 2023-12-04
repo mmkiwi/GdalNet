@@ -7,25 +7,20 @@ using MMKiwi.GdalNet.InteropAttributes;
 namespace MMKiwi.GdalNet;
 
 [GdalGenerateWrapper]
-public sealed partial class OgrFeature : IDisposable, IConstructibleWrapper<OgrFeature, OgrFeature.MarshalHandle>, IHasHandle<OgrFeature.MarshalHandle>
+public sealed partial class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, OgrFeature.MarshalHandle>, IHasHandle<OgrFeature.MarshalHandle>
 {
-    private MarshalHandle Handle { get; }
-
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    internal OgrFeature(MarshalHandle handle) => Handle = handle;
     public void Dispose()
     {
         ((IDisposable)Handle).Dispose();
     }
 
-    internal class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    internal class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
     {
         private MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
         }
 
-        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
+        static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
 
         protected override bool ReleaseHandle()
         {

@@ -3,9 +3,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using MMKiwi.GdalNet.CHelpers;
+using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 
+[GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected, HandleVisibility = MemberVisibility.Internal)]
 public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>
 {
     public string? Description
@@ -35,13 +37,4 @@ public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>
     }
 
     public string[] MetadataDomainList => Interop.GDALGetMetadataDomainList(this);
-
-    GdalInternalHandle IHasHandle<GdalInternalHandle>.Handle => Handle;
-
-    private protected GdalInternalHandle Handle { get; }
-
-    private protected GdalMajorObject(GdalInternalHandle handle)
-    {
-        Handle = handle;
-    }
 }

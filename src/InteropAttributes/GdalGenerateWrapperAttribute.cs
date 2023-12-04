@@ -9,5 +9,7 @@ namespace MMKiwi.GdalNet.InteropAttributes;
 [AttributeUsage(AttributeTargets.Class)]
 public class GdalGenerateWrapperAttribute : Attribute
 {
-    public ConstructorVisibility ConstructorVisibility { get; set; }
+    public MemberVisibility ConstructorVisibility { get; set; } = MemberVisibility.Private;
+    public MemberVisibility HandleVisibility { get; set; } = MemberVisibility.Internal;
+    public MemberVisibility HandleSetVisibility { get; set; } = MemberVisibility.DoNotGenerate;
 }

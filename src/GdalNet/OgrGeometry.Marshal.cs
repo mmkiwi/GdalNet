@@ -9,20 +9,16 @@ using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 
-[GdalGenerateWrapper(ConstructorVisibility = ConstructorVisibility.PrivateProtected)]
-public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle>, IConstructibleWrapper<OgrGeometry, OgrGeometry.MarshalHandle>
+[GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected)]
+public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle>, IConstructableWrapper<OgrGeometry, OgrGeometry.MarshalHandle>
 {
-    internal MarshalHandle Handle { get; }
-
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    internal abstract class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    internal abstract class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
     {
         private MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
         }
 
-        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
+        static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
 
         protected override bool ReleaseHandle()
         {
@@ -38,7 +34,7 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
         public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(true) { } }
     }
 
-    static OgrGeometry IConstructibleWrapper<OgrGeometry, MarshalHandle>.Construct(MarshalHandle handle)
+    static OgrGeometry IConstructableWrapper<OgrGeometry, MarshalHandle>.Construct(MarshalHandle handle)
     {
         OgrWkbGeometryType type = Interop.OGR_G_GetGeometryType(handle);
         return type switch
@@ -66,7 +62,7 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
     }
 
     [GdalGenerateWrapper]
-    private partial class UnknownGeometry : OgrGeometry, IConstructibleWrapper<UnknownGeometry, OgrGeometry.MarshalHandle>
+    private partial class UnknownGeometry : OgrGeometry, IConstructableWrapper<UnknownGeometry, OgrGeometry.MarshalHandle>
     {
         public UnknownGeometry(MarshalHandle handle) : base(handle)
         {

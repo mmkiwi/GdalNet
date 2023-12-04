@@ -8,24 +8,18 @@ using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 
-[GdalGenerateWrapper]
-public partial class OgrFieldDomain : IConstructibleWrapper<OgrFieldDomain, OgrFieldDomain.MarshalHandle>, IDisposable, IHasHandle<OgrFieldDomain.MarshalHandle>
+[GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected)]
+public partial class OgrFieldDomain : IConstructableWrapper<OgrFieldDomain, OgrFieldDomain.MarshalHandle>, IDisposable, IHasHandle<OgrFieldDomain.MarshalHandle>
 {
     private bool _disposedValue;
 
-    private protected OgrFieldDomain(MarshalHandle handle) => Handle = handle;
-
-    private protected MarshalHandle Handle { get; }
-
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    internal abstract class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    internal abstract class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
     {
         public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
         }
 
-        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
+        static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
 
         protected override bool ReleaseHandle()
         {

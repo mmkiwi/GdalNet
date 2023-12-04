@@ -3,7 +3,7 @@
 internal static class GdalConstructionHelper
 {
     public static TRes Construct<TRes, THandle>(THandle handle)
-        where TRes : class, IConstructibleWrapper<TRes, THandle>
+        where TRes : class, IConstructableWrapper<TRes, THandle>
         where THandle : GdalInternalHandle
     {
         if (handle.IsInvalid)
@@ -12,14 +12,14 @@ internal static class GdalConstructionHelper
     }
 
     public static TRes? ConstructNullable<TRes, THandle>(THandle handle)
-        where TRes : class, IConstructibleWrapper<TRes, THandle>
+        where TRes : class, IConstructableWrapper<TRes, THandle>
         where THandle : GdalInternalHandle
     {
         return handle.IsInvalid ? null : TRes.Construct(handle);
     }
 
     public static THandle GetNullHandle<THandle>()
-        where THandle : GdalInternalHandle, IConstructibleHandle<THandle>
+        where THandle : GdalInternalHandle, IConstructableHandle<THandle>
     {
         return THandle.Construct(false);
     }

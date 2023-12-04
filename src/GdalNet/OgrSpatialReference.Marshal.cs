@@ -9,15 +9,11 @@ using MMKiwi.GdalNet.InteropAttributes;
 namespace MMKiwi.GdalNet;
 
 [GdalGenerateWrapper]
-public partial class OgrSpatialReference: IConstructibleWrapper<OgrSpatialReference, OgrSpatialReference.MarshalHandle>, IHasHandle<OgrSpatialReference.MarshalHandle>
+public partial class OgrSpatialReference: IConstructableWrapper<OgrSpatialReference, OgrSpatialReference.MarshalHandle>, IHasHandle<OgrSpatialReference.MarshalHandle>
 {
-    internal MarshalHandle Handle { get; }
-
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    internal class MarshalHandle : GdalInternalHandleNeverOwns, IConstructibleHandle<MarshalHandle>
+    internal class MarshalHandle : GdalInternalHandleNeverOwns, IConstructableHandle<MarshalHandle>
     {
-        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle)
+        static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle)
         {
             Debug.Assert(ownsHandle is false); // Should never be true
             return new();

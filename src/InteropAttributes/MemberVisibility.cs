@@ -9,12 +9,13 @@ using NetEscapades.EnumGenerators;
 namespace MMKiwi.GdalNet.InteropAttributes;
 
 [EnumExtensions]
-public enum ConstructorVisibility
+public enum MemberVisibility
 {
     [Description("public")] Public,
     [Description("protected")] Protected,
     [Description("internal")] Internal,
     [Description("protected internal")] ProtectedInternal,
     [Description("private")] Private,
-    [Description("private protected")] PrivateProtected
+    [Description("private protected")] PrivateProtected,
+    DoNotGenerate
 }
