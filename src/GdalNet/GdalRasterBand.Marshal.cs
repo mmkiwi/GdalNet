@@ -4,8 +4,11 @@
 
 using System.Diagnostics;
 
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
+[GdalGenerateWrapper]
 public sealed partial class GdalRasterBand: IConstructibleWrapper<GdalRasterBand, GdalRasterBand.MarshalHandle>, IHasHandle<GdalRasterBand.MarshalHandle>
 {
     internal MarshalHandle Handle { get; }

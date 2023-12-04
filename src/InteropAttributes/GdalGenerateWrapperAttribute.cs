@@ -6,8 +6,8 @@ using System;
 
 namespace MMKiwi.GdalNet.InteropAttributes;
 
-[AttributeUsage(AttributeTargets.Method)]
-public class GdalWrapperMethodAttribute : Attribute
+[AttributeUsage(AttributeTargets.Class)]
+public class GdalGenerateWrapperAttribute : Attribute
 {
-    public string? MethodName { get; set; }
+    public ConstructorVisibility ConstructorVisibility { get; set; }
 }

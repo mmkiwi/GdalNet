@@ -4,9 +4,12 @@
 
 using System.Diagnostics.Contracts;
 
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
-public partial class OgrFieldDomain:IConstructibleWrapper<OgrFieldDomain, OgrFieldDomain.MarshalHandle>, IDisposable, IHasHandle<OgrFieldDomain.MarshalHandle>
+[GdalGenerateWrapper]
+public partial class OgrFieldDomain : IConstructibleWrapper<OgrFieldDomain, OgrFieldDomain.MarshalHandle>, IDisposable, IHasHandle<OgrFieldDomain.MarshalHandle>
 {
     private bool _disposedValue;
 

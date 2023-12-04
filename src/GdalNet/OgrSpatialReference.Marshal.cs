@@ -4,12 +4,13 @@
 
 using System.Diagnostics;
 
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
+[GdalGenerateWrapper]
 public partial class OgrSpatialReference: IConstructibleWrapper<OgrSpatialReference, OgrSpatialReference.MarshalHandle>, IHasHandle<OgrSpatialReference.MarshalHandle>
 {
-    private OgrSpatialReference(MarshalHandle handle) => Handle = handle;
-
     internal MarshalHandle Handle { get; }
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;

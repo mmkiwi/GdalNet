@@ -5,15 +5,16 @@
 using System.Diagnostics.Contracts;
 using System.Reflection;
 
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
+[GdalGenerateWrapper(ConstructorVisibility = ConstructorVisibility.PrivateProtected)]
 public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle>, IConstructibleWrapper<OgrGeometry, OgrGeometry.MarshalHandle>
 {
     internal MarshalHandle Handle { get; }
 
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    private protected OgrGeometry(MarshalHandle handle) => this.Handle = handle;
 
     internal abstract class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {
@@ -64,6 +65,7 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
         };
     }
 
+    [GdalGenerateWrapper]
     private partial class UnknownGeometry : OgrGeometry, IConstructibleWrapper<UnknownGeometry, OgrGeometry.MarshalHandle>
     {
         public UnknownGeometry(MarshalHandle handle) : base(handle)

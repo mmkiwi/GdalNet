@@ -5,8 +5,11 @@
 using System.Diagnostics;
 using System.Reflection;
 
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
+[GdalGenerateWrapper]
 public sealed partial class OgrLayer : IConstructibleWrapper<OgrLayer, OgrLayer.MarshalHandle>, IHasHandle<OgrLayer.MarshalHandle>
 {
     internal OgrLayer(MarshalHandle handle)

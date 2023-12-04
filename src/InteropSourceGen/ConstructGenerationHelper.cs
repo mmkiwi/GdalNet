@@ -13,17 +13,21 @@ namespace MMKiwi.GdalNet.InteropSourceGen;
 
 public static class ConstructGenerationHelper
 {
+    public const string MarkerNamespace = "MMKiwi.GdalNet.InteropAttributes";
+    public const string MarkerClass = "GdalGenerateWrapperAttribute";
+    public const string MarkerFullName = $"{MarkerNamespace}.{MarkerClass}";
+
     static readonly SymbolDisplayFormat s_symbolDisplayFormat = new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
-    internal static string? GenerateExtensionClass(Compilation compilation, ConstructGenerator.GenerationInfo classGroup, SourceProductionContext context)
+    internal static string? GenerateExtensionClass(Compilation compilation, ConstructGenerator.GenerationInfo genInfo, SourceProductionContext context)
     {
         StringBuilder resFile = new();
 
         Stack<TypeDeclarationSyntax> parentClasses = [];
         Stack<BaseNamespaceDeclarationSyntax> parentNamespaces = [];
 
-        TypeDeclarationSyntax parentClass = classGroup.ClassSymbol;
-        SyntaxNode? parent = classGroup.ClassSymbol;
+        TypeDeclarationSyntax parentClass = genInfo.ClassSymbol;
+        SyntaxNode? parent = genInfo.ClassSymbol;
 
         while (parent is not null)
         {
@@ -60,23 +64,24 @@ public static class ConstructGenerationHelper
             cls.Members.OfType<MethodDeclarationSyntax>();
         }
 
-        if (classGroup.ConstructMethod.ReceiverType is not INamedTypeSymbol reciever)
-            return null;
+        string wrapperType = genInfo.WrapperType.Split('.').Last();
 
-        ITypeSymbol wrapperType = reciever.TypeArguments[0];
-        ITypeSymbol handleType = reciever.TypeArguments[1];
-
-        resFile.AppendLine($"""
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
-        """);
-        resFile.AppendLine($"    static global::{wrapperType.ToDisplayString()} IConstructibleWrapper<global::{wrapperType.ToDisplayString()}, global::{handleType.ToDisplayString()}>.Construct(global::{handleType.ToDisplayString()} handle) => new(handle);");
-
-        if(classGroup.NeedsConstructor)
+        if (genInfo.NeedsConstructMethod)
         {
             resFile.AppendLine($"""
+
                 [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
             """);
-            resFile.AppendLine($"    private {wrapperType.Name}(global::{handleType.ToDisplayString()} handle) => Handle = handle;");
+            resFile.AppendLine($"    static global::{genInfo.WrapperType} IConstructibleWrapper<global::{genInfo.WrapperType}, global::{genInfo.HandleType}>.Construct(global::{genInfo.HandleType} handle) => new(handle);");
+        }
+
+        if (genInfo.NeedsConstructor)
+        {
+            resFile.AppendLine($"""
+
+                [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+            """);
+            resFile.AppendLine($"    {genInfo.ConstructorVisibility} {wrapperType}(global::{genInfo.HandleType} handle) => Handle = handle;");
         }
 
         foreach (var ns in parentClasses)

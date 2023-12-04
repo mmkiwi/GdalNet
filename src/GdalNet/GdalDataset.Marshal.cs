@@ -3,9 +3,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using MMKiwi.GdalNet.CHelpers;
+using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 
+[GdalGenerateWrapper]
 public sealed partial class GdalDataset : IHasHandle<GdalDataset.MarshalHandle>, IConstructibleWrapper<GdalDataset, GdalDataset.MarshalHandle>
 {
     private GdalDataset(MarshalHandle handle) : base(handle)

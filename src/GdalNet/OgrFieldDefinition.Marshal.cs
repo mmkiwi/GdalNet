@@ -4,8 +4,11 @@
 
 using System.Diagnostics;
 
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
+[GdalGenerateWrapper]
 public partial class OgrFieldDefinition : IConstructibleWrapper<OgrFieldDefinition, OgrFieldDefinition.MarshalHandle>, IHasHandle<OgrFieldDefinition.MarshalHandle>
 {
     internal MarshalHandle Handle { get; }
