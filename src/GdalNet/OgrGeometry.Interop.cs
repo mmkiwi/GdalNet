@@ -4,7 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 public abstract partial class OgrGeometry

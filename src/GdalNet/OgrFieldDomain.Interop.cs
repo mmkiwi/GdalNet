@@ -4,7 +4,7 @@
 
 using Microsoft.VisualBasic.FileIO;
 
-using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;

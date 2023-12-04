@@ -20,10 +20,6 @@ public class InteropGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Add the marker attribute to the compilation
-        context.RegisterPostInitializationOutput(ctx => ctx.AddSource("GdalWrapperMethodAttribute.g.cs",
-                                                                      SourceText.From(InteropGenerationHelper.Attribute, Encoding.UTF8)));
-
         // Do a simple filter for methods
         IncrementalValuesProvider<MethodGenerationInfo> methodDeclarations = context.SyntaxProvider
             .ForAttributeWithMetadataName(InteropGenerationHelper.MarkerFullName,

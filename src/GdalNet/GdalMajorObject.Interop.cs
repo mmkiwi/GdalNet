@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using MMKiwi.GdalNet.Marshallers;
-using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 

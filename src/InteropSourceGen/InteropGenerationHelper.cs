@@ -15,46 +15,11 @@ namespace MMKiwi.GdalNet.InteropSourceGen;
 
 public static class InteropGenerationHelper
 {
-    public const string MarkerNamespace = "MMKiwi.GdalNet.Interop";
+    public const string MarkerNamespace = "MMKiwi.GdalNet.InteropAttributes";
     public const string MarkerClass = "GdalWrapperMethodAttribute";
+    public const string HelperNamespace = "MMKiwi.GdalNet.Interop";
     public const string HelperClass = "GdalConstructionHelper";
     public const string MarkerFullName = $"{MarkerNamespace}.{MarkerClass}";
-    public const string Attribute = $$"""
-#nullable enable 
-namespace {{MarkerNamespace}}
-{
-    [System.AttributeUsage(System.AttributeTargets.Method)]
-    public class {{MarkerClass}} : System.Attribute
-    {
-        public string? MethodName {get; set;}
-    }
-
-    internal static class {{HelperClass}}
-    {
-        public static TRes Construct<TRes,THandle>(THandle handle) 
-            where TRes: class, IConstructibleWrapper<TRes,THandle>
-            where THandle: GdalInternalHandle
-        {
-            if(handle.IsInvalid) 
-                throw new InvalidOperationException("Cannot marshal null handle");
-            return TRes.Construct(handle);
-        }
-
-        public static TRes? ConstructNullable<TRes,THandle>(THandle handle) 
-            where TRes: class, IConstructibleWrapper<TRes,THandle>
-            where THandle: GdalInternalHandle
-        {
-            return handle.IsInvalid ? null : TRes.Construct(handle);
-        }
-
-        public static THandle GetNullHandle<THandle>()
-            where THandle:GdalInternalHandle, IConstructibleHandle<THandle>
-        {
-            return THandle.Construct(false);
-        }
-    }
-}
-""";
 
     static readonly SymbolDisplayFormat s_symbolDisplayFormat = new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
@@ -182,7 +147,7 @@ namespace {{MarkerNamespace}}
             {
                 if (param.WrapperParam!.Type is NullableTypeSyntax)
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Type} __param_{param.WrapperParam.Identifier} = ({param.WrapperParam.Identifier} as IHasHandle<{param.InteropParam.Type}>)?.Handle ?? {MarkerNamespace}.{HelperClass}.GetNullHandle<{param.InteropParam.Type}>();");
+                    methodString.AppendLine($"{space}{param.InteropParam.Type} __param_{param.WrapperParam.Identifier} = ({param.WrapperParam.Identifier} as IHasHandle<{param.InteropParam.Type}>)?.Handle ?? {HelperNamespace}.{HelperClass}.GetNullHandle<{param.InteropParam.Type}>();");
                 }
                 else
                 {
@@ -199,7 +164,7 @@ namespace {{MarkerNamespace}}
             {
                 if (param.WrapperParam!.Type is NullableTypeSyntax)
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Type} __ref_{param.InteropParam.Identifier}_raw = ({param.WrapperParam.Identifier} as IHasHandle<{param.InteropParam.Type}>)?.Handle ?? {MarkerNamespace}.{HelperClass}.GetNullHandle<{param.InteropParam.Type}>();");
+                    methodString.AppendLine($"{space}{param.InteropParam.Type} __ref_{param.InteropParam.Identifier}_raw = ({param.WrapperParam.Identifier} as IHasHandle<{param.InteropParam.Type}>)?.Handle ?? {HelperNamespace}.{HelperClass}.GetNullHandle<{param.InteropParam.Type}>();");
                 }
                 else
                 {
@@ -268,22 +233,22 @@ namespace {{MarkerNamespace}}
             {
                 if (param.WrapperParam!.Type is NullableTypeSyntax nts)
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {MarkerNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {param.InteropParam.Type}>(__out_{param.InteropParam.Identifier}_raw);");
+                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {param.InteropParam.Type}>(__out_{param.InteropParam.Identifier}_raw);");
                 }
                 else
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {MarkerNamespace}.{HelperClass}.Construct<{param.WrapperParam.Type}, {param.InteropParam.Type}>(__out_{param.InteropParam.Identifier}_raw);");
+                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.Construct<{param.WrapperParam.Type}, {param.InteropParam.Type}>(__out_{param.InteropParam.Identifier}_raw);");
                 }
             }
             else if (param.TransformType == TransformType.WrapperRef)
             {
                 if (param.WrapperParam!.Type is NullableTypeSyntax nts)
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {MarkerNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {param.InteropParam.Type}>(__ref_{param.InteropParam.Identifier}_raw);");
+                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {param.InteropParam.Type}>(__ref_{param.InteropParam.Identifier}_raw);");
                 }
                 else
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {MarkerNamespace}.{HelperClass}.Construct<{param.WrapperParam.Type}, {param.InteropParam.Type}>(__ref_{param.InteropParam.Identifier}_raw);");
+                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.Construct<{param.WrapperParam.Type}, {param.InteropParam.Type}>(__ref_{param.InteropParam.Identifier}_raw);");
                 }
             }
         }
@@ -296,9 +261,9 @@ namespace {{MarkerNamespace}}
         else if (interopMethod.Return == TransformType.WrapperOut)
         {
             if (method.ReturnType is NullableTypeSyntax nts)
-                methodString.AppendLine($"{space}__return_value = {MarkerNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {interopMethod.InteropMethod.ReturnType}>(__return_value_raw);");
+                methodString.AppendLine($"{space}__return_value = {HelperNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {interopMethod.InteropMethod.ReturnType}>(__return_value_raw);");
             else
-                methodString.AppendLine($"{space}__return_value = {MarkerNamespace}.{HelperClass}.Construct<{method.ReturnType}, {interopMethod.InteropMethod.ReturnType}>(__return_value_raw);");
+                methodString.AppendLine($"{space}__return_value = {HelperNamespace}.{HelperClass}.Construct<{method.ReturnType}, {interopMethod.InteropMethod.ReturnType}>(__return_value_raw);");
             methodString.AppendLine($"{space}return __return_value;");
         }
 
