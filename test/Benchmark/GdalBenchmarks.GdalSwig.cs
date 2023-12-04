@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes.Filters;
 
 using OSGeo.GDAL;
 using OSGeo.OGR;
@@ -14,6 +15,7 @@ public partial class GdalBenchmarks
     static readonly string[] s_config = ["TABLE=RasterAerial1"];
 
     [Benchmark(Baseline = true)]
+    [AotFilter("SWIG doesnt support AOT.")]
     public (int, List<DataType>) GdalSwig()
     {
         GdalConfiguration.ConfigureGdal();
