@@ -163,8 +163,12 @@ public class ConstructGenerator : IIncrementalGenerator
 
         foreach (GenerationInfo cls in classes.Distinct(GenerationInfo.ClassNameEqualityComparer.Default))
         {
-            if (cls.ClassSymbol is null || (cls.HandleType is null && cls.WrapperType is null && cls.NeedsConstructor == false))
+            if (cls.ClassSymbol is null || (cls.NeedsConstructMethod is false && 
+                                            cls.NeedsExplicitHandle is false  &&
+                                            cls.NeedsImplicitHandle is false && 
+                                            cls.NeedsConstructor is false))
                 continue;
+
             // generate the source code and add it to the output
             string? result = ConstructGenerationHelper.GenerateExtensionClass(compilation, cls!, context);
             if (result != null)
