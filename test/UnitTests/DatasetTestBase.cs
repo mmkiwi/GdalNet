@@ -15,7 +15,7 @@ public abstract class DatasetTestBase
         GdalInfo.RegisterAllDrivers();
     }
 
-    protected DatasetInfo GetDataset(int index) => TestData.Datasets[index];
+    protected static DatasetInfo GetDataset(int index) => TestData.Datasets[index];
 
     public static IEnumerable<object[]> Datasets => Enumerable.Range(0, TestData.DatasetCount).Select(x => new object[] { x });
 }

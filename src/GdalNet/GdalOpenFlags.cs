@@ -9,7 +9,7 @@ namespace MMKiwi.GdalNet;
 [Flags]
 internal enum GdalOpenFlags
 {
-    None = 0x00,
+    None = 0,
     Readonly = 0x00,
     Update = 0x01,
     Raster = 0x02,
