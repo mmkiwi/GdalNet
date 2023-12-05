@@ -55,7 +55,7 @@ public class ConstructGenerator : IIncrementalGenerator
             {
                 ctorVisibility = (MemberVisibility)cv;
             }
-            else if(namedArgument.Key == nameof(GdalGenerateWrapperAttribute.HandleVisibility) && namedArgument.Value.Value is int hv)
+            else if (namedArgument.Key == nameof(GdalGenerateWrapperAttribute.HandleVisibility) && namedArgument.Value.Value is int hv)
             {
                 handleVisibility = (MemberVisibility)hv;
             }
@@ -68,7 +68,6 @@ public class ConstructGenerator : IIncrementalGenerator
         string wrapperTypeStr = classSymbol.ToDisplayString();
         string? handleTypeStr = null;
 
-
         // Only needed iif the class implements IConstructableWrapper, so start by assuming they aren't needed
         // until that interface is encountered
         bool hasConstructMethod = true;
@@ -79,6 +78,9 @@ public class ConstructGenerator : IIncrementalGenerator
         bool hasExplicitHandle = true;
         bool hasImplicitHandle = true;
 
+        bool needsIDisposable = false;
+        bool hasIDisposable = false;
+
         foreach (INamedTypeSymbol baseInterface in classSymbol.Interfaces)
         {
             if (baseInterface.IsGenericType && baseInterface.ConstructedFrom.ToDisplayString() is "MMKiwi.GdalNet.IConstructableWrapper<TRes, THandle>")
@@ -86,7 +88,7 @@ public class ConstructGenerator : IIncrementalGenerator
                 hasConstructMethod = false;
                 foreach (ISymbol member in baseInterface.GetMembers())
                 {
-                    if (member is IMethodSymbol methodSymbol)
+                    if (member is IMethodSymbol)
                     {
                         ITypeSymbol handleType = baseInterface.TypeArguments[1];
 
@@ -103,14 +105,31 @@ public class ConstructGenerator : IIncrementalGenerator
                 hasExplicitHandle = false;
                 hasConstructor = false;
                 hasImplicitHandle = false;
+
+                ITypeSymbol handleType = baseInterface.TypeArguments[0];
+                handleTypeStr = handleType.ToDisplayString();
+
+                var handleParent = handleType;
+                while (handleParent is not null)
+                {
+                    if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandleNeverOwns")
+                    {
+                        needsIDisposable = false;
+                        break;
+                    }
+                    else if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandle")
+                    {
+                        needsIDisposable = true;
+                        break;
+                    }
+                    handleParent = handleParent.BaseType;
+                }
+
                 foreach (ISymbol member in baseInterface.GetMembers())
                 {
-                    if (member is IPropertySymbol methodSymbol)
+                    if (member is IPropertySymbol)
                     {
                         // Get handle type
-                        ITypeSymbol handleType = baseInterface.TypeArguments[0];
-                        handleTypeStr = handleType.ToDisplayString();
-
                         hasExplicitHandle |= classSymbol.FindImplementationForInterfaceMember(member) is not null;
 
                         foreach (IMethodSymbol implementedCtor in classSymbol.Constructors)
@@ -123,13 +142,18 @@ public class ConstructGenerator : IIncrementalGenerator
 
                         foreach (var implementedMember in classSymbol.GetMembers().OfType<IPropertySymbol>())
                         {
-                            if(implementedMember.Name == "Handle" && implementedMember.Type.Equals(handleType, SymbolEqualityComparer.IncludeNullability))
+                            if (implementedMember.Name == "Handle" && implementedMember.Type.Equals(handleType, SymbolEqualityComparer.IncludeNullability))
                             {
                                 hasImplicitHandle = true;
                             }
                         }
                     }
                 }
+            }
+
+            if (baseInterface.ToDisplayString() == "System.IDisposable")
+            {
+                hasIDisposable = true;
             }
         }
 
@@ -149,7 +173,8 @@ public class ConstructGenerator : IIncrementalGenerator
             NeedsExplicitHandle = !hasExplicitHandle,
             NeedsImplicitHandle = !hasImplicitHandle && handleVisibility != MemberVisibility.DoNotGenerate,
             HandleVisibility = handleVisibility.ToStringFast(),
-            HandleSetVisibility = handleSetVisibility.ToStringFast()
+            HandleSetVisibility = handleSetVisibility.ToStringFast(),
+            MissingIDisposable = needsIDisposable && !hasIDisposable
         };
     }
 
@@ -163,11 +188,23 @@ public class ConstructGenerator : IIncrementalGenerator
 
         foreach (GenerationInfo cls in classes.Distinct(GenerationInfo.ClassNameEqualityComparer.Default))
         {
-            if (cls.ClassSymbol is null || (cls.NeedsConstructMethod is false && 
-                                            cls.NeedsExplicitHandle is false  &&
-                                            cls.NeedsImplicitHandle is false && 
+            if (cls.ClassSymbol is null || (cls.NeedsConstructMethod is false &&
+                                            cls.NeedsExplicitHandle is false &&
+                                            cls.NeedsImplicitHandle is false &&
                                             cls.NeedsConstructor is false))
                 continue;
+
+            if(cls.MissingIDisposable)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0008",
+                                                                    "Missing IDisposable",
+                                                                    "Class {0} implements IHasHandle, but does not implement IDisposable.",
+                                                                    "GDal.SourceGenerator",
+                                                                    DiagnosticSeverity.Warning,
+                                                                    true),
+                                                            cls.ClassSymbol.GetLocation(),
+                                                            cls.ClassSymbol.Identifier));
+            }
 
             // generate the source code and add it to the output
             string? result = ConstructGenerationHelper.GenerateExtensionClass(compilation, cls!, context);
@@ -189,6 +226,7 @@ public class ConstructGenerator : IIncrementalGenerator
 
         public required string HandleVisibility { get; init; }
         public required string? HandleSetVisibility { get; init; }
+        public bool MissingIDisposable { get; internal set; }
 
         public override int GetHashCode()
         {

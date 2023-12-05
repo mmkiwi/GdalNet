@@ -303,7 +303,7 @@ public static class InteropGenerationHelper
 
             if (candidateInterop.ParameterList.Parameters.Count != wrapperMethod.ParameterList.Parameters.Count) // Parameter count must be the same
             {
-                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0005",
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0004",
                                                                                     "Partial match",
                                                                                     "Skipping match for method {0}. Method {1} does not have the same number of parameters.",
                                                                                     "GDal.SourceGenerator",
@@ -332,7 +332,7 @@ public static class InteropGenerationHelper
             if (invalidParameters.Any()) // One or more invalid parameters
             {
                 foreach (var invalidParam in invalidParameters)
-                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0005",
+                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0006",
                                                                                         "Partial match",
                                                                                         "Skipping match for method {0}. Parameter {1} of method {2} cannot be matched.",
                                                                                         "GDal.SourceGenerator",
@@ -346,7 +346,7 @@ public static class InteropGenerationHelper
             var returnCompatibility = CheckReturn(wrapperMethod, candidateInterop, compilation);
             if (returnCompatibility is TransformType.Invalid)
             {
-                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0005",
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0007",
                                                                     "Partial match",
                                                                     "Skipping match for method {0}. Method {1} has an incompatible return type.",
                                                                     "GDal.SourceGenerator",
