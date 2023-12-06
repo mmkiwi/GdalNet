@@ -11,7 +11,6 @@ public sealed partial class OgrCodedFieldDomain: IConstructableWrapper<OgrCodedF
 {
     private OgrCodedFieldDomain(MarshalHandle handle) : base(handle) { }
     new private MarshalHandle Handle => (MarshalHandle)base.Handle;
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
     [GdalGenerateHandle]
     new internal abstract partial class MarshalHandle : OgrFieldDomain.MarshalHandle, IConstructableHandle<MarshalHandle>

@@ -10,13 +10,7 @@ namespace MMKiwi.GdalNet;
 [GdalGenerateWrapper]
 public sealed partial class GdalDataset : IHasHandle<GdalDataset.MarshalHandle>, IConstructableWrapper<GdalDataset, GdalDataset.MarshalHandle>
 {
-    private GdalDataset(MarshalHandle handle) : base(handle)
-    {
-        RasterBands = new(this);
-        Layers = new(this);
-    }
     new MarshalHandle Handle => (MarshalHandle)base.Handle;
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
     [GdalGenerateHandle]
     internal abstract partial class MarshalHandle : GdalInternalHandle

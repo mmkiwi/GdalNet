@@ -7,38 +7,18 @@ using MMKiwi.GdalNet.InteropAttributes;
 namespace MMKiwi.GdalNet;
 
 [GdalGenerateWrapper]
-public sealed partial class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, OgrFeature.MarshalHandle>, IHasHandle<OgrFeature.MarshalHandle>
+public sealed partial class OgrFeature : IConstructableWrapper<OgrFeature, OgrFeature.MarshalHandle>, IHasHandle<OgrFeature.MarshalHandle>
 {
-    public void Dispose()
+    [GdalGenerateHandle]
+    internal abstract partial class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
     {
-        ((IDisposable)Handle).Dispose();
-    }
-
-    internal class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
-    {
-        private MarshalHandle(bool ownsHandle) : base(ownsHandle)
-        {
-        }
-
-        static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
-
         protected override GdalCplErr? ReleaseHandleCore()
         {
-            lock (ReentrantLock)
-            {
-                Interop.OGR_F_Destroy(handle);
-                return null;
-            }
+            Interop.OGR_F_Destroy(handle);
+            return null;
         }
 
-        internal class Owns: MarshalHandle
-        {
-            public Owns() : base(true) { }
-        }
-
-        internal class DoesntOwn : MarshalHandle
-        {
-            public DoesntOwn() : base(true) { }
-        }
+        internal class Owns : MarshalHandle { public Owns() : base(true) { } }
+        internal class DoesntOwn : MarshalHandle { public DoesntOwn() : base(true) { } }
     }
 }

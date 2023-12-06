@@ -18,12 +18,6 @@ public sealed partial class OgrLayer : IConstructableWrapper<OgrLayer, OgrLayer.
         Features = new(this);
     }
 
-    internal class MarshalHandle : GdalInternalHandleNeverOwns, IConstructableHandle<MarshalHandle>
-    {
-        static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle)
-        {
-            Debug.Assert(ownsHandle is false); // Should never be true
-            return new();
-        }
-    }
+    [GdalGenerateHandle]
+    internal sealed partial class MarshalHandle : GdalInternalHandleNeverOwns, IConstructableHandle<MarshalHandle>    {    }
 }

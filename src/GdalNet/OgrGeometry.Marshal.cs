@@ -12,14 +12,9 @@ namespace MMKiwi.GdalNet;
 [GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected)]
 public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle>, IConstructableWrapper<OgrGeometry, OgrGeometry.MarshalHandle>
 {
-    internal abstract class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
+    [GdalGenerateHandle]
+    internal abstract partial class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
     {
-        private MarshalHandle(bool ownsHandle) : base(ownsHandle)
-        {
-        }
-
-        static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
-
         protected override GdalCplErr? ReleaseHandleCore()
         {
             Interop.OGR_G_DestroyGeometry(handle);

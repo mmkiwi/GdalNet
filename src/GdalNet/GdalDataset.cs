@@ -10,8 +10,14 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalDataset : GdalMajorObject, IDisposable
+public sealed partial class GdalDataset : GdalMajorObject
 {
+    private GdalDataset(MarshalHandle handle) : base(handle)
+    {
+        RasterBands = new(this);
+        Layers = new(this);
+    }
+
     public static GdalDataset Open(string fileName,
                                     GdalOpenSettings? openSettings = null,
                                     IEnumerable<string>? allowedDrivers = null,
@@ -22,11 +28,6 @@ public sealed partial class GdalDataset : GdalMajorObject, IDisposable
         var dataset = Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
         GdalError.ThrowIfError();
         return dataset!;
-    }
-
-    public void Dispose()
-    {
-        Handle.Dispose();
     }
 
     public GdalBandCollection RasterBands { get; }

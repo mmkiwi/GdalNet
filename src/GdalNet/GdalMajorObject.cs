@@ -8,8 +8,10 @@ using MMKiwi.GdalNet.InteropAttributes;
 namespace MMKiwi.GdalNet;
 
 [GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected, HandleVisibility = MemberVisibility.Internal)]
-public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>
+public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>, IDisposable
 {
+    private bool _disposedValue;
+
     public string? Description
     {
         get => Interop.GDALGetDescription(this);
@@ -37,4 +39,23 @@ public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>
     }
 
     public string[] MetadataDomainList => Interop.GDALGetMetadataDomainList(this);
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                Handle.Dispose();
+            }
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 }
