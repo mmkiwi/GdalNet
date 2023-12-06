@@ -9,4 +9,5 @@ namespace MMKiwi.GdalNet.InteropAttributes;
 [AttributeUsage(AttributeTargets.Class)]
 public class GdalGenerateHandleAttribute : Attribute
 {
+    public MemberVisibility ConstuctorVisibility { get; set; } = MemberVisibility.Protected;
 }

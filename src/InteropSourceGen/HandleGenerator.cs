@@ -51,6 +51,16 @@ public class HandleGenerator : IIncrementalGenerator
         bool hasConstructor = false;
         bool hasConstructMethod = false;
 
+        MemberVisibility constructorVisibility = MemberVisibility.Protected;
+
+        foreach (KeyValuePair<string, TypedConstant> namedArgument in attribute.NamedArguments)
+        {
+            if (namedArgument.Key == nameof(GdalGenerateHandleAttribute.ConstuctorVisibility) && namedArgument.Value.Value is int cv)
+            {
+                constructorVisibility = (MemberVisibility)cv;
+            }
+        }
+
         string? baseHandle = null;
 
         var parentClass = classSymbol.BaseType;
@@ -98,7 +108,8 @@ public class HandleGenerator : IIncrementalGenerator
             ClassSymbol = classSyntax,
             GenerateConstruct = needsConstructMethod && !hasConstructMethod,
             BaseHandleType = baseHandle,
-            GenerateConstructor = !hasConstructor && baseHandle == "GdalInternalHandle",
+            GenerateConstructor = !hasConstructor && baseHandle == "GdalInternalHandle" && constructorVisibility != MemberVisibility.DoNotGenerate,
+            ConstructorVisibility = constructorVisibility.ToStringFast()
         };
     }
 
@@ -127,6 +138,7 @@ public class HandleGenerator : IIncrementalGenerator
         public required bool GenerateConstructor { get; init; }
         public required bool GenerateConstruct { get; init; }
         public required string BaseHandleType { get; init; }
+        public required string ConstructorVisibility { get; init; }
 
         public override int GetHashCode()
         {

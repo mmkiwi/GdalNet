@@ -93,7 +93,7 @@ public static class HandleGenerationHelper
             resFile.AppendLine($$"""
 
                 [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
-                private {{className}}(bool ownsHandle): base(ownsHandle) { }
+                {{genInfo.ConstructorVisibility}} {{className}}(bool ownsHandle): base(ownsHandle) { }
             """);
         }
 
