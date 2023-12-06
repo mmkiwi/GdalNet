@@ -19,5 +19,9 @@ public sealed partial class OgrCodedFieldDomain: IConstructableWrapper<OgrCodedF
         protected MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
         }
+
+        public new sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(false) { } }
+
+        public new sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
     }
 }

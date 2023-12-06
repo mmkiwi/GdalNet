@@ -9,13 +9,4 @@ namespace MMKiwi.GdalNet.InteropAttributes;
 [AttributeUsage(AttributeTargets.Class)]
 public class GdalGenerateHandleAttribute : Attribute
 {
-    public GenerateType GenerateOwns { get; set; } = GenerateType.Auto;
-    public GenerateType GenerateDoesntOwn { get; set; } = GenerateType.Auto;
-}
-
-public enum GenerateType
-{
-    Auto,
-    Generate,
-    Omit
 }

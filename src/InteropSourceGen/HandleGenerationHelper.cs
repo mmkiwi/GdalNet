@@ -97,23 +97,6 @@ public static class HandleGenerationHelper
             """);
         }
 
-        if (genInfo.GenerateDoesntOwn)
-        {
-            resFile.AppendLine($$"""
-
-                [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
-                new public sealed class DoesntOwn : {{className}} { public DoesntOwn() : base(false) { } }
-            """);
-        }
-        if (genInfo.GenerateOwns)
-        {
-            resFile.AppendLine($$"""
-
-                [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
-                new public sealed class Owns : {{className}} { public Owns() : base(true) { } }
-            """);
-        }
-
         foreach (var ns in parentClasses)
         {
             resFile.AppendLine("}");

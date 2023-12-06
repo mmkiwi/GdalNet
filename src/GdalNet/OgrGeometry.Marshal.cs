@@ -23,6 +23,7 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
         protected override GdalCplErr? ReleaseHandleCore()
         {
             Interop.OGR_G_DestroyGeometry(handle);
+            return null;
         }
 
         public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }

@@ -47,34 +47,9 @@ public class HandleGenerator : IIncrementalGenerator
 
         AttributeData attribute = context.Attributes[0];
 
-        GenerateType generateOwns = GenerateType.Auto;
-        GenerateType generateDoesntOwn = GenerateType.Auto;
-
-        bool hasOwns = false;
-        bool hasDoesntOwn = false;
         bool needsConstructMethod = false;
         bool hasConstructor = false;
         bool hasConstructMethod = false;
-
-        foreach (KeyValuePair<string, TypedConstant> namedArgument in attribute.NamedArguments)
-        {
-            if (namedArgument.Key == nameof(GdalGenerateHandleAttribute.GenerateOwns) && namedArgument.Value.Value is int go)
-            {
-                generateOwns = (GenerateType)go;
-            }
-            else if (namedArgument.Key == nameof(GdalGenerateHandleAttribute.GenerateDoesntOwn) && namedArgument.Value.Value is int gdo)
-            {
-                generateDoesntOwn = (GenerateType)gdo;
-            }
-        }
-
-        foreach (var childClass in classSyntax.ChildNodes().OfType<ClassDeclarationSyntax>())
-        {
-            if (childClass.Identifier.ToString() == "Owns")
-                hasOwns = true;
-            else if (childClass.Identifier.ToString() == "DoesntOwn")
-                hasDoesntOwn = true;
-        }
 
         string? baseHandle = null;
 
@@ -114,7 +89,7 @@ public class HandleGenerator : IIncrementalGenerator
 
         foreach (IMethodSymbol constructor in classSymbol.Constructors)
         {
-            if(constructor.Parameters.Length == 1 && constructor.Parameters[0].Type.ToDisplayString() == "bool")
+            if (constructor.Parameters.Length == 1 && constructor.Parameters[0].Type.ToDisplayString() == "bool")
                 hasConstructor = true;
         }
 
@@ -124,22 +99,6 @@ public class HandleGenerator : IIncrementalGenerator
             GenerateConstruct = needsConstructMethod && !hasConstructMethod,
             BaseHandleType = baseHandle,
             GenerateConstructor = !hasConstructor && baseHandle == "GdalInternalHandle",
-            GenerateDoesntOwn = (generateDoesntOwn, hasDoesntOwn) switch
-            {
-                (GenerateType.Auto, true) => false,
-                (GenerateType.Auto, false) => true,
-                (GenerateType.Generate, _) => true,
-                (GenerateType.Omit, _) => false,
-                _ => throw new NotImplementedException(),
-            },
-            GenerateOwns = (generateOwns, hasOwns) switch
-            {
-                (GenerateType.Auto, true) => false,
-                (GenerateType.Auto, false) => true,
-                (GenerateType.Generate, _) => true,
-                (GenerateType.Omit, _) => false,
-                _ => throw new NotImplementedException(),
-            }
         };
     }
 
@@ -167,8 +126,6 @@ public class HandleGenerator : IIncrementalGenerator
         public required ClassDeclarationSyntax ClassSymbol { get; init; }
         public required bool GenerateConstructor { get; init; }
         public required bool GenerateConstruct { get; init; }
-        public required bool GenerateOwns { get; init; }
-        public required bool GenerateDoesntOwn { get; init; }
         public required string BaseHandleType { get; init; }
 
         public override int GetHashCode()

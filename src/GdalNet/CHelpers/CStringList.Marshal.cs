@@ -18,5 +18,8 @@ internal unsafe sealed partial class CStringList : IConstructableWrapper<CString
             return null;
         }
 
+        public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(false) { } }
+
+        public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
     }
 }

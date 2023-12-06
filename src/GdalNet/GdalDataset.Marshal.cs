@@ -21,9 +21,8 @@ public sealed partial class GdalDataset : IHasHandle<GdalDataset.MarshalHandle>,
     [GdalGenerateHandle]
     internal abstract partial class MarshalHandle : GdalInternalHandle
     {
-        protected MarshalHandle(bool ownsHandle) : base(ownsHandle) { }
-
-        internal class Owns : MarshalHandle { public Owns(bool ownsHandle) : base(true) { } }
+        public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(false) { } }
+        public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
         protected override GdalCplErr? ReleaseHandleCore() => Interop.GDALClose(handle);
     }
 }
