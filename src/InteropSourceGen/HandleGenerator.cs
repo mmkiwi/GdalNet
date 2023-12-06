@@ -120,7 +120,8 @@ public class HandleGenerator : IIncrementalGenerator
             GenerateConstruct = needsConstructMethod && !hasConstructMethod,
             BaseHandleType = baseHandle,
             GenerateConstructor = !hasConstructor && baseHandle == "GdalInternalHandle" && constructorVisibility != MemberVisibility.DoNotGenerate,
-            ConstructorVisibility = constructorVisibility.ToStringFast()
+            ConstructorVisibility = constructorVisibility.ToStringFast(),
+            IsSealedOrAbstract = classSymbol.IsAbstract || classSymbol.IsSealed
         };
     }
 
@@ -149,6 +150,17 @@ public class HandleGenerator : IIncrementalGenerator
             }
             else if (cls is GenerationInfo.Ok genInfo)
             {
+                if(!genInfo.IsSealedOrAbstract)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00012",
+                                                                    "Handle shoudl be sealed or abstract",
+                                                                    "Class {0} should be sealed or abstract.",
+                                                                    "GDal.SourceGenerator",
+                                                                    DiagnosticSeverity.Warning,
+                                                                    true),
+                                                            cls.ClassSymbol.GetLocation(),
+                                                            cls.ClassSymbol.Identifier));
+                }
                 // generate the source code and add it to the output
                 string? result = HandleGenerationHelper.GenerateExtensionClass(compilation, genInfo!, context);
                 if (result != null)
@@ -182,10 +194,7 @@ public class HandleGenerator : IIncrementalGenerator
             public required bool GenerateConstruct { get; init; }
             public required string BaseHandleType { get; init; }
             public required string ConstructorVisibility { get; init; }
+            public required bool IsSealedOrAbstract { get; init; }
         }
     }
-
-    
-
-    
 }

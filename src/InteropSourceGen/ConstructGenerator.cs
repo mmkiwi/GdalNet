@@ -46,7 +46,7 @@ public class ConstructGenerator : IIncrementalGenerator
 
         if (!classSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
         {
-            return new GenerationInfo.ErrorNotPartial() { ClassSymbol = classSyntax };
+            return new GenerationInfo.ErrorNotPartial() { ClassSyntax = classSyntax };
         }
 
         AttributeData attribute = context.Attributes.First();
@@ -163,19 +163,22 @@ public class ConstructGenerator : IIncrementalGenerator
             }
         }
 
-        if(needsIDisposable && !hasIDisposable) // Check to see if parent classes have IDisposable
+        if (handleTypeStr == null)
+        {
+            return new GenerationInfo.ErrorDoesNotImplement()
+            {
+                ClassSyntax = classSyntax
+            };
+        }
+
+        if (needsIDisposable && !hasIDisposable) // Check to see if parent classes have IDisposable
         {
             hasIDisposable = FindIDisposableInParent(classSymbol);
         }
 
-        if (handleTypeStr == null)
-        {
-            return null;
-        }
-
         return new GenerationInfo.Ok()
         {
-            ClassSymbol = classSyntax,
+            ClassSyntax = classSyntax,
             NeedsConstructor = !hasConstructor,
             NeedsConstructMethod = !hasConstructMethod && ctorVisibility != MemberVisibility.DoNotGenerate,
             ConstructorVisibility = ctorVisibility.ToStringFast(),
@@ -225,10 +228,21 @@ public class ConstructGenerator : IIncrementalGenerator
                                                                     "GDal.SourceGenerator",
                                                                     DiagnosticSeverity.Warning,
                                                                     true),
-                                                            cls.ClassSymbol.GetLocation(),
-                                                            cls.ClassSymbol.Identifier));
+                                                            cls.ClassSyntax.GetLocation(),
+                                                            cls.ClassSyntax.Identifier));
             }
-            if (cls is GenerationInfo.Ok genInfo)
+            else if (cls is GenerationInfo.ErrorDoesNotImplement)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00011",
+                                                    "Class does not implement IConstructableHandle or IHasHandle",
+                                                    "Class {0} must implement IConstructableHandle or IHasHandle to generate the wrapper type.",
+                                                    "GDal.SourceGenerator",
+                                                    DiagnosticSeverity.Warning,
+                                                    true),
+                                            cls.ClassSyntax.GetLocation(),
+                                            cls.ClassSyntax.Identifier));
+            }
+            else if (cls is GenerationInfo.Ok genInfo)
             {
                 if (genInfo.NeedsConstructMethod is false &&
                                                 genInfo.NeedsExplicitHandle is false &&
@@ -244,25 +258,25 @@ public class ConstructGenerator : IIncrementalGenerator
                                                                         "GDal.SourceGenerator",
                                                                         DiagnosticSeverity.Warning,
                                                                         true),
-                                                                cls.ClassSymbol.GetLocation(),
-                                                                cls.ClassSymbol.Identifier));
+                                                                cls.ClassSyntax.GetLocation(),
+                                                                cls.ClassSyntax.Identifier));
                 }
 
                 // generate the source code and add it to the output
                 string? result = ConstructGenerationHelper.GenerateExtensionClass(compilation, genInfo!, context);
                 if (result != null)
-                    context.AddSource($"Construct.{cls.ClassSymbol.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
+                    context.AddSource($"Construct.{cls.ClassSyntax.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
             }
-
-
         }
     }
 
     public abstract class GenerationInfo
     {
-        public required ClassDeclarationSyntax ClassSymbol { get; init; }
+        public required ClassDeclarationSyntax ClassSyntax { get; init; }
 
         public class ErrorNotPartial : GenerationInfo { }
+
+        public class ErrorDoesNotImplement : GenerationInfo { }
 
         public class Ok : GenerationInfo
         {
@@ -281,15 +295,15 @@ public class ConstructGenerator : IIncrementalGenerator
 
         public override int GetHashCode()
         {
-            return ClassSymbol.GetHashCode();
+            return ClassSyntax.GetHashCode();
         }
 
         public class ClassNameEqualityComparer : EqualityComparer<GenerationInfo>
         {
             public new static ClassNameEqualityComparer Default => new();
-            public override bool Equals(GenerationInfo x, GenerationInfo y) => x.ClassSymbol.ToFullDisplayName() == y.ClassSymbol.ToFullDisplayName();
+            public override bool Equals(GenerationInfo x, GenerationInfo y) => x.ClassSyntax.ToFullDisplayName() == y.ClassSyntax.ToFullDisplayName();
 
-            public override int GetHashCode(GenerationInfo obj) => obj.ClassSymbol.ToFullDisplayName().GetHashCode();
+            public override int GetHashCode(GenerationInfo obj) => obj.ClassSyntax.ToFullDisplayName().GetHashCode();
         }
     }
 }

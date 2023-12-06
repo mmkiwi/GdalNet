@@ -28,8 +28,8 @@ public static class ConstructGenerationHelper
         Stack<TypeDeclarationSyntax> parentClasses = [];
         Stack<BaseNamespaceDeclarationSyntax> parentNamespaces = [];
 
-        TypeDeclarationSyntax parentClass = genInfo.ClassSymbol;
-        SyntaxNode? parent = genInfo.ClassSymbol;
+        TypeDeclarationSyntax parentClass = genInfo.ClassSyntax;
+        SyntaxNode? parent = genInfo.ClassSyntax;
 
         while (parent is not null)
         {
