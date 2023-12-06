@@ -17,18 +17,14 @@ public sealed partial class GdalVirtualDataset : IConstructableWrapper<GdalVirtu
         {
         }
 
-        protected override bool ReleaseHandle()
+        protected override GdalCplErr? ReleaseHandleCore()
         {
-            lock (ReentrantLock)
-            {
-                GdalError.ResetErrors();
-                int res = Interop.VSIFCloseL(handle);
-                return res >= 0 && GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
-            }
+            int res = Interop.VSIFCloseL(handle);
+            return res >= 0 ? GdalCplErr.Failure : GdalCplErr.None;
         }
 
-        public sealed class Owns :MarshalHandle { public Owns() : base(true) { } }
-        public sealed class DoesntOwn :MarshalHandle { public DoesntOwn() : base(true) { } }
+        public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
+        public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(true) { } }
     }
 
     private void Dispose(bool disposing)

@@ -22,15 +22,12 @@ public sealed partial class OgrFeature : IDisposable, IConstructableWrapper<OgrF
 
         static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
 
-        protected override bool ReleaseHandle()
+        protected override GdalCplErr? ReleaseHandleCore()
         {
             lock (ReentrantLock)
             {
-                if (base.IsInvalid)
-                    return false;
-                GdalError.ResetErrors();
                 Interop.OGR_F_Destroy(handle);
-                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
+                return null;
             }
         }
 

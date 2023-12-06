@@ -20,14 +20,9 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
 
         static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
 
-        protected override bool ReleaseHandle()
+        protected override GdalCplErr? ReleaseHandleCore()
         {
-            lock (ReentrantLock)
-            {
-                GdalError.ResetErrors();
-                Interop.OGR_G_DestroyGeometry(handle);
-                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
-            }
+            Interop.OGR_G_DestroyGeometry(handle);
         }
 
         public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }

@@ -21,16 +21,11 @@ public partial class OgrFieldDomain : IConstructableWrapper<OgrFieldDomain, OgrF
 
         static MarshalHandle IConstructableHandle<MarshalHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
 
-        protected override bool ReleaseHandle()
+        protected override GdalCplErr? ReleaseHandleCore()
         {
-            lock (ReentrantLock)
-            {
-                if (base.IsInvalid)
-                    return false;
-                GdalError.ResetErrors();
-                Interop.OGR_FldDomain_Destroy(handle);
-                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
-            }
+            Interop.OGR_FldDomain_Destroy(handle);
+            return null;
+
         }
 
         public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }

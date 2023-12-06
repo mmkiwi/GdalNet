@@ -18,32 +18,12 @@ public sealed partial class GdalDataset : IHasHandle<GdalDataset.MarshalHandle>,
     new MarshalHandle Handle => (MarshalHandle)base.Handle;
     MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    internal abstract class MarshalHandle : GdalInternalHandle
+    [GdalGenerateHandle]
+    internal abstract partial class MarshalHandle : GdalInternalHandle
     {
-        private MarshalHandle(bool ownsHandle) : base(ownsHandle)
-        {
-        }
+        protected MarshalHandle(bool ownsHandle) : base(ownsHandle) { }
 
-        protected override bool ReleaseHandle()
-        {
-            lock (ReentrantLock)
-            {
-                if (base.IsInvalid)
-                    return false;
-                GdalError.ResetErrors();
-                Interop.GDALClose(handle);
-                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
-            }
-        }
-
-        internal class DoesNotOwn : MarshalHandle
-        {
-            public DoesNotOwn() : base(false) { }
-        }
-
-        internal class Owns : MarshalHandle
-        {
-            public Owns() : base(false) { }
-        }
+        internal class Owns : MarshalHandle { public Owns(bool ownsHandle) : base(true) { } }
+        protected override GdalCplErr? ReleaseHandleCore() => Interop.GDALClose(handle);
     }
 }
