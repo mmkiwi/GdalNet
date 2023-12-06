@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -42,6 +43,11 @@ public class ConstructGenerator : IIncrementalGenerator
         // we know the node is a MethodDeclarationSyntax thanks to IsSyntaxTargetForGeneration
         ClassDeclarationSyntax classSyntax = (ClassDeclarationSyntax)context.TargetNode;
         INamedTypeSymbol classSymbol = (INamedTypeSymbol)context.TargetSymbol;
+
+        if (!classSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+        {
+            return new GenerationInfo.ErrorNotPartial() { ClassSymbol = classSyntax };
+        }
 
         AttributeData attribute = context.Attributes.First();
 
@@ -162,7 +168,7 @@ public class ConstructGenerator : IIncrementalGenerator
             return null;
         }
 
-        return new()
+        return new GenerationInfo.Ok()
         {
             ClassSymbol = classSyntax,
             NeedsConstructor = !hasConstructor,
@@ -188,45 +194,67 @@ public class ConstructGenerator : IIncrementalGenerator
 
         foreach (GenerationInfo cls in classes.Distinct(GenerationInfo.ClassNameEqualityComparer.Default))
         {
-            if (cls.ClassSymbol is null || (cls.NeedsConstructMethod is false &&
-                                            cls.NeedsExplicitHandle is false &&
-                                            cls.NeedsImplicitHandle is false &&
-                                            cls.NeedsConstructor is false))
-                continue;
-
-            if(cls.MissingIDisposable)
+            if (cls is GenerationInfo.ErrorNotPartial)
             {
-                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0008",
-                                                                    "Missing IDisposable",
-                                                                    "Class {0} implements IHasHandle, but does not implement IDisposable.",
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00010",
+                                                                    "Class must be partial",
+                                                                    "Class {0} must be partial for the source generator to work.",
                                                                     "GDal.SourceGenerator",
                                                                     DiagnosticSeverity.Warning,
                                                                     true),
                                                             cls.ClassSymbol.GetLocation(),
                                                             cls.ClassSymbol.Identifier));
             }
+            if (cls is GenerationInfo.Ok genInfo)
+            {
+                if (genInfo.NeedsConstructMethod is false &&
+                                                genInfo.NeedsExplicitHandle is false &&
+                                                genInfo.NeedsImplicitHandle is false &&
+                                                genInfo.NeedsConstructor is false)
+                    continue;
 
-            // generate the source code and add it to the output
-            string? result = ConstructGenerationHelper.GenerateExtensionClass(compilation, cls!, context);
-            if (result != null)
-                context.AddSource($"Construct.{cls.ClassSymbol.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
+                if (genInfo.MissingIDisposable)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0008",
+                                                                        "Missing IDisposable",
+                                                                        "Class {0} implements IHasHandle, but does not implement IDisposable.",
+                                                                        "GDal.SourceGenerator",
+                                                                        DiagnosticSeverity.Warning,
+                                                                        true),
+                                                                cls.ClassSymbol.GetLocation(),
+                                                                cls.ClassSymbol.Identifier));
+                }
+
+                // generate the source code and add it to the output
+                string? result = ConstructGenerationHelper.GenerateExtensionClass(compilation, genInfo!, context);
+                if (result != null)
+                    context.AddSource($"Construct.{cls.ClassSymbol.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
+            }
+
+
         }
     }
 
-    public class GenerationInfo
+    public abstract class GenerationInfo
     {
         public required ClassDeclarationSyntax ClassSymbol { get; init; }
-        public required string WrapperType { get; init; }
-        public required string HandleType { get; init; }
-        public required string ConstructorVisibility { get; init; }
-        public required bool NeedsConstructor { get; init; }
-        public required bool NeedsConstructMethod { get; init; }
-        public required bool NeedsExplicitHandle { get; init; }
-        public required bool NeedsImplicitHandle { get; init; }
 
-        public required string HandleVisibility { get; init; }
-        public required string? HandleSetVisibility { get; init; }
-        public bool MissingIDisposable { get; internal set; }
+        public class ErrorNotPartial : GenerationInfo { }
+
+        public class Ok : GenerationInfo
+        {
+            public required string WrapperType { get; init; }
+            public required string HandleType { get; init; }
+            public required string ConstructorVisibility { get; init; }
+            public required bool NeedsConstructor { get; init; }
+            public required bool NeedsConstructMethod { get; init; }
+            public required bool NeedsExplicitHandle { get; init; }
+            public required bool NeedsImplicitHandle { get; init; }
+
+            public required string HandleVisibility { get; init; }
+            public required string? HandleSetVisibility { get; init; }
+            public bool MissingIDisposable { get; internal set; }
+        }
 
         public override int GetHashCode()
         {

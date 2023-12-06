@@ -20,7 +20,7 @@ public static class HandleGenerationHelper
 
     static readonly SymbolDisplayFormat s_symbolDisplayFormat = new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
-    internal static string? GenerateExtensionClass(Compilation compilation, HandleGenerator.GenerationInfo genInfo, SourceProductionContext context)
+    internal static string? GenerateExtensionClass(Compilation compilation, HandleGenerator.GenerationInfo.Ok genInfo, SourceProductionContext context)
     {
         StringBuilder resFile = new();
 

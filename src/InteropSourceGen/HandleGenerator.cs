@@ -51,6 +51,17 @@ public class HandleGenerator : IIncrementalGenerator
         bool hasConstructor = false;
         bool hasConstructMethod = false;
 
+        bool isPartial = classSyntax.Modifiers.Any(m => m.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.PartialKeyword));
+
+        if(!isPartial)
+        {
+            //If the method is not partial, skip everything else and just report an error. 
+            return new GenerationInfo.ErrorNotPartial()
+            {
+                ClassSymbol = classSyntax,
+            };
+        }
+
         MemberVisibility constructorVisibility = MemberVisibility.Protected;
 
         foreach (KeyValuePair<string, TypedConstant> namedArgument in attribute.NamedArguments)
@@ -103,7 +114,7 @@ public class HandleGenerator : IIncrementalGenerator
                 hasConstructor = true;
         }
 
-        return new()
+        return new GenerationInfo.Ok()
         {
             ClassSymbol = classSyntax,
             GenerateConstruct = needsConstructMethod && !hasConstructMethod,
@@ -121,25 +132,34 @@ public class HandleGenerator : IIncrementalGenerator
             return;
         }
 
-        foreach (GenerationInfo cls in classes.Distinct(GenerationInfo.ClassNameEqualityComparer.Default))
+        foreach (GenerationInfo? cls in classes.Distinct(GenerationInfo.ClassNameEqualityComparer.Default))
         {
-            if (cls.ClassSymbol is null)
+            if (cls?.ClassSymbol is null)
                 continue;
-            // generate the source code and add it to the output
-            string? result = HandleGenerationHelper.GenerateExtensionClass(compilation, cls!, context);
-            if (result != null)
-                context.AddSource($"Construct.{cls.ClassSymbol.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
+            if (cls is GenerationInfo.ErrorNotPartial)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00010",
+                                                                                    "Class must be partial",
+                                                                                    "Class {0} must be partial for the source generator to work.",
+                                                                                    "GDal.SourceGenerator",
+                                                                                    DiagnosticSeverity.Warning,
+                                                                                    true),
+                                                                            cls.ClassSymbol.GetLocation(),
+                                                                            cls.ClassSymbol.Identifier));
+            }
+            else if (cls is GenerationInfo.Ok genInfo)
+            {
+                // generate the source code and add it to the output
+                string? result = HandleGenerationHelper.GenerateExtensionClass(compilation, genInfo!, context);
+                if (result != null)
+                    context.AddSource($"Construct.{cls.ClassSymbol.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
+            }
         }
     }
 
-    public class GenerationInfo
+    public abstract class GenerationInfo
     {
         public required ClassDeclarationSyntax ClassSymbol { get; init; }
-        public required bool GenerateConstructor { get; init; }
-        public required bool GenerateConstruct { get; init; }
-        public required string BaseHandleType { get; init; }
-        public required string ConstructorVisibility { get; init; }
-
         public override int GetHashCode()
         {
             return ClassSymbol.GetHashCode();
@@ -149,8 +169,23 @@ public class HandleGenerator : IIncrementalGenerator
         {
             public new static ClassNameEqualityComparer Default => new();
             public override bool Equals(GenerationInfo x, GenerationInfo y) => x.ClassSymbol.ToFullDisplayName() == y.ClassSymbol.ToFullDisplayName();
-
             public override int GetHashCode(GenerationInfo obj) => obj.ClassSymbol.ToFullDisplayName().GetHashCode();
         }
+
+        public class ErrorNotPartial : GenerationInfo
+        {
+
+        }
+        public class Ok : GenerationInfo
+        {
+            public required bool GenerateConstructor { get; init; }
+            public required bool GenerateConstruct { get; init; }
+            public required string BaseHandleType { get; init; }
+            public required string ConstructorVisibility { get; init; }
+        }
     }
+
+    
+
+    
 }

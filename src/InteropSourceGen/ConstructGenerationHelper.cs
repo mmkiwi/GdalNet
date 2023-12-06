@@ -21,7 +21,7 @@ public static class ConstructGenerationHelper
 
     static readonly SymbolDisplayFormat s_symbolDisplayFormat = new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
-    internal static string? GenerateExtensionClass(Compilation compilation, ConstructGenerator.GenerationInfo genInfo, SourceProductionContext context)
+    internal static string? GenerateExtensionClass(Compilation compilation, ConstructGenerator.GenerationInfo.Ok genInfo, SourceProductionContext context)
     {
         StringBuilder resFile = new();
 
