@@ -163,6 +163,11 @@ public class ConstructGenerator : IIncrementalGenerator
             }
         }
 
+        if(needsIDisposable && !hasIDisposable) // Check to see if parent classes have IDisposable
+        {
+            hasIDisposable = FindIDisposableInParent(classSymbol);
+        }
+
         if (handleTypeStr == null)
         {
             return null;
@@ -182,6 +187,24 @@ public class ConstructGenerator : IIncrementalGenerator
             HandleSetVisibility = handleSetVisibility.ToStringFast(),
             MissingIDisposable = needsIDisposable && !hasIDisposable
         };
+
+        static bool FindIDisposableInParent(INamedTypeSymbol classSymbol)
+        {
+            var parent = classSymbol.BaseType;
+            while (parent != null)
+            {
+                foreach (var baseInterface in parent.Interfaces)
+                {
+                    if (baseInterface.ToDisplayString() == "System.IDisposable")
+                    {
+                        return true;
+                    }
+                }
+                parent = parent.BaseType;
+            }
+
+            return false;
+        }
     }
 
     static void Execute(Compilation compilation, ImmutableArray<GenerationInfo> classes, SourceProductionContext context)
