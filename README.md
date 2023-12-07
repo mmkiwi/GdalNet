@@ -8,7 +8,7 @@ and an easier to use, more .NET-like API.
 
 Currently pre-alpha with very little implemented and a constantly changing API.
 I wouldn't use this for any sort of development yet. This project is targeting
-GDAL version 3.7.x as of right now. 
+GDAL version 3.8.x as of right now.
 
 ## License
 
