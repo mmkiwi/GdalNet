@@ -3,41 +3,20 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using MMKiwi.GdalNet.CHelpers;
+using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(GdalHandleMarshallerIn<GdalDataset, GdalDataset.MarshalHandle>))]
-public sealed partial class GdalDataset :IConstructibleWrapper<GdalDataset, GdalDataset.MarshalHandle>
+[GdalGenerateWrapper]
+public sealed partial class GdalDataset : IHasHandle<GdalDataset.MarshalHandle>, IConstructableWrapper<GdalDataset, GdalDataset.MarshalHandle>
 {
-    private GdalDataset(MarshalHandle handle) : base(handle)
+    new MarshalHandle Handle => (MarshalHandle)base.Handle;
+
+    [GdalGenerateHandle]
+    internal abstract partial class MarshalHandle : GdalInternalHandle
     {
-        Handle = handle;
-        RasterBands = new(this);
-        Layers = new(this);
-    }
-    MarshalHandle Handle { get; }
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    static GdalDataset? IConstructibleWrapper<GdalDataset, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
-
-    internal sealed class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
-    {
-        private MarshalHandle(bool ownsHandle) : base(ownsHandle)
-        {
-        }
-
-        public static MarshalHandle Construct(bool ownsHandle) => new(ownsHandle);
-
-        protected override bool ReleaseHandle()
-        {
-            lock (ReentrantLock)
-            {
-                if (base.IsInvalid)
-                    return false;
-                GdalError.ResetErrors();
-                Interop.GDALClose(handle);
-                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
-            }
-        }
+        public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(false) { } }
+        public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
+        protected override GdalCplErr? ReleaseHandleCore() => Interop.GDALClose(handle);
     }
 }

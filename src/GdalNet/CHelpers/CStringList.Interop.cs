@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet.CHelpers;
@@ -12,19 +13,25 @@ internal partial class CStringList
     public unsafe static partial class Interop
     {
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [return: MarshalUsing(typeof(GdalHandleMarshallerOutOwns<CStringList, MarshalHandle>))]
+        private static partial CStringList.MarshalHandle.Owns CSLAddString(CStringList.MarshalHandle strList, string newString);
+        [GdalWrapperMethod]
         public static partial CStringList CSLAddString(CStringList? strList, string newString);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [return: MarshalUsing(typeof(GdalHandleMarshallerOutOwns<CStringList,MarshalHandle>))]
+        private static partial CStringList.MarshalHandle.Owns CSLAddStringMayFail(CStringList.MarshalHandle strList, string newString);
+        [GdalWrapperMethod] 
         public static partial CStringList CSLAddStringMayFail(CStringList? strList, string newString);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial int CSLCount(CStringList? strList);
+        private static partial int CSLCount(CStringList.MarshalHandle strList);
+        [GdalWrapperMethod] 
+        private static partial int CSLCount(CStringList? strList);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        public static partial string CSLGetField(CStringList strList, int index);
+        private static partial string CSLGetField(CStringList.MarshalHandle strList, int index);
+        [GdalWrapperMethod] 
+        private static partial string CSLGetField(CStringList strList, int index);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]

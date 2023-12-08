@@ -30,7 +30,7 @@ public partial class OgrFeatureCollection : IEnumerable<OgrFeature>
 
     private int _isEnumerating;
 
-    private class FeatureEnumerator : IEnumerator<OgrFeature>
+    private sealed class FeatureEnumerator : IEnumerator<OgrFeature>
     {
         public FeatureEnumerator(OgrFeatureCollection ogrFeatureCollection)
         {

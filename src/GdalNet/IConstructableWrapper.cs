@@ -4,6 +4,8 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class GdalDriver
+internal interface IConstructableWrapper<TRes, in THandle>
+    where THandle : GdalInternalHandle
 {
+    public static abstract TRes Construct(THandle handle);
 }

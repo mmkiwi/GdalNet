@@ -4,8 +4,10 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrFieldDomain
+public partial class OgrFieldDomain: IDisposable
 {
+    private bool _disposedValue;
+
     public string Name => Interop.OGR_FldDomain_GetName(this);
     public string Description => Interop.OGR_FldDomain_GetDescription(this);
     public OgrFieldDomainType DomainType => Interop.OGR_FldDomain_GetDomainType(this);
@@ -20,5 +22,25 @@ public partial class OgrFieldDomain
     {
         get => Interop.OGR_FldDomain_GetMergePolicy(this);
         set => Interop.OGR_FldDomain_SetMergePolicy(this, value);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                Handle.Dispose();
+            }
+
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

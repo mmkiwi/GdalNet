@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "InteropSourceGen": {
+      "commandName": "Project"
+    },
+    "SourceGenerator": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\GDalNet\\GdalNet.csproj"
+    }
+  }
+}

@@ -6,8 +6,9 @@ using System.Buffers;
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalVirtualDataset
-{ 
+public sealed partial class GdalVirtualDataset: IDisposable
+{
+    private bool _disposedValue;
 
     public MemoryHandle MemoryHandle { get; private set; }
     public GdalDataset Dataset { get; private set; } = null!;
@@ -28,6 +29,7 @@ public sealed partial class GdalVirtualDataset
             GdalError.ThrowIfError();
         }
 
+        virtualDataset!.MemoryHandle.Dispose();
         virtualDataset!.MemoryHandle = pin;
 
         virtualDataset.Dataset = GdalDataset.Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles)!;
@@ -36,5 +38,25 @@ public sealed partial class GdalVirtualDataset
             GdalError.ThrowIfError();
         }
         return virtualDataset;
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                Handle.Dispose();
+                MemoryHandle.Dispose();
+            }
+
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
     }
 }

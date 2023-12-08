@@ -4,6 +4,8 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class GdalDriver
+internal interface IConstructableHandle<THandle>
+    where THandle:GdalInternalHandle
 {
+    static abstract THandle Construct(bool ownsHandle);
 }

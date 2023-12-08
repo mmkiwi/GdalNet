@@ -10,8 +10,14 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalDataset : GdalMajorObject, IDisposable
+public sealed partial class GdalDataset : GdalMajorObject
 {
+    private GdalDataset(MarshalHandle handle) : base(handle)
+    {
+        RasterBands = new(this);
+        Layers = new(this);
+    }
+
     public static GdalDataset Open(string fileName,
                                     GdalOpenSettings? openSettings = null,
                                     IEnumerable<string>? allowedDrivers = null,
@@ -24,30 +30,8 @@ public sealed partial class GdalDataset : GdalMajorObject, IDisposable
         return dataset!;
     }
 
-    public void Dispose()
-    {
-        Handle.Dispose();
-    }
-
     public GdalBandCollection RasterBands { get; }
     public OgrLayerCollection Layers { get; }
     public int RasterXSize => Interop.GDALGetRasterXSize(this);
     public int RasterYSize => Interop.GDALGetRasterYSize(this);
-}
-
-internal interface IConstructibleWrapper<TRes, THandle> : IHasHandle<THandle>
-    where THandle : GdalInternalHandle
-{
-    public static abstract TRes? Construct(THandle handle);
-}
-
-internal interface IHasHandle<THandle>
-{
-    public THandle Handle { get; }
-}
-
-internal interface IConstructibleHandle<THandle>
-    where THandle : GdalInternalHandle
-{
-    public static abstract THandle Construct(bool ownsHandle);
 }
