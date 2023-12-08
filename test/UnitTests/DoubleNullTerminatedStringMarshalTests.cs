@@ -130,7 +130,7 @@ public unsafe class CStringArrayMarshalTests
     [Fact]
     public unsafe void TestManagedToUnmanagedEmpty()
     {
-        var marshal = CStringArrayMarshal.ConvertToUnmanaged(Array.Empty<string>());
+        var marshal = CStringArrayMarshal.ConvertToUnmanaged([]);
         try
         {
             ((nint)marshal).Should().Be(0);
@@ -179,7 +179,7 @@ public unsafe class CStringArrayMarshalTests
             csl.AddString(data[i]);
         }
 
-        string[]? result = CStringArrayMarshal.ConvertToManaged(csl.HandlePointer);
+        string[]? result = CStringArrayMarshal.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
 
         result.Should().BeEquivalentTo(data);
 
@@ -196,7 +196,7 @@ public unsafe class CStringArrayMarshalTests
             csl.AddString(dataArray[i]);
         }
 
-        string[]? result = CStringArrayMarshal.ConvertToManaged(csl.HandlePointer);
+        string[]? result = CStringArrayMarshal.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
 
         result.Should().BeEquivalentTo(dataArray);
 
@@ -212,7 +212,7 @@ public unsafe class CStringArrayMarshalTests
             csl.AddString(data[i]);
         }
 
-        IEnumerable<string>? result = CStringArrayMarshal.EnumerableMarshal.ConvertToManaged(csl.HandlePointer);
+        IEnumerable<string>? result = CStringArrayMarshal.EnumerableMarshal.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
 
         result.Should().BeEquivalentTo(data);
 
@@ -284,19 +284,19 @@ public unsafe class CStringArrayMarshalTests
 
     public static class TestData
     {
-        public static string[] AsciiOnly => new string[]
-            {
+        public static string[] AsciiOnly =>
+            [
                 "This is a test",
                 "Each member of the array is null-terminated",
                 "The entire array ends with two nulls in a row"
-            };
+            ];
 
-        public static string[] MixedUnicode => new string[]
-            {
+        public static string[] MixedUnicode =>
+            [
                 "This is a test with some Ùnicode characters",
                 "This should perform the same, but some characters will take up multiple bytes",
                 "CKJ: 乪 乫 Emoji:😄 BOM: \uFEFF"
-            };
+            ];
 
         public static Dictionary<string, string> ParameterPair => new()
         {

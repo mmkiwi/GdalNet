@@ -6,11 +6,8 @@ using System.Buffers;
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalVirtualDataset : GdalSafeHandle
-{
-    public GdalVirtualDataset(nint pointer, bool ownsHandle) : base(pointer, ownsHandle)
-    {
-    }
+public sealed partial class GdalVirtualDataset
+{ 
 
     public MemoryHandle MemoryHandle { get; private set; }
     public GdalDataset Dataset { get; private set; } = null!;
@@ -39,22 +36,5 @@ public sealed partial class GdalVirtualDataset : GdalSafeHandle
             GdalError.ThrowIfError();
         }
         return virtualDataset;
-    }
-
-    protected override bool ReleaseHandle()
-    {
-        Interop.VSIFCloseL(this);
-        return true;
-
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        if (disposing)
-        {
-            MemoryHandle.Dispose();
-            this.Dataset.Dispose();
-        }
     }
 }

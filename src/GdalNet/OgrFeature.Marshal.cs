@@ -3,37 +3,40 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 namespace MMKiwi.GdalNet;
-
-[NativeMarshalling(typeof(Marshal.In))]
-public partial class OgrFeature
+[NativeMarshalling(typeof(GdalHandleMarshallerIn<OgrFeature, MarshalHandle>))]
+public sealed partial class OgrFeature : IDisposable, IConstructibleWrapper<OgrFeature, OgrFeature.MarshalHandle>
 {
-    private OgrFeature(nint pointer, bool ownsHandle) : base(pointer, ownsHandle) { }
+    private MarshalHandle Handle { get; }
 
-    internal static partial class Marshal
+    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
+
+    internal OgrFeature(MarshalHandle handle) => Handle = handle;
+    public void Dispose()
     {
-        [CustomMarshaller(typeof(OgrFeature), MarshalMode.Default, typeof(In))]
-        internal static partial class In
+        ((IDisposable)Handle).Dispose();
+    }
+
+    static OgrFeature? IConstructibleWrapper<OgrFeature, MarshalHandle>.Construct(MarshalHandle handle)
+        => new(handle);
+
+    internal class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    {
+        public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
-            public static nint ConvertToUnmanaged(OgrFeature? handle) => handle is null ? 0 : handle.Handle;
         }
 
-        [CustomMarshaller(typeof(OgrFeature), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(OgrFeature? handle) => handle is null ? 0 : handle.Handle;
-            public static OgrFeature? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new OgrFeature(pointer, false);
-            }
-        }
+        static MarshalHandle IConstructibleHandle<MarshalHandle>.Construct(bool ownsHandle)
+            => new(ownsHandle);
 
-        [CustomMarshaller(typeof(OgrFeature), MarshalMode.Default, typeof(OwnsHandle))]
-        internal static partial class OwnsHandle
+        protected override bool ReleaseHandle()
         {
-            public static nint ConvertToUnmanaged(OgrFeature? handle) => handle is null ? 0 : handle.Handle;
-            public static OgrFeature? ConvertToManaged(nint pointer)
+            lock (ReentrantLock)
             {
-                return pointer <= 0 ? null : new OgrFeature(pointer, true);
+                if (base.IsInvalid)
+                    return false;
+                GdalError.ResetErrors();
+                Interop.OGR_F_Destroy(handle);
+                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
             }
         }
     }

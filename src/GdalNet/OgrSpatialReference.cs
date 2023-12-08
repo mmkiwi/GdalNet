@@ -4,4 +4,6 @@
 
 namespace MMKiwi.GdalNet;
 
-public static partial class OgrGeometryFactory;
+public partial class OgrSpatialReference
+{
+}

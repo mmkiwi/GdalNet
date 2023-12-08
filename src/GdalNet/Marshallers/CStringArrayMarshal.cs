@@ -15,7 +15,7 @@ internal unsafe static partial class CStringArrayMarshal
 {
     public static string[]? ConvertToManaged(byte** unmanaged)
     {
-        List<string> results = new();
+        List<string> results = [];
         int i = 0;
         if (unmanaged == null)
             return null;
@@ -33,7 +33,7 @@ internal unsafe static partial class CStringArrayMarshal
             i++;
         }
 
-        return results.ToArray();
+        return [.. results];
     }
 
     public static class DictionaryMarshal
@@ -45,7 +45,7 @@ internal unsafe static partial class CStringArrayMarshal
             if (unmanaged == null)
                 return null;
 
-            Dictionary<string, string> results = new();
+            Dictionary<string, string> results = [];
             while (true)
             {
                 byte* currStringPtr = unmanaged[i];
@@ -134,7 +134,7 @@ internal unsafe static partial class CStringArrayMarshal
         public static void Free(byte** unmanaged) => CSLDestroy(unmanaged);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial void CSLDestroy(byte** unmanaged);
     }
 }

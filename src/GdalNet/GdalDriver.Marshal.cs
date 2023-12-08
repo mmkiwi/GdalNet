@@ -3,25 +3,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 namespace MMKiwi.GdalNet;
-[NativeMarshalling(typeof(Marshal.In))]
 public partial class GdalDriver
 {
-    internal static partial class Marshal
+    internal  class MarshalHandle
     {
-        [CustomMarshaller(typeof(GdalDriver), MarshalMode.Default, typeof(In))]
-        internal static partial class In
-        {
-            public static nint ConvertToUnmanaged(GdalDriver? handle) => handle is null ? 0 : handle.Handle;
-        }
-
-        [CustomMarshaller(typeof(GdalDriver), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(GdalDriver? handle) => handle is null ? 0 : handle.Handle;
-            public static GdalDriver? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new GdalDriver(pointer);
-            }
-        }
+        
     }
 }

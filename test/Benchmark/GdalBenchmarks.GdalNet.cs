@@ -15,7 +15,7 @@ public partial class GdalBenchmarks
     {
         GdalInfo.RegisterAllDrivers();
         using var dataset = GdalDataset.Open(FileName, openOptions: new Dictionary<string, string> { { "TABLE", "RasterAerial1" } });
-        List<GdalDataType> dataTypes = new();
+        List<GdalDataType> dataTypes = [];
         foreach (var band in dataset.RasterBands)
         {
             dataTypes.Add(band.DataType);

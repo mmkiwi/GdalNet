@@ -36,7 +36,7 @@ public class OgrLayerTests: LayerTestBase
 
 public class LayerTestBase: DatasetTestBase
 {
-    protected LayerInfo GetLayer(int index) => TestData.Layers[index];
+    protected static LayerInfo GetLayer(int index) => TestData.Layers[index];
 
     public static IEnumerable<object[]> Layers => Enumerable.Range(0, TestData.LayerCount).Select(x => new object[] { x });
 }

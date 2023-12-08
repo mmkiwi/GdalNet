@@ -14,12 +14,12 @@ public static partial class GdalInfo
         static Interop() => GdalError.EnsureInitialize();
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
         internal static partial string GDALVersionInfo(ReadOnlySpan<byte> requestType);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         internal static partial void GDALAllRegister();
     }
 }

@@ -4,9 +4,6 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrGeomFieldDefn : GdalHandle
+public partial class OgrGeomFieldDefn
 {
-    private OgrGeomFieldDefn(nint pointer) : base(pointer)
-    {
-    }
 }

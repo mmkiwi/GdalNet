@@ -10,15 +10,15 @@ public sealed partial class GdalVirtualDataset
     internal static partial class Interop
     {
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return: MarshalUsing(typeof(Marshal.OwnsHandle))]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [return: MarshalUsing(typeof(GdalHandleMarshallerOutOwns<GdalVirtualDataset, GdalVirtualDataset.MarshalHandle>))]
         public unsafe static partial GdalVirtualDataset VSIFileFromMemBuffer(string fileName,
                                                                 byte* buffer,
                                                                 long buffSize,
                                                                 [MarshalAs(UnmanagedType.Bool)] bool takeOwnership);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial int VSIFCloseL(GdalVirtualDataset dataset);
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial int VSIFCloseL(nint dataset);
     }
 }

@@ -4,35 +4,54 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal.In))]
-public sealed partial class GdalVirtualDataset
+public sealed partial class GdalVirtualDataset : IConstructibleWrapper<GdalVirtualDataset, GdalVirtualDataset.MarshalHandle>, IDisposable
 {
-    internal static partial class Marshal
+    private bool _disposedValue;
+
+    private GdalVirtualDataset(MarshalHandle handle) => Handle = handle;
+    private MarshalHandle Handle { get; }
+
+    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
+
+    static GdalVirtualDataset? IConstructibleWrapper<GdalVirtualDataset, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
+
+    internal class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
     {
-        [CustomMarshaller(typeof(GdalVirtualDataset), MarshalMode.Default, typeof(In))]
-        internal static partial class In
+        public MarshalHandle(bool ownsHandle) : base(ownsHandle)
         {
-            public static nint ConvertToUnmanaged(GdalVirtualDataset? handle) => handle is null ? 0 : handle.Handle;
         }
 
-        [CustomMarshaller(typeof(GdalVirtualDataset), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(GdalVirtualDataset? handle) => handle is null ? 0 : handle.Handle;
-            public static GdalVirtualDataset? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new GdalVirtualDataset(pointer, false);
-            }
-        }
+        public static MarshalHandle Construct(bool ownsHandle) => new(ownsHandle);
 
-        [CustomMarshaller(typeof(GdalVirtualDataset), MarshalMode.Default, typeof(OwnsHandle))]
-        internal static partial class OwnsHandle
+        protected override bool ReleaseHandle()
         {
-            public static nint ConvertToUnmanaged(GdalVirtualDataset? handle) => handle is null ? 0 : handle.Handle;
-            public static GdalVirtualDataset? ConvertToManaged(nint pointer)
+            lock (ReentrantLock)
             {
-                return pointer <= 0 ? null : new GdalVirtualDataset(pointer, true);
+                GdalError.ResetErrors();
+                int res = Interop.VSIFCloseL(handle);
+                return res >= 0 && GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
             }
         }
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                MemoryHandle.Dispose();
+                Handle.Dispose();
+            }
+
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

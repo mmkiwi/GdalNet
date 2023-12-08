@@ -10,10 +10,6 @@
         <RootNamespace>MMKiwi.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
         <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
-
-    <Target Name="GenerateStubs" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild">
-        <Exec Command="..\..\artifacts\bin\GdalStubGenerator\debug\GdalStubGenerator.exe $(MSBuildProjectDirectory)" />
-    </Target>
     
     <ItemGroup>
         <None Include="..\..\vcpkg_installed\x64-windows\bin\*.dll" LinkBase="dependencies">

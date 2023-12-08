@@ -22,7 +22,8 @@ public partial class OgrLayer
 
     public bool TryGetFeatureById(long id, [NotNullWhen(true)] out OgrFeature? feature)
     {
-        return (feature = Interop.OGR_L_GetFeature(this, id)) is not null;
+        feature = Interop.OGR_L_GetFeature(this, id);
+        return feature is not null;
     }
 
     public OgrFeature GetFeatureById(long id)
@@ -31,5 +32,4 @@ public partial class OgrLayer
         GdalError.ThrowIfError();
         return feature ?? throw new InvalidOperationException($"Could not get feature with ID {id} from layer {Name}");
     }
-
 }

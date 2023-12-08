@@ -21,8 +21,8 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
         {
             if (index < 0 || index >= Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
-            
-            return GdalDataset.Interop.GDALDatasetGetLayer(Dataset, index) ?? throw new InvalidOperationException();
+
+            return GdalDataset.Interop.GDALDatasetGetLayer(Dataset, index);
         }
     }
 
@@ -31,7 +31,7 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
         get
         {
             ArgumentNullException.ThrowIfNull(key);
-            return GdalDataset.Interop.GDALDatasetGetLayerByName(Dataset, key) ?? throw new KeyNotFoundException();
+            return GdalDataset.Interop.GDALDatasetGetLayerByName(Dataset, key) ?? throw new NotImplementedException();
         }
     }
 

@@ -9,24 +9,18 @@ namespace MMKiwi.GdalNet;
 public sealed partial class GdalDataset
 {
 
-    protected override bool ReleaseHandle()
-    {
-        var errCode = Interop.GDALClose(this);
-        return errCode == GdalCplErr.None;
-    }
-
     [CLSCompliant(false)]
     internal static new partial class Interop
     {
         static Interop() => GdalError.EnsureInitialize();
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static partial GdalCplErr GDALClose(GdalDataset dataset);
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial GdalCplErr GDALClose(nint dataset);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return:MarshalUsing(typeof(Marshal.OwnsHandle))]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [return:MarshalUsing(typeof(GdalHandleMarshallerOutOwns<GdalDataset, GdalDataset.MarshalHandle>))]
         public static partial GdalDataset? GDALOpenEx(string fileName,
                                                       GdalOpenFlags openFlags,
                                                       [MarshalUsing(typeof(CStringArrayMarshal))]
@@ -36,37 +30,33 @@ public sealed partial class GdalDataset
                                                       [MarshalUsing(typeof(CStringArrayMarshal))]
                                                       IEnumerable<string>? siblingFiles);
 
-
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial int GDALGetRasterCount(GdalDataset dataset);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial int GDALGetRasterXSize(GdalDataset dataset);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial int GDALGetRasterYSize(GdalDataset dataset);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return: MarshalUsing(typeof(GdalRasterBand.Marshal.DoesNotOwnHandle))]
-        public static partial GdalRasterBand? GDALGetRasterBand(GdalDataset dataset, int bandId);
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial GdalRasterBand GDALGetRasterBand(GdalDataset dataset, int bandId);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial int GDALDatasetGetLayerCount(GdalDataset dataset);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return: MarshalUsing(typeof(OgrLayer.Marshal.DoesNotOwnHandle))]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial OgrLayer? GDALDatasetGetLayerByName(GdalDataset dataset, string layer);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-        [return: MarshalUsing(typeof(OgrLayer.Marshal.DoesNotOwnHandle))]
-        public static partial OgrLayer? GDALDatasetGetLayer(GdalDataset dataset, int layerId);
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial OgrLayer GDALDatasetGetLayer(GdalDataset dataset, int layerId);
     }
 }
 

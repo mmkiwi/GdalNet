@@ -13,7 +13,7 @@ public partial class OgrFieldDomain
     internal partial class Interop
     {
         [LibraryImport("gdal")]
-        public unsafe static partial void OGR_FldDomain_Destroy(OgrFieldDomain domain);
+        public unsafe static partial void OGR_FldDomain_Destroy(nint domain);
 
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
@@ -45,7 +45,7 @@ public partial class OgrFieldDomain
         public unsafe static partial void OGR_FldDomain_SetMergePolicy(OgrFieldDomain domain, OgrFieldDomainMergePolicy value);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        [return:MarshalUsing(typeof(OgrCodedFieldDomain.Marshal.OwnsHandle))]
+        [return:MarshalUsing(typeof(GdalHandleMarshallerOutOwns<OgrCodedFieldDomain, OgrCodedFieldDomain.MarshalHandle>))]
         public unsafe static partial OgrCodedFieldDomain? OGR_CodedFldDomain_Create(string name, string? description, OgrFieldType fieldType, OgrFieldSubType fieldSubType, nint enumeration);
     }
 }

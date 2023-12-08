@@ -5,7 +5,7 @@
 using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
-public sealed partial class GdalRasterBand: GdalHandle
+public sealed partial class GdalRasterBand
 {
     [CLSCompliant(false)]
     internal static partial class Interop
@@ -13,12 +13,12 @@ public sealed partial class GdalRasterBand: GdalHandle
         static Interop() => GdalError.EnsureInitialize();
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [return: MarshalUsing(typeof(CStringArrayMarshal))]
         public static partial string[] GDALGetRasterCategoryNames(GdalRasterBand rasterBand);
 
         [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial GdalDataType GDALGetRasterDataType(GdalRasterBand rasterBand);
     }
 }

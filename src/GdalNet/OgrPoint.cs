@@ -4,6 +4,6 @@
 
 namespace MMKiwi.GdalNet;
 
-public abstract partial class GdalMajorObject
+public partial class OgrPoint:OgrGeometry
 {
 }

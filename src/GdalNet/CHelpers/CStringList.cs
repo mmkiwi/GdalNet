@@ -20,27 +20,29 @@ namespace MMKiwi.GdalNet.CHelpers;
 ///  <see cref="Marshallers.CStringArrayMarshal"/> can be used to marshal
 ///  any IEnumerable 
 /// </remarks>
-internal unsafe sealed partial class CStringList : GdalSafeHandle
+internal sealed unsafe partial class CStringList : IDisposable
 {
     public static CStringList Create(string firstString)
     {
-        return new(Interop.CSLAddString(null, firstString), true);
+        return Interop.CSLAddString(null, firstString);
     }
-
-    protected override bool ReleaseHandle()
-    {
-        Interop.CSLDestroy(this);
-        return true;
-    }
-
-    public byte** HandlePointer => (byte**)Handle;
 
     public void AddString(string value)
     {
-        nint newHandle = Interop.CSLAddStringMayFail(this, value);
-        if (newHandle != 0)
+        var newHandle = Interop.CSLAddStringMayFail(this, value);
+        if (!newHandle.Handle.IsInvalid)
         {
-            Handle = newHandle;
+            // Invalidate the old handle before reassigning it, CSLAddStringMayFail
+            // takes care of deleting it, and we don't want to delete the old area
+            // of memory when the finalizer for the old Handle is run, otherwise
+            // there'll be memory errors
+            Handle.SetHandleAsInvalid();
+            Handle = newHandle.Handle;
         }
+    }
+
+    public void Dispose()
+    {
+        Handle.Dispose();
     }
 }

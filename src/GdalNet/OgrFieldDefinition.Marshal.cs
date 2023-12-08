@@ -4,28 +4,16 @@
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(Marshal.In))]
-public partial class OgrFieldDefinition
+[NativeMarshalling(typeof(GdalHandleMarshaller<OgrFieldDefinition, MarshalHandle>))]
+public partial class OgrFieldDefinition : IConstructibleWrapper<OgrFieldDefinition, OgrFieldDefinition.MarshalHandle>
 {
-    private OgrFieldDefinition(nint handle) : base(handle) { }
+    private OgrFieldDefinition(MarshalHandle handle) => Handle = handle;
 
-    internal static partial class Marshal
-    {
-        [CustomMarshaller(typeof(OgrFieldDefinition), MarshalMode.Default, typeof(In))]
-        internal static partial class In
-        {
-            public static nint ConvertToUnmanaged(OgrFieldDefinition? handle) => handle is null ? 0 : handle.Handle;
-        }
+    internal MarshalHandle Handle { get; }
 
-        [CustomMarshaller(typeof(OgrFieldDefinition), MarshalMode.Default, typeof(DoesNotOwnHandle))]
-        internal static partial class DoesNotOwnHandle
-        {
-            public static nint ConvertToUnmanaged(OgrFieldDefinition? handle) => handle is null ? 0 : handle.Handle;
-            public static OgrFieldDefinition? ConvertToManaged(nint pointer)
-            {
-                return pointer <= 0 ? null : new OgrFieldDefinition(pointer);
-            }
-        }
+    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
 
-    }
+    static OgrFieldDefinition? IConstructibleWrapper<OgrFieldDefinition, MarshalHandle>.Construct(MarshalHandle handle) => new(handle);
+
+    internal partial class MarshalHandle : GdalInternalHandleNeverOwns { }
 }

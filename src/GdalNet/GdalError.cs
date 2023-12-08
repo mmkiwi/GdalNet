@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace MMKiwi.GdalNet;
 
@@ -12,7 +13,7 @@ public sealed partial record class GdalError
 #if DEBUG
     static GdalError()
     {
-        ErrorRaised += (s,e) => DebugError(s,e);
+        ErrorRaised += (s, e) => DebugError(s, e);
     }
 #endif
     private GdalError(GdalCplErr severity, int errorNum, string message)
@@ -44,6 +45,36 @@ public sealed partial record class GdalError
         UserInterrupt = 9,
         ObjectNull = 10
     }
+
+    public static void ThrowIfError(GdalCplErr error)
+    {
+        ThrowIfError();
+        if (error == GdalCplErr.Failure || error == GdalCplErr.Fatal)
+        {
+            throw new GdalException("Unknown GDAL error");
+        }
+    }
+
+    public static void ThrowIfError(OgrError error)
+    {
+        ThrowIfError();
+        if (error == OgrError.None)
+            return;
+        throw error switch
+        {
+            OgrError.NotEnoughData => throw new InvalidDataException("OGR: not enough data"),
+            OgrError.NotEnoughMemory => throw new InsufficientMemoryException("OGR: not enough memory"),
+            OgrError.UnsupportedGeometryType => throw new InvalidDataException("OGR: Unsupported Geometry Type"),
+            OgrError.UnsupportedOperation => throw new InvalidOperationException("OGR: Unsupported Operation"),
+            OgrError.CorruptData => throw new InvalidDataException("OGR: Corrupt Data"),
+            OgrError.Falure => throw new GdalException("OGR: Failure"),
+            OgrError.UnsupportedSRS => throw new InvalidDataException("OGR: Unsupported spatial reference"),
+            OgrError.InvalidHandle => throw new InvalidDataException("OGR: Invalid handle"),
+            OgrError.NonExistingFeature => throw new InvalidDataException("OGR: Non existing feature"),
+            _ => throw new GdalException("Unknown OGR exception"),
+        };
+    }
+
 
     public static void ThrowIfError()
     {
@@ -84,8 +115,25 @@ public sealed partial record class GdalError
         {
             return;
         }
-        else 
+        else
             Debug.WriteLine($"GDAL Error Severity:{eventArgs.Error.Severity}, Code: {(int)eventArgs.Error.ErrorNum}, {eventArgs.Error.Message}", "GDAL");
+    }
+
+    [CustomMarshaller(typeof(OgrError), MarshalMode.ManagedToUnmanagedOut, typeof(ThrowMarshal))]
+    [CustomMarshaller(typeof(GdalCplErr), MarshalMode.ManagedToUnmanagedOut, typeof(ThrowMarshal))]
+    public static class ThrowMarshal
+    {
+        public static OgrError ConvertToManaged(OgrError unmanaged)
+        {
+            ThrowIfError(unmanaged);
+            return unmanaged;
+        }
+
+        public static GdalCplErr ConvertToManaged(GdalCplErr unmanaged)
+        {
+            ThrowIfError(unmanaged);
+            return unmanaged;
+        }
     }
 }
 
@@ -97,4 +145,19 @@ public sealed class GdalErrorEventArgs : EventArgs
     }
 
     public GdalError Error { get; }
+}
+
+public class GdalException : ApplicationException
+{
+    public GdalException()
+    {
+    }
+
+    public GdalException(string? message) : base(message)
+    {
+    }
+
+    public GdalException(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
 }
