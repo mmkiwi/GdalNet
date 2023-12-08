@@ -2,60 +2,25 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Diagnostics.Contracts;
+
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(GdalHandleMarshallerIn<OgrFieldDomain, OgrFieldDomain.MarshalHandle>))]
-public partial class OgrFieldDomain:IConstructibleWrapper<OgrFieldDomain, OgrFieldDomain.MarshalHandle>, IDisposable
+[GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected)]
+public partial class OgrFieldDomain : IConstructableWrapper<OgrFieldDomain, OgrFieldDomain.MarshalHandle>, IHasHandle<OgrFieldDomain.MarshalHandle>
 {
-    private bool _disposedValue;
-
-    private protected OgrFieldDomain(MarshalHandle handle) { Handle = handle; }
-
-    private protected MarshalHandle Handle { get; }
-
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    static OgrFieldDomain? IConstructibleWrapper<OgrFieldDomain, MarshalHandle>.Construct(MarshalHandle handle)
-        => new(handle);
-
-    internal class MarshalHandle : GdalInternalHandle, IConstructibleHandle<MarshalHandle>
+    [GdalGenerateHandle]
+    internal abstract partial class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
     {
-        public MarshalHandle(bool ownsHandle) : base(ownsHandle)
+        protected override GdalCplErr? ReleaseHandleCore()
         {
+            Interop.OGR_FldDomain_Destroy(handle);
+            return null;
         }
 
-        public static MarshalHandle Construct(bool ownsHandle) => new(ownsHandle);
-
-        protected override bool ReleaseHandle()
-        {
-            lock (ReentrantLock)
-            {
-                if (base.IsInvalid)
-                    return false;
-                GdalError.ResetErrors();
-                Interop.OGR_FldDomain_Destroy(handle);
-                return GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
-            }
-        }
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposedValue)
-        {
-            if (disposing)
-            {
-                ((IDisposable)Handle).Dispose();
-            }
-
-            _disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
+        public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(true) { } }
     }
 }

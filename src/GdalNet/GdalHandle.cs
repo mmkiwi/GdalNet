@@ -18,12 +18,30 @@ internal abstract class GdalInternalHandle : SafeHandle
     internal bool OwnsHandle { get; }
 
     public static readonly object ReentrantLock = new();
+
+    protected override bool ReleaseHandle()
+    {
+        lock (ReentrantLock)
+        {
+            if (IsInvalid)
+                return false;
+
+            GdalError.ResetErrors();
+            var err = ReleaseHandleCore();
+            bool errIsFatal = err is not null or GdalCplErr.Failure or GdalCplErr.Fatal;
+            bool lastIsFatal = GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
+            return !errIsFatal && !lastIsFatal;
+        }
+    }
+
+    protected abstract GdalCplErr? ReleaseHandleCore();
 }
 
 internal abstract class GdalInternalHandleNeverOwns : GdalInternalHandle
 {
     protected GdalInternalHandleNeverOwns() : base(false) { }
 
+    protected override GdalCplErr? ReleaseHandleCore() => default;
     protected override bool ReleaseHandle() => true;
 
 }

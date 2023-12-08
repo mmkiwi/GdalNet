@@ -3,8 +3,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 namespace MMKiwi.GdalNet;
-public abstract partial class OgrGeometry
+public abstract partial class OgrGeometry: IDisposable
 {
+    private bool _disposedValue;
+
     public static OgrGeometry CreateFromWkb(ReadOnlySpan<byte> wkb, OgrSpatialReference? spatialReference = null)
     {
         var err = Interop.OGR_G_CreateFromWkb(wkb, spatialReference, out OgrGeometry result, wkb.Length);
@@ -111,5 +113,25 @@ public abstract partial class OgrGeometry
             GdalError.ThrowIfError();
             return result;
         }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                Handle.Dispose();
+            }
+
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

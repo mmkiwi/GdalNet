@@ -2,8 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace MMKiwi.GdalNet;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-public abstract partial class GdalMajorObject
-{
-}
+namespace MMKiwi.GdalNet.InteropSourceGen;
+
+public record class MethodGenerationInfo(MethodDeclarationSyntax Method, string TargetName);

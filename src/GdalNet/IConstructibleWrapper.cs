@@ -4,6 +4,6 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class GdalDriver
+internal interface IConstructableWrapper<T>
 {
 }

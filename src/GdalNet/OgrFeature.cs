@@ -4,6 +4,26 @@
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial class OgrFeature
+public sealed partial class OgrFeature : IDisposable
 {
+    private bool _disposedValue;
+
+    private void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                Handle.Dispose();
+            }
+
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+    }
 }

@@ -2,27 +2,22 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Diagnostics;
 using System.Reflection;
+
+using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(GdalHandleMarshaller<OgrLayer, MarshalHandle>))]
-public partial class OgrLayer : IConstructibleWrapper<OgrLayer, OgrLayer.MarshalHandle>
+[GdalGenerateWrapper]
+public sealed partial class OgrLayer : IConstructableWrapper<OgrLayer, OgrLayer.MarshalHandle>, IHasHandle<OgrLayer.MarshalHandle>
 {
-    private OgrLayer(MarshalHandle handle)
+    internal OgrLayer(MarshalHandle handle)
     {
         Handle = handle;
         Features = new(this);
     }
 
-    internal MarshalHandle Handle { get; }
-
-    MarshalHandle IHasHandle<MarshalHandle>.Handle => Handle;
-
-    static OgrLayer? IConstructibleWrapper<OgrLayer, MarshalHandle>.Construct(MarshalHandle handle) 
-        => new(handle);
-
-    internal class MarshalHandle : GdalInternalHandleNeverOwns
-    {
-    }
+    [GdalGenerateHandle]
+    internal sealed partial class MarshalHandle : GdalInternalHandleNeverOwns, IConstructableHandle<MarshalHandle>    {    }
 }
