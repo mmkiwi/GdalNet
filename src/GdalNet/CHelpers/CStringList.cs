@@ -17,7 +17,7 @@ namespace MMKiwi.GdalNet.CHelpers;
 /// or <see cref="Array"/> of strings and then convert at the end.
 /// </summary>
 /// <remarks>
-///  <see cref="Marshallers.CStringArrayMarshal"/> can be used to marshal
+///  <see cref=Marshallerss.CStringArrayMarshal"/> can be used to marshal
 ///  any IEnumerable 
 /// </remarks>
 internal sealed unsafe partial class CStringList : IDisposable

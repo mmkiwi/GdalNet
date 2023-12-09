@@ -36,5 +36,9 @@ internal partial class CStringList
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial void CSLDestroy(nint unmanaged);
+        
+        [LibraryImport("gdal")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial void CSLDestroy(byte** unmanaged);
     }
 }

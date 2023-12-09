@@ -21,7 +21,7 @@ public unsafe class CStringArrayMarshalTests
     [MemberData(nameof(TestStrings))]
     public unsafe void TestManagedToUnmanaged(string[] data)
     {
-        byte** marshal = CStringArrayMarshal.ConvertToUnmanaged(data);
+        byte** marshal = CStringArrayMarshal.StringArray.ConvertToUnmanaged(data);
         try
         {
             using AssertionScope _ = new();
@@ -34,7 +34,7 @@ public unsafe class CStringArrayMarshalTests
         }
         finally
         {
-            CStringArrayMarshal.Free(marshal);
+            CStringArrayMarshal.StringArray.Free(marshal);
         }
     }
 
@@ -60,7 +60,7 @@ public unsafe class CStringArrayMarshalTests
         }
         finally
         {
-            CStringArrayMarshal.Free(marshal);
+            CStringArrayMarshal.StringArray.Free(marshal);
         }
     }
 
@@ -81,21 +81,21 @@ public unsafe class CStringArrayMarshalTests
         }
         finally
         {
-            CStringArrayMarshal.Free(marshal);
+            CStringArrayMarshal.StringArray.Free(marshal);
         }
     }
 
     [Fact]
     public unsafe void TestManagedToUnmanagedNull()
     {
-        byte** marshal = CStringArrayMarshal.ConvertToUnmanaged(null!);
+        byte** marshal = CStringArrayMarshal.StringArray.ConvertToUnmanaged(null!);
         try
         {
             ((nint)marshal).Should().Be(0);
         }
         finally
         {
-            CStringArrayMarshal.Free(marshal);
+            CStringArrayMarshal.StringArray.Free(marshal);
         }
     }
 
@@ -109,7 +109,7 @@ public unsafe class CStringArrayMarshalTests
         }
         finally
         {
-            CStringArrayMarshal.Free(marshal);
+            CStringArrayMarshal.StringArray.Free(marshal);
         }
     }
 
@@ -123,21 +123,22 @@ public unsafe class CStringArrayMarshalTests
         }
         finally
         {
-            CStringArrayMarshal.Free(marshal);
+            CStringArrayMarshal.StringArray.Free(marshal);
         }
     }
 
     [Fact]
     public unsafe void TestManagedToUnmanagedEmpty()
     {
-        var marshal = CStringArrayMarshal.ConvertToUnmanaged([]);
+        byte** marshal = CStringArrayMarshal.StringArray.ConvertToUnmanaged([]);
         try
         {
-            ((nint)marshal).Should().Be(0);
+            byte* result = *marshal;
+            ((nint)result).Should().Be(0);
         }
         finally
         {
-            CStringArrayMarshal.Free(marshal);
+            CStringArrayMarshal.StringArray.Free(marshal);
         }
     }
 
@@ -147,11 +148,12 @@ public unsafe class CStringArrayMarshalTests
         var marshal = CStringArrayMarshal.DictionaryMarshal.ConvertToUnmanaged(new Dictionary<string,string>());
         try
         {
-            ((nint)marshal).Should().Be(0);
+            byte* result = *marshal;
+            ((nint)result).Should().Be(0);
         }
         finally
         {
-            CStringArrayMarshal.Free(marshal);
+            CStringArrayMarshal.StringArray.Free(marshal);
         }
     }
 
@@ -161,11 +163,12 @@ public unsafe class CStringArrayMarshalTests
         var marshal = CStringArrayMarshal.EnumerableMarshal.ConvertToUnmanaged(Array.Empty<string>());
         try
         {
-            ((nint)marshal).Should().Be(0);
+            byte* result = *marshal;
+            ((nint)result).Should().Be(0);
         }
         finally
         {
-            CStringArrayMarshal.Free(marshal);
+            CStringArrayMarshal.StringArray.Free(marshal);
         }
     }
 
@@ -179,7 +182,7 @@ public unsafe class CStringArrayMarshalTests
             csl.AddString(data[i]);
         }
 
-        string[]? result = CStringArrayMarshal.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
+        string[]? result = CStringArrayMarshal.StringArray.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
 
         result.Should().BeEquivalentTo(data);
 
@@ -196,7 +199,7 @@ public unsafe class CStringArrayMarshalTests
             csl.AddString(dataArray[i]);
         }
 
-        string[]? result = CStringArrayMarshal.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
+        string[]? result = CStringArrayMarshal.StringArray.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
 
         result.Should().BeEquivalentTo(dataArray);
 
@@ -221,7 +224,7 @@ public unsafe class CStringArrayMarshalTests
     [Fact]
     public void TestUnmanagedToManagedNull()
     {
-        string[]? result = CStringArrayMarshal.ConvertToManaged(null)?.ToArray();
+        string[]? result = CStringArrayMarshal.StringArray.ConvertToManaged(null)?.ToArray();
         result.Should().BeNull();
     }
 
@@ -245,7 +248,7 @@ public unsafe class CStringArrayMarshalTests
         byte** single = (byte**)NativeMemory.Alloc((nuint)sizeof(nint));
         single[0] = null;
 
-        string[]? result = CStringArrayMarshal.ConvertToManaged(single)?.ToArray();
+        string[]? result = CStringArrayMarshal.StringArray.ConvertToManaged(single)?.ToArray();
         result.Should().BeEmpty();
     }
 
