@@ -264,11 +264,9 @@ public class ConstructGeneratorTest
         var runResult = driver.GetRunResult().Results.Single();
         return Verify(runResult).UseDirectory("snapshots");
     }
-
-    public static IEnumerable<object[]> MemberVisibilities => MemberVisibilityExtensions.GetValues().Select(m=>new object[]{m});
-    
+   
     [Theory]
-    [MemberData(nameof(MemberVisibilities))]
+    [ClassData(typeof(MemberVisibilities))]
     public Task TestConstructorVisibility(MemberVisibility memberVisibility)
     {
         SyntaxTree source = CSharpSyntaxTree.ParseText(
@@ -296,7 +294,7 @@ public class ConstructGeneratorTest
     }
     
     [Theory]
-    [MemberData(nameof(MemberVisibilities))]
+    [ClassData(typeof(MemberVisibilities))]
     public Task TestHandleVisibility(MemberVisibility memberVisibility)
     {
         SyntaxTree source = CSharpSyntaxTree.ParseText(
@@ -368,7 +366,7 @@ public class ConstructGeneratorTest
     }
     
     [Theory]
-    [MemberData(nameof(MemberVisibilities))]
+    [ClassData(typeof(MemberVisibilities))]
     public Task TestHandleSetVisibility(MemberVisibility memberVisibility)
     {
         SyntaxTree source = CSharpSyntaxTree.ParseText(
