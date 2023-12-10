@@ -1,0 +1,30 @@
+﻿{
+  Generator: {},
+  GeneratedSources: [
+    {
+      HintName: InteropGenerator.Interop.Test.g.cs,
+      Source:
+using MMKiwi.GdalNet.InteropAttributes;
+using MMKiwi.GdalNet;
+using System.Runtime.InteropServices;
+#nullable enable
+namespace Test {
+public partial static class Interop
+{ 
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+    public static partial int TestCMethod(in TestWrapper dataset)
+    {
+        int __return_value;
+        ArgumentNullException.ThrowIfNull(dataset);
+        TestHandle __param_dataset = ((IHasHandle<TestHandle>)dataset).Handle;
+         __return_value = TestCMethod(__param_dataset);
+        return __return_value;
+
+    }
+}
+}
+
+    }
+  ],
+  Diagnostics: null
+}

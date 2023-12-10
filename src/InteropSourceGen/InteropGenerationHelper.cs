@@ -275,6 +275,7 @@ public static class InteropGenerationHelper
 
             if (fullName == "System.Runtime.InteropServices.LibraryImportAttribute")
                 return true;
+            
         }
         return false;
     }
