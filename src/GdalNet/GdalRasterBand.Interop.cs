@@ -9,6 +9,7 @@ namespace MMKiwi.GdalNet;
 public sealed partial class GdalRasterBand
 {
     [CLSCompliant(false)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     internal static partial class Interop
     {
         static Interop() => GdalError.EnsureInitialize();

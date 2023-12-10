@@ -10,6 +10,7 @@ namespace MMKiwi.GdalNet;
 public partial class GdalMajorObject
 {
     [CLSCompliant(false)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     internal static partial class Interop
     {
         [LibraryImport("gdal")]

@@ -18,7 +18,7 @@ public sealed partial class GdalVirtualDataset : IConstructableWrapper<GdalVirtu
             return res >= 0 ? GdalCplErr.Failure : GdalCplErr.None;
         }
 
-        public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
-        public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(true) { } }
+        public sealed class Owns() : MarshalHandle(true);
+        public sealed class DoesntOwn() : MarshalHandle(true);
     }
 }

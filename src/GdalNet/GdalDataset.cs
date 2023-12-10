@@ -6,10 +6,11 @@ namespace MMKiwi.GdalNet;
 
 public sealed partial class GdalDataset : GdalMajorObject
 {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameterInConstructor")] 
     private GdalDataset(MarshalHandle handle) : base(handle)
     {
-        RasterBands = new(this);
-        Layers = new(this);
+        RasterBands = new GdalBandCollection(this);
+        Layers = new OgrLayerCollection(this);
     }
 
     public static GdalDataset Open(string fileName,

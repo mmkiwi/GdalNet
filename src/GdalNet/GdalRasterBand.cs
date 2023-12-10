@@ -2,12 +2,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalRasterBand
+[GdalGenerateWrapper]
+public sealed partial class GdalRasterBand: IConstructableWrapper<GdalRasterBand, GdalRasterBand.MarshalHandle>, IHasHandle<GdalRasterBand.MarshalHandle>
 {
     public string[] Categories => Interop.GDALGetRasterCategoryNames(this);
     public GdalDataType DataType => Interop.GDALGetRasterDataType(this);
-
+    
+    [GdalGenerateHandle]
+    internal sealed partial class MarshalHandle : GdalInternalHandleNeverOwns, IConstructableHandle<MarshalHandle>;
 }
-

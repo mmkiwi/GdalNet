@@ -11,6 +11,7 @@ public sealed partial class GdalDataset
 {
 
     [CLSCompliant(false)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     internal static new partial class Interop
     {
         static Interop() => GdalError.EnsureInitialize();

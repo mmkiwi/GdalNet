@@ -18,8 +18,8 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
             return null;
         }
 
-        public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
-        public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(true) { } }
+        public sealed class Owns() : MarshalHandle(true);
+        public sealed class DoesntOwn() : MarshalHandle(true);
     }
 
     static OgrGeometry IConstructableWrapper<OgrGeometry, MarshalHandle>.Construct(MarshalHandle handle)

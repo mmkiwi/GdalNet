@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-internal interface IHasHandle<THandle>
+internal interface IHasHandle<out THandle>
 {
     public THandle Handle { get; }
 }
