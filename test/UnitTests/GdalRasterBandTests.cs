@@ -2,11 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System;
-
 using FluentAssertions.Execution;
-
-using MMKiwi.GdalNet;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
@@ -21,7 +17,7 @@ public sealed class GdalRasterBandTests:DatasetTestBase
         using var _ = new AssertionScope();
         var datasetInfo = GetDataset(index);
 
-        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options)!;
         var dataset = virtualDataset.Dataset;
 
         foreach (var band in dataset.RasterBands)
@@ -35,7 +31,7 @@ public sealed class GdalRasterBandTests:DatasetTestBase
         using var _ = new AssertionScope();
         var datasetInfo = GetDataset(index);
 
-        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options)!;
         var dataset = virtualDataset.Dataset;
 
         var action = () => dataset.RasterBands[-1];
@@ -49,7 +45,7 @@ public sealed class GdalRasterBandTests:DatasetTestBase
         using var _ = new AssertionScope();
         var datasetInfo = GetDataset(index);
 
-        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
+        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options)!;
         var dataset = virtualDataset.Dataset;
 
         var action = () => dataset.RasterBands[dataset.RasterBands.Count + 1];

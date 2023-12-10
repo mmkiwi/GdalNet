@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrFieldCollection : IReadOnlyList<OgrField>
+public class OgrFieldCollection : IReadOnlyList<OgrField>
 {
     internal OgrFieldCollection(OgrFeature feature)
     {

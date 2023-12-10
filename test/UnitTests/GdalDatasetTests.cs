@@ -2,15 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System;
-using System.Collections.Immutable;
-
-using MMKiwi.GdalNet;
-using MMKiwi.GdalNet.SampleData;
-
-using Xunit.Abstractions;
-using Xunit.Sdk;
-
 namespace MMKiwi.GdalNet.UnitTests;
 
 //[Collection("GDAL")]
@@ -26,7 +17,7 @@ public sealed class GdalDatasetTests: DatasetTestBase
             using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
             var dataset = virtualDataset.Dataset;
         };
-        action.Should().NotThrow($"should exist");
+        action.Should().NotThrow("should exist");
     }
 
     [Fact]
@@ -37,8 +28,7 @@ public sealed class GdalDatasetTests: DatasetTestBase
             using var dataset = GdalDataset.Open("DOESNOTEXIST");
             if (dataset is not null)
                 throw new Exception(dataset.Description);
-            else
-                throw new Exception("X");
+            throw new Exception("X");
         };
         action.Should().Throw<IOException>();
     }
@@ -62,7 +52,7 @@ public sealed class GdalDatasetTests: DatasetTestBase
         var datasetInfo = GetDataset(index);
 
         using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
-        var dataset = virtualDataset.Dataset;
+        var dataset = virtualDataset?.Dataset;
 
         dataset!.RasterXSize.Should().Be(datasetInfo.Dataset.RasterXSize);
     }
@@ -74,7 +64,7 @@ public sealed class GdalDatasetTests: DatasetTestBase
         var datasetInfo = GetDataset(index);
 
         using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
-        var dataset = virtualDataset.Dataset;
+        var dataset = virtualDataset?.Dataset;
 
         dataset!.RasterYSize.Should().Be(datasetInfo.Dataset.RasterYSize);
     }
@@ -86,7 +76,7 @@ public sealed class GdalDatasetTests: DatasetTestBase
         var datasetInfo = GetDataset(index);
 
         using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
-        var dataset = virtualDataset.Dataset;
+        var dataset = virtualDataset?.Dataset;
 
         dataset!.Layers.Count.Should().Be(datasetInfo.File.Layers.Length);
     }

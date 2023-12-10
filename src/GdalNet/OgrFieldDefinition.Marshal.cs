@@ -2,8 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Diagnostics;
-
 using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
@@ -12,5 +10,5 @@ namespace MMKiwi.GdalNet;
 public partial class OgrFieldDefinition : IConstructableWrapper<OgrFieldDefinition, OgrFieldDefinition.MarshalHandle>, IHasHandle<OgrFieldDefinition.MarshalHandle>
 {
     [GdalGenerateHandle]
-    internal sealed partial class MarshalHandle : GdalInternalHandleNeverOwns, IConstructableHandle<MarshalHandle> { }
+    internal sealed partial class MarshalHandle : GdalInternalHandleNeverOwns, IConstructableHandle<MarshalHandle>;
 }

@@ -7,7 +7,7 @@ using MMKiwi.GdalNet.InteropAttributes;
 namespace MMKiwi.GdalNet.CHelpers;
 
 [GdalGenerateWrapper(HandleSetVisibility = MemberVisibility.Private)]
-internal unsafe sealed partial class CStringList : IConstructableWrapper<CStringList, CStringList.MarshalHandle>, IHasHandle<CStringList.MarshalHandle>
+internal sealed partial class CStringList : IConstructableWrapper<CStringList, CStringList.MarshalHandle>, IHasHandle<CStringList.MarshalHandle>
 {
     [GdalGenerateHandle]
     internal abstract partial class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>

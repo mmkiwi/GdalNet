@@ -10,7 +10,5 @@ namespace MMKiwi.GdalNet;
 public partial class GdalDriver: IConstructableWrapper<GdalDriver, GdalDriver.MarshalHandle>, IHasHandle<GdalDriver.MarshalHandle>
 {
     [GdalGenerateHandle]
-    internal sealed partial class MarshalHandle: GdalInternalHandleNeverOwns
-    {
-    }
+    internal sealed partial class MarshalHandle: GdalInternalHandleNeverOwns;
 }

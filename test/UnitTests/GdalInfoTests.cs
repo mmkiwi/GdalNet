@@ -2,14 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using MMKiwi.GdalNet;
-
-using System.Text.RegularExpressions;
-
 namespace MMKiwi.GdalNet.UnitTests;
 
 //[Collection("GDAL")]
-public partial class GdalInfoTests
+public class GdalInfoTests
 {
     [Fact]
     public void CanGetVersion()

@@ -2,12 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Data;
-
-using Microsoft.Win32.SafeHandles;
-
-using MMKiwi.GdalNet.Marshallers;
-
 namespace MMKiwi.GdalNet;
 
 public sealed partial class GdalDataset : GdalMajorObject

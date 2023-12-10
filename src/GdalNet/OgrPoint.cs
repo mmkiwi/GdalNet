@@ -4,6 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrPoint:OgrGeometry
+public class OgrPoint : OgrGeometry
 {
+    internal OgrPoint(MarshalHandle handle) : base(handle) { }
 }

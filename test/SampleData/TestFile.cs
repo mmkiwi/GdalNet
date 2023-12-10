@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace MMKiwi.GdalNet.SampleData;
 
-public record class TestFile
+public record TestFile
 {
     public required byte[] Data { get; init; }
     public required ImmutableArray<TestDataset> Datasets {  get; init; }

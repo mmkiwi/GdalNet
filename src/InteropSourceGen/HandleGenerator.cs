@@ -2,12 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System;
 using System.Collections.Immutable;
-using System.Reflection;
 using System.Text;
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -18,11 +17,11 @@ namespace MMKiwi.GdalNet.InteropSourceGen;
 [Generator]
 public class HandleGenerator : IIncrementalGenerator
 {
-    const string AttributeFull = $"{nameof(MMKiwi)}.{nameof(GdalNet)}.{nameof(InteropAttributes)}.{nameof(GdalGenerateHandleAttribute)}";
+    const string AttributeFull =
+        $"{nameof(MMKiwi)}.{nameof(GdalNet)}.{nameof(InteropAttributes)}.{nameof(GdalGenerateHandleAttribute)}";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-
         // Do a simple filter for methods
         IncrementalValuesProvider<GenerationInfo> methodDeclarations = context.SyntaxProvider
             .ForAttributeWithMetadataName(
@@ -36,7 +35,8 @@ public class HandleGenerator : IIncrementalGenerator
             = context.CompilationProvider.Combine(methodDeclarations.Collect());
 
         // Generate the source using the compilation and methods
-        context.RegisterSourceOutput(compilationAndMethods, static (spc, source) => Execute(source.Item1, source.Item2, spc));
+        context.RegisterSourceOutput(compilationAndMethods,
+            static (spc, source) => Execute(source.Item1, source.Item2, spc));
     }
 
     static GenerationInfo? GetClasses(GeneratorAttributeSyntaxContext context, CancellationToken ct)
@@ -51,22 +51,20 @@ public class HandleGenerator : IIncrementalGenerator
         bool hasConstructor = false;
         bool hasConstructMethod = false;
 
-        bool isPartial = classSyntax.Modifiers.Any(m => m.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.PartialKeyword));
+        bool isPartial = classSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword));
 
-        if(!isPartial)
+        if (!isPartial)
         {
             //If the method is not partial, skip everything else and just report an error. 
-            return new GenerationInfo.ErrorNotPartial()
-            {
-                ClassSymbol = classSyntax,
-            };
+            return new GenerationInfo.ErrorNotPartial { ClassSymbol = classSyntax, };
         }
 
         MemberVisibility constructorVisibility = MemberVisibility.Protected;
 
         foreach (KeyValuePair<string, TypedConstant> namedArgument in attribute.NamedArguments)
         {
-            if (namedArgument.Key == nameof(GdalGenerateHandleAttribute.ConstuctorVisibility) && namedArgument.Value.Value is int cv)
+            if (namedArgument.Key == nameof(GdalGenerateHandleAttribute.ConstuctorVisibility) &&
+                namedArgument.Value.Value is int cv)
             {
                 constructorVisibility = (MemberVisibility)cv;
             }
@@ -82,11 +80,13 @@ public class HandleGenerator : IIncrementalGenerator
                 baseHandle = "GdalInternalHandleNeverOwns";
                 break;
             }
-            else if (parentClass.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandle")
+
+            if (parentClass.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandle")
             {
                 baseHandle = "GdalInternalHandle";
                 break;
             }
+
             parentClass = parentClass.BaseType;
         }
 
@@ -95,7 +95,8 @@ public class HandleGenerator : IIncrementalGenerator
 
         foreach (INamedTypeSymbol baseInterface in classSymbol.Interfaces)
         {
-            if (baseInterface.IsGenericType && baseInterface.ConstructedFrom.ToDisplayString() is "MMKiwi.GdalNet.IConstructableHandle<THandle>")
+            if (baseInterface.IsGenericType &&
+                baseInterface.ConstructedFrom.ToDisplayString() is "MMKiwi.GdalNet.IConstructableHandle<THandle>")
             {
                 needsConstructMethod = true;
                 foreach (ISymbol member in baseInterface.GetMembers())
@@ -114,18 +115,21 @@ public class HandleGenerator : IIncrementalGenerator
                 hasConstructor = true;
         }
 
-        return new GenerationInfo.Ok()
+        return new GenerationInfo.Ok
         {
             ClassSymbol = classSyntax,
             GenerateConstruct = needsConstructMethod && !hasConstructMethod,
             BaseHandleType = baseHandle,
-            GenerateConstructor = !hasConstructor && baseHandle == "GdalInternalHandle" && constructorVisibility != MemberVisibility.DoNotGenerate,
+            GenerateConstructor =
+                !hasConstructor && baseHandle == "GdalInternalHandle" &&
+                constructorVisibility != MemberVisibility.DoNotGenerate,
             ConstructorVisibility = constructorVisibility.ToStringFast(),
             IsSealedOrAbstract = classSymbol.IsAbstract || classSymbol.IsSealed
         };
     }
 
-    static void Execute(Compilation compilation, ImmutableArray<GenerationInfo> classes, SourceProductionContext context)
+    static void Execute(Compilation compilation, ImmutableArray<GenerationInfo> classes,
+        SourceProductionContext context)
     {
         if (classes.IsDefaultOrEmpty)
         {
@@ -140,31 +144,32 @@ public class HandleGenerator : IIncrementalGenerator
             if (cls is GenerationInfo.ErrorNotPartial)
             {
                 context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00010",
-                                                                                    "Class must be partial",
-                                                                                    "Class {0} must be partial for the source generator to work.",
-                                                                                    "GDal.SourceGenerator",
-                                                                                    DiagnosticSeverity.Warning,
-                                                                                    true),
-                                                                            cls.ClassSymbol.GetLocation(),
-                                                                            cls.ClassSymbol.Identifier));
+                        "Class must be partial",
+                        "Class {0} must be partial for the source generator to work.",
+                        "GDal.SourceGenerator",
+                        DiagnosticSeverity.Warning,
+                        true),
+                    cls.ClassSymbol.GetLocation(),
+                    cls.ClassSymbol.Identifier));
             }
             else if (cls is GenerationInfo.Ok genInfo)
             {
-                if(!genInfo.IsSealedOrAbstract)
+                if (!genInfo.IsSealedOrAbstract)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00012",
-                                                                    "Handle shoudl be sealed or abstract",
-                                                                    "Class {0} should be sealed or abstract.",
-                                                                    "GDal.SourceGenerator",
-                                                                    DiagnosticSeverity.Warning,
-                                                                    true),
-                                                            cls.ClassSymbol.GetLocation(),
-                                                            cls.ClassSymbol.Identifier));
+                            "Handle shoudl be sealed or abstract",
+                            "Class {0} should be sealed or abstract.",
+                            "GDal.SourceGenerator",
+                            DiagnosticSeverity.Warning,
+                            true),
+                        cls.ClassSymbol.GetLocation(),
+                        cls.ClassSymbol.Identifier));
                 }
+
                 // generate the source code and add it to the output
-                string? result = HandleGenerationHelper.GenerateExtensionClass(compilation, genInfo!, context);
-                if (result != null)
-                    context.AddSource($"Construct.{cls.ClassSymbol.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
+                string result = HandleGenerationHelper.GenerateExtensionClass(compilation, genInfo, context);
+                context.AddSource($"Construct.{cls.ClassSymbol.ToFullDisplayName()}.g.cs",
+                    SourceText.From(result, Encoding.UTF8));
             }
         }
     }
@@ -172,6 +177,7 @@ public class HandleGenerator : IIncrementalGenerator
     public abstract class GenerationInfo
     {
         public required ClassDeclarationSyntax ClassSymbol { get; init; }
+
         public override int GetHashCode()
         {
             return ClassSymbol.GetHashCode();
@@ -180,14 +186,15 @@ public class HandleGenerator : IIncrementalGenerator
         public class ClassNameEqualityComparer : EqualityComparer<GenerationInfo>
         {
             public new static ClassNameEqualityComparer Default => new();
-            public override bool Equals(GenerationInfo x, GenerationInfo y) => x.ClassSymbol.ToFullDisplayName() == y.ClassSymbol.ToFullDisplayName();
+
+            public override bool Equals(GenerationInfo x, GenerationInfo y) =>
+                x.ClassSymbol.ToFullDisplayName() == y.ClassSymbol.ToFullDisplayName();
+
             public override int GetHashCode(GenerationInfo obj) => obj.ClassSymbol.ToFullDisplayName().GetHashCode();
         }
 
-        public class ErrorNotPartial : GenerationInfo
-        {
+        public class ErrorNotPartial : GenerationInfo;
 
-        }
         public class Ok : GenerationInfo
         {
             public required bool GenerateConstructor { get; init; }

@@ -2,8 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Diagnostics;
-
 namespace MMKiwi.GdalNet;
 
 internal abstract class GdalInternalHandle : SafeHandle
@@ -21,6 +19,9 @@ internal abstract class GdalInternalHandle : SafeHandle
 
     protected override bool ReleaseHandle()
     {
+        if (OwnsHandle)
+            return false;
+        
         lock (ReentrantLock)
         {
             if (IsInvalid)
@@ -28,8 +29,10 @@ internal abstract class GdalInternalHandle : SafeHandle
 
             GdalError.ResetErrors();
             var err = ReleaseHandleCore();
-            bool errIsFatal = err is not null or GdalCplErr.Failure or GdalCplErr.Fatal;
-            bool lastIsFatal = GdalError.LastError is not null && GdalError.LastError.Severity is not GdalCplErr.Failure or GdalCplErr.Fatal;
+            bool errIsFatal = err is not GdalCplErr.Failure && err is not GdalCplErr.Fatal;
+            bool lastIsFatal = GdalError.LastError is not null && 
+                               GdalError.LastError.Severity is not GdalCplErr.Failure && 
+                               GdalError.LastError.Severity is not GdalCplErr.Fatal;
             return !errIsFatal && !lastIsFatal;
         }
     }

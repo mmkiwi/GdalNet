@@ -12,43 +12,43 @@ public partial class OgrLayer
     {
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        private static partial string OGR_L_GetName(OgrLayer.MarshalHandle layer);
+        private static partial string OGR_L_GetName(MarshalHandle layer);
 
         [GdalWrapperMethod]
         public static partial string OGR_L_GetName(OgrLayer layer);
 
         [LibraryImport("gdal")]
-        private static partial OgrFeature.MarshalHandle.Owns OGR_L_GetNextFeature(OgrLayer.MarshalHandle layer);
+        private static partial OgrFeature.MarshalHandle.Owns OGR_L_GetNextFeature(MarshalHandle layer);
         [GdalWrapperMethod]
-        public static partial OgrFeature OGR_L_GetNextFeature(OgrLayer layer);
+        public static partial OgrFeature? OGR_L_GetNextFeature(OgrLayer layer);
 
         [LibraryImport("gdal")]
-        private static partial void OGR_L_ResetReading(OgrLayer.MarshalHandle layer);
+        private static partial void OGR_L_ResetReading(MarshalHandle layer);
         [GdalWrapperMethod]
         public static partial void OGR_L_ResetReading(OgrLayer layer);
 
         [LibraryImport("gdal")]
-        private static partial OgrError OGR_L_SetNextByIndex(OgrLayer.MarshalHandle layer, long index);
+        private static partial OgrError OGR_L_SetNextByIndex(MarshalHandle layer, long index);
         [GdalWrapperMethod]
-        private static partial OgrError OGR_L_SetNextByIndex(OgrLayer layer, long index);
+        public static partial OgrError OGR_L_SetNextByIndex(OgrLayer layer, long index);
 
         [LibraryImport("gdal")]
-        private static partial OgrFeature.MarshalHandle.Owns OGR_L_GetFeature(OgrLayer.MarshalHandle layer, long index);
+        private static partial OgrFeature.MarshalHandle.Owns OGR_L_GetFeature(MarshalHandle layer, long index);
         [GdalWrapperMethod]
         public static partial OgrFeature? OGR_L_GetFeature(OgrLayer layer, long index);
 
         [LibraryImport("gdal")]
-        private static partial OgrWkbGeometryType OGR_L_GetGeomType(OgrLayer.MarshalHandle layer);
+        private static partial OgrWkbGeometryType OGR_L_GetGeomType(MarshalHandle layer);
         [GdalWrapperMethod]
         public static partial OgrWkbGeometryType OGR_L_GetGeomType(OgrLayer layer);
 
         [LibraryImport("gdal")]
-        private static partial nint OGR_L_GetGeometryTypes(OgrLayer.MarshalHandle layer, int geomField, int flags, out int entryCount, nint progressFunc, nint progressData);
+        private static partial nint OGR_L_GetGeometryTypes(MarshalHandle layer, int geomField, int flags, out int entryCount, nint progressFunc, nint progressData);
         [GdalWrapperMethod]
         public static partial nint OGR_L_GetGeometryTypes(OgrLayer layer, int geomField, int flags, out int entryCount, nint progressFunc, nint progressData);
 
         [LibraryImport("gdal")]
-        private static partial OgrGeometry.MarshalHandle.DoesntOwn OGR_L_GetSpatialFilter(OgrLayer.MarshalHandle layer);
+        private static partial OgrGeometry.MarshalHandle.DoesntOwn OGR_L_GetSpatialFilter(MarshalHandle layer);
 
         [GdalWrapperMethod]
         public static partial OgrGeometry? OGR_L_GetSpatialFilter(OgrLayer layer);
@@ -64,7 +64,7 @@ public partial class OgrLayer
         public static partial void OGR_L_SetSpatialFilterEx(OgrGeometry? geometry);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        private static partial OgrError OGR_L_SetAttributeFilter(OgrLayer.MarshalHandle layer, string? query);
+        private static partial OgrError OGR_L_SetAttributeFilter(MarshalHandle layer, string? query);
         [GdalWrapperMethod]
         public static partial OgrError OGR_L_SetAttributeFilter(OgrLayer layer, string? query);
 
@@ -79,7 +79,7 @@ public partial class OgrLayer
         public static partial OgrError OGR_L_CreateFeature(OgrFeature feature);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
-        private static partial OgrError OGR_L_DeleteFeature(OgrLayer.MarshalHandle layer, long featureId);
+        private static partial OgrError OGR_L_DeleteFeature(MarshalHandle layer, long featureId);
         [GdalWrapperMethod]
         public static partial OgrError OGR_L_DeleteFeature(OgrLayer layer, long featureId);
 
@@ -89,7 +89,7 @@ public partial class OgrLayer
         public static partial OgrError OGR_L_UpsertFeature(OgrFeature feature);
 
         [LibraryImport("gdal")]
-        private static partial OgrError OGR_L_UpdateFeature(OgrLayer.MarshalHandle layer,
+        private static partial OgrError OGR_L_UpdateFeature(MarshalHandle layer,
                                                            OgrFeature.MarshalHandle feature,
                                                            int updatedFieldsCount,
                                                            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex=2), In]

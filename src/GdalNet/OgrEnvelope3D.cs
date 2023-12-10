@@ -5,7 +5,7 @@
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(OgrEnvelope3dMarshaller))]
-public record class OgrEnvelope3D(double MinX, double MaxX, double MinY, double MaxY, double MinZ, double MaxZ)
+public record OgrEnvelope3D(double MinX, double MaxX, double MinY, double MaxY, double MinZ, double MaxZ)
 {
     public OgrEnvelope3D() : this(double.NegativeInfinity,
                                   double.PositiveInfinity,
@@ -14,7 +14,7 @@ public record class OgrEnvelope3D(double MinX, double MaxX, double MinY, double 
                                   double.NegativeInfinity,
                                   double.PositiveInfinity) { }
 
-    public bool IsEmpty => MinX == double.NegativeInfinity;
+    public bool IsEmpty => double.IsNegativeInfinity(MinX);
 
     public OgrEnvelope3D Merge(OgrEnvelope3D other)
         => new(Math.Min(MinX, other.MinX),
@@ -40,21 +40,16 @@ public record class OgrEnvelope3D(double MinX, double MaxX, double MinY, double 
             {
                 return sOther;
             }
-            else
-            {
-                return new(MinX: Math.Min(MinX, sOther.MinX),
-                           MaxX: Math.Max(MaxX, sOther.MaxX),
-                           MinY: Math.Max(MinY, sOther.MinY),
-                           MaxY: Math.Min(MaxY, sOther.MaxY),
-                           MinZ: Math.Max(MinZ, sOther.MinZ),
-                           MaxZ: Math.Min(MaxZ, sOther.MaxZ));
 
-            }
+            return new(MinX: Math.Min(MinX, sOther.MinX),
+                MaxX: Math.Max(MaxX, sOther.MaxX),
+                MinY: Math.Max(MinY, sOther.MinY),
+                MaxY: Math.Min(MaxY, sOther.MaxY),
+                MinZ: Math.Max(MinZ, sOther.MinZ),
+                MaxZ: Math.Min(MaxZ, sOther.MaxZ));
         }
-        else
-        {
-            return new();
-        }
+
+        return new();
     }
 
     public bool Intersects(OgrEnvelope3D other)
@@ -68,7 +63,7 @@ public record class OgrEnvelope3D(double MinX, double MaxX, double MinY, double 
            MinZ <= other.MinZ && MaxZ >= other.MaxZ;
 
     [CustomMarshaller(typeof(OgrEnvelope3D), MarshalMode.Default, typeof(OgrEnvelope3dMarshaller))]
-    internal static unsafe class OgrEnvelope3dMarshaller
+    internal static class OgrEnvelope3dMarshaller
     {
         [StructLayout(LayoutKind.Sequential)]
         internal struct OGREnvelopeUnmanaged3d

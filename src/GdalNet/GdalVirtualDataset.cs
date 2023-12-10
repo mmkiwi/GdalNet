@@ -13,7 +13,7 @@ public sealed partial class GdalVirtualDataset: IDisposable
     public MemoryHandle MemoryHandle { get; private set; }
     public GdalDataset Dataset { get; private set; } = null!;
 
-    public unsafe static GdalVirtualDataset Open(Memory<byte> buffer,
+    public unsafe static GdalVirtualDataset? Open(Memory<byte> buffer,
                                                  GdalOpenSettings? openSettings = null,
                                                  IEnumerable<string>? allowedDrivers = null,
                                                  IReadOnlyDictionary<string, string>? openOptions = null,
@@ -22,22 +22,30 @@ public sealed partial class GdalVirtualDataset: IDisposable
         GdalOpenSettings openFlags = openSettings ?? new();
 
         string fileName = $"/vsimem/datasource_{Guid.NewGuid()}";
-        var pin = buffer.Pin();
-        GdalVirtualDataset virtualDataset = Interop.VSIFileFromMemBuffer(fileName, (byte*)pin.Pointer, buffer.Length, false);
+        using var pin = buffer.Pin();
+        GdalVirtualDataset? virtualDataset = Interop.VSIFileFromMemBuffer(fileName, (byte*)pin.Pointer, buffer.Length, false);
+        
         if (virtualDataset is null)
         {
             GdalError.ThrowIfError();
         }
-
-        virtualDataset!.MemoryHandle.Dispose();
-        virtualDataset!.MemoryHandle = pin;
-
-        virtualDataset.Dataset = GdalDataset.Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles)!;
-        if (virtualDataset.Dataset is null)
+        else
         {
-            GdalError.ThrowIfError();
+            virtualDataset.MemoryHandle.Dispose();
+            virtualDataset.MemoryHandle = pin;
+
+            GdalDataset? dataset =
+                GdalDataset.Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
+
+            virtualDataset.Dataset = dataset!;
+            if (dataset is null)
+            {
+                GdalError.ThrowIfError();
+            }
+            return virtualDataset;
         }
-        return virtualDataset;
+
+        return null;
     }
 
     private void Dispose(bool disposing)

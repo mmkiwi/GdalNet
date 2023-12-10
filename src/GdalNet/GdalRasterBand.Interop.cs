@@ -16,13 +16,13 @@ public sealed partial class GdalRasterBand
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [return: MarshalUsing(typeof(CStringArrayMarshal))]
-        private static partial string[] GDALGetRasterCategoryNames(GdalRasterBand.MarshalHandle rasterBand);
+        private static partial string[] GDALGetRasterCategoryNames(MarshalHandle rasterBand);
         [GdalWrapperMethod]
         public static partial string[] GDALGetRasterCategoryNames(GdalRasterBand rasterBand);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        private static partial GdalDataType GDALGetRasterDataType(GdalRasterBand.MarshalHandle rasterBand);
+        private static partial GdalDataType GDALGetRasterDataType(MarshalHandle rasterBand);
         [GdalWrapperMethod]
         public static partial GdalDataType GDALGetRasterDataType(GdalRasterBand rasterBand);
     }

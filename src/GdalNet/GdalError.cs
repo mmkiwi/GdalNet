@@ -3,17 +3,15 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.Serialization;
 
 namespace MMKiwi.GdalNet;
 
-public sealed partial record class GdalError
+public sealed partial record GdalError
 {
 #if DEBUG
     static GdalError()
     {
-        ErrorRaised += (s, e) => DebugError(s, e);
+        ErrorRaised += DebugError;
     }
 #endif
     private GdalError(GdalCplErr severity, int errorNum, string message)
@@ -83,7 +81,7 @@ public sealed partial record class GdalError
             return;
         }
 
-        else if (LastError?.Severity == GdalCplErr.Failure || LastError?.Severity == GdalCplErr.Fatal)
+        if (LastError.Severity is GdalCplErr.Failure or GdalCplErr.Fatal)
         {
             try
             {
@@ -109,14 +107,14 @@ public sealed partial record class GdalError
         }
     }
 
-    public static void DebugError(object? sender, GdalErrorEventArgs eventArgs)
+    private static void DebugError(object? sender, GdalErrorEventArgs eventArgs)
     {
-        if (eventArgs?.Error == null || eventArgs.Error.Severity == GdalCplErr.None)
+        if (eventArgs.Error.Severity == GdalCplErr.None)
         {
             return;
         }
-        else
-            Debug.WriteLine($"GDAL Error Severity:{eventArgs.Error.Severity}, Code: {(int)eventArgs.Error.ErrorNum}, {eventArgs.Error.Message}", "GDAL");
+
+        Debug.WriteLine($"GDAL Error Severity:{eventArgs.Error.Severity}, Code: {(int)eventArgs.Error.ErrorNum}, {eventArgs.Error.Message}", "GDAL");
     }
 
     [CustomMarshaller(typeof(OgrError), MarshalMode.ManagedToUnmanagedOut, typeof(ThrowMarshal))]

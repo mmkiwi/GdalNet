@@ -2,8 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Microsoft.VisualBasic.FileIO;
-
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -18,48 +16,48 @@ public partial class OgrFieldDomain
 
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        private static partial string OGR_FldDomain_GetName(OgrFieldDomain.MarshalHandle domain);
+        private static partial string OGR_FldDomain_GetName(MarshalHandle domain);
         [GdalWrapperMethod]
         public static partial string OGR_FldDomain_GetName(OgrFieldDomain domain);
 
         [LibraryImport("gdal")]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        private static partial string OGR_FldDomain_GetDescription(OgrFieldDomain.MarshalHandle domain);
+        private static partial string OGR_FldDomain_GetDescription(MarshalHandle domain);
         [GdalWrapperMethod]
         public static partial string OGR_FldDomain_GetDescription(OgrFieldDomain domain);
 
         [LibraryImport("gdal")]
-        private static partial OgrFieldDomainType OGR_FldDomain_GetDomainType(OgrFieldDomain.MarshalHandle domain);
+        private static partial OgrFieldDomainType OGR_FldDomain_GetDomainType(MarshalHandle domain);
         [GdalWrapperMethod]
         public static partial OgrFieldDomainType OGR_FldDomain_GetDomainType(OgrFieldDomain domain);
 
         [LibraryImport("gdal")]
-        private static partial OgrFieldType OGR_FldDomain_GetFieldType(OgrFieldDomain.MarshalHandle domain);
+        private static partial OgrFieldType OGR_FldDomain_GetFieldType(MarshalHandle domain);
         [GdalWrapperMethod]
         public static partial OgrFieldType OGR_FldDomain_GetFieldType(OgrFieldDomain domain);
 
         [LibraryImport("gdal")]
-        private static partial OgrFieldSubType OGR_FldDomain_GetFieldSubType(OgrFieldDomain.MarshalHandle domain);
+        private static partial OgrFieldSubType OGR_FldDomain_GetFieldSubType(MarshalHandle domain);
         [GdalWrapperMethod]
         public static partial OgrFieldSubType OGR_FldDomain_GetFieldSubType(OgrFieldDomain domain);
 
         [LibraryImport("gdal")]
-        private static partial OgrFieldDomainSplitPolicy OGR_FldDomain_GetSplitPolicy(OgrFieldDomain.MarshalHandle domain);
+        private static partial OgrFieldDomainSplitPolicy OGR_FldDomain_GetSplitPolicy(MarshalHandle domain);
         [GdalWrapperMethod]
         public static partial OgrFieldDomainSplitPolicy OGR_FldDomain_GetSplitPolicy(OgrFieldDomain domain);
 
         [LibraryImport("gdal")]
-        private static partial void OGR_FldDomain_SetSplitPolicy(OgrFieldDomain.MarshalHandle domain, OgrFieldDomainSplitPolicy value);
+        private static partial void OGR_FldDomain_SetSplitPolicy(MarshalHandle domain, OgrFieldDomainSplitPolicy value);
         [GdalWrapperMethod]
         public static partial void OGR_FldDomain_SetSplitPolicy(OgrFieldDomain domain, OgrFieldDomainSplitPolicy value);
 
         [LibraryImport("gdal")]
-        private static partial OgrFieldDomainMergePolicy OGR_FldDomain_GetMergePolicy(OgrFieldDomain.MarshalHandle domain);
+        private static partial OgrFieldDomainMergePolicy OGR_FldDomain_GetMergePolicy(MarshalHandle domain);
         [GdalWrapperMethod]
         public static partial OgrFieldDomainMergePolicy OGR_FldDomain_GetMergePolicy(OgrFieldDomain domain);
 
         [LibraryImport("gdal")]
-        private static partial void OGR_FldDomain_SetMergePolicy(OgrFieldDomain.MarshalHandle domain, OgrFieldDomainMergePolicy value);
+        private static partial void OGR_FldDomain_SetMergePolicy(MarshalHandle domain, OgrFieldDomainMergePolicy value);
         [GdalWrapperMethod]
         public static partial void OGR_FldDomain_SetMergePolicy(OgrFieldDomain domain, OgrFieldDomainMergePolicy value);
 

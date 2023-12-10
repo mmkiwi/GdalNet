@@ -13,13 +13,13 @@ public sealed partial class GdalVirtualDataset
     {
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8, EntryPoint =nameof(VSIFileFromMemBuffer))]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        private unsafe static partial GdalVirtualDataset.MarshalHandle.Owns _VSIFileFromMemBuffer(string fileName,
+        private unsafe static partial MarshalHandle.Owns _VSIFileFromMemBuffer(string fileName,
                                                                 byte* buffer,
                                                                 long buffSize,
                                                                 [MarshalAs(UnmanagedType.Bool)] bool takeOwnership);
 
         [GdalWrapperMethod(MethodName =nameof(_VSIFileFromMemBuffer))]
-        public unsafe static partial GdalVirtualDataset VSIFileFromMemBuffer(string fileName,
+        public unsafe static partial GdalVirtualDataset? VSIFileFromMemBuffer(string fileName,
                                                         byte* buffer,
                                                         long buffSize,
                                                         bool takeOwnership);

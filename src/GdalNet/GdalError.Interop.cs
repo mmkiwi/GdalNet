@@ -6,10 +6,10 @@ namespace MMKiwi.GdalNet;
 
 using unsafe CplErrHandle = delegate* unmanaged[Stdcall]<GdalCplErr, int, char*, void>;
 
-public unsafe partial record class GdalError
+public unsafe partial record GdalError
 {
     [CLSCompliant(false)]
-    internal unsafe static partial class Interop
+    internal static partial class Interop
     {
         static Interop() => EnsureInitialize();
 
@@ -35,7 +35,7 @@ public unsafe partial record class GdalError
 
     private static CplErrHandle GetStdcallAction() => (CplErrHandle)Marshal.GetFunctionPointerForDelegate(HandleError);
 
-    private unsafe static void HandleError(GdalCplErr error, int errorNum, char* messageUtf8)
+    private static void HandleError(GdalCplErr error, int errorNum, char* messageUtf8)
     {
         string message = Marshal.PtrToStringUTF8((nint)messageUtf8) ?? string.Empty;
         GdalError errorInfo = new(error, errorNum, message);

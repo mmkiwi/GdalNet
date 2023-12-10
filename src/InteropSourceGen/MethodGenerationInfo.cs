@@ -6,4 +6,4 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace MMKiwi.GdalNet.InteropSourceGen;
 
-public record class MethodGenerationInfo(MethodDeclarationSyntax Method, string TargetName);
+public record MethodGenerationInfo(MethodDeclarationSyntax Method, string TargetName);

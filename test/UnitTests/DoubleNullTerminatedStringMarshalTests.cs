@@ -2,8 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Collections.Immutable;
-using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 
@@ -19,7 +17,7 @@ public unsafe class CStringArrayMarshalTests
 
     [Theory]
     [MemberData(nameof(TestStrings))]
-    public unsafe void TestManagedToUnmanaged(string[] data)
+    public void TestManagedToUnmanaged(string[] data)
     {
         byte** marshal = CStringArrayMarshal.StringArray.ConvertToUnmanaged(data);
         try
@@ -30,7 +28,7 @@ public unsafe class CStringArrayMarshalTests
                 string? currString = Utf8StringMarshaller.ConvertToManaged(marshal[i]);
                 currString.Should().Be(data[i]);
             }
-                ((nint)marshal[data.Length]).Should().Be(0);
+            ((nint)marshal[data.Length]).Should().Be(0);
         }
         finally
         {
@@ -40,7 +38,7 @@ public unsafe class CStringArrayMarshalTests
 
     [Theory]
     [MemberData(nameof(TestDictionaries))]
-    public unsafe void TestManagedToUnmanagedDictionary(Dictionary<string, string> data)
+    public void TestManagedToUnmanagedDictionary(Dictionary<string, string> data)
     {
         byte** marshal = CStringArrayMarshal.DictionaryMarshal.ConvertToUnmanaged(data);
         try
@@ -56,7 +54,7 @@ public unsafe class CStringArrayMarshalTests
                 data.TryGetValue(key, out string? dictValue).Should().BeTrue($"{key} should be a key");
                 dictValue.Should().Be(value);
             }
-                ((nint)marshal[data.Count]).Should().Be(0);
+            ((nint)marshal[data.Count]).Should().Be(0);
         }
         finally
         {
@@ -66,7 +64,7 @@ public unsafe class CStringArrayMarshalTests
 
     [Theory]
     [MemberData(nameof(TestStrings))]
-    public unsafe void TestManagedToUnmanagedEnumerable(string[] data)
+    public void TestManagedToUnmanagedEnumerable(string[] data)
     {
         byte** marshal = CStringArrayMarshal.EnumerableMarshal.ConvertToUnmanaged(data);
         try
@@ -77,7 +75,7 @@ public unsafe class CStringArrayMarshalTests
                 string? currString = Utf8StringMarshaller.ConvertToManaged(marshal[i]);
                 currString.Should().Be(data[i]);
             }
-                ((nint)marshal[data.Length]).Should().Be(0);
+            ((nint)marshal[data.Length]).Should().Be(0);
         }
         finally
         {
@@ -86,7 +84,7 @@ public unsafe class CStringArrayMarshalTests
     }
 
     [Fact]
-    public unsafe void TestManagedToUnmanagedNull()
+    public void TestManagedToUnmanagedNull()
     {
         byte** marshal = CStringArrayMarshal.StringArray.ConvertToUnmanaged(null!);
         try
@@ -100,7 +98,7 @@ public unsafe class CStringArrayMarshalTests
     }
 
     [Fact]
-    public unsafe void TestManagedToUnmanagedNullDictionary()
+    public void TestManagedToUnmanagedNullDictionary()
     {
         byte** marshal = CStringArrayMarshal.DictionaryMarshal.ConvertToUnmanaged(null!);
         try
@@ -114,7 +112,7 @@ public unsafe class CStringArrayMarshalTests
     }
 
     [Fact]
-    public unsafe void TestManagedToUnmanagedNullEnumerable()
+    public void TestManagedToUnmanagedNullEnumerable()
     {
         byte** marshal = CStringArrayMarshal.EnumerableMarshal.ConvertToUnmanaged(null!);
         try
@@ -128,7 +126,7 @@ public unsafe class CStringArrayMarshalTests
     }
 
     [Fact]
-    public unsafe void TestManagedToUnmanagedEmpty()
+    public void TestManagedToUnmanagedEmpty()
     {
         byte** marshal = CStringArrayMarshal.StringArray.ConvertToUnmanaged([]);
         try
@@ -143,7 +141,7 @@ public unsafe class CStringArrayMarshalTests
     }
 
     [Fact]
-    public unsafe void TestManagedToUnmanagedEmptyDictionary()
+    public void TestManagedToUnmanagedEmptyDictionary()
     {
         var marshal = CStringArrayMarshal.DictionaryMarshal.ConvertToUnmanaged(new Dictionary<string,string>());
         try
@@ -158,7 +156,7 @@ public unsafe class CStringArrayMarshalTests
     }
 
     [Fact]
-    public unsafe void TestManagedToUnmanagedEmptyEnumerable()
+    public void TestManagedToUnmanagedEmptyEnumerable()
     {
         var marshal = CStringArrayMarshal.EnumerableMarshal.ConvertToUnmanaged(Array.Empty<string>());
         try
@@ -229,21 +227,21 @@ public unsafe class CStringArrayMarshalTests
     }
 
     [Fact]
-    public unsafe void TestUnmanagedToManagedNullDictionary()
+    public void TestUnmanagedToManagedNullDictionary()
     {
         Dictionary<string, string>? result = CStringArrayMarshal.DictionaryMarshal.ConvertToManaged(null);
         result.Should().BeNull();
     }
 
     [Fact]
-    public unsafe void TestUnmanagedToManagedNullEnumerable()
+    public void TestUnmanagedToManagedNullEnumerable()
     {
         IEnumerable<string>? result = CStringArrayMarshal.EnumerableMarshal.ConvertToManaged(null);
         result.Should().BeNull();
     }
 
     [Fact]
-    public unsafe void TestUnmanagedToManagedEmpty()
+    public void TestUnmanagedToManagedEmpty()
     {
         byte** single = (byte**)NativeMemory.Alloc((nuint)sizeof(nint));
         single[0] = null;
@@ -253,7 +251,7 @@ public unsafe class CStringArrayMarshalTests
     }
 
     [Fact]
-    public unsafe void TestUnmanagedToManagedEmptEnumerable()
+    public void TestUnmanagedToManagedEmptyEnumerable()
     {
         byte** single = (byte**)NativeMemory.Alloc((nuint)sizeof(nint));
         single[0] = null;
@@ -263,7 +261,7 @@ public unsafe class CStringArrayMarshalTests
     }
 
     [Fact]
-    public unsafe void TestUnmanagedToManagedEmptyDictionary()
+    public void TestUnmanagedToManagedEmptyDictionary()
     {
         byte** single = (byte**)NativeMemory.Alloc((nuint)sizeof(nint));
         single[0] = null;
@@ -274,18 +272,20 @@ public unsafe class CStringArrayMarshalTests
 
     public static IEnumerable<object[]> TestStrings =>
 
-        new List<object[]>() {
+        new List<object[]>
+        {
             new object[] { TestData.AsciiOnly },
             new object[] { TestData.MixedUnicode }
         };
 
     public static IEnumerable<object[]> TestDictionaries =>
 
-    new List<object[]>() {
+    new List<object[]>
+    {
             new object[] { TestData.ParameterPair }
     };
 
-    public static class TestData
+    private static class TestData
     {
         public static string[] AsciiOnly =>
             [

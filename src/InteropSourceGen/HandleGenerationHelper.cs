@@ -8,8 +8,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-using MMKiwi.GdalNet.InteropAttributes;
-
 namespace MMKiwi.GdalNet.InteropSourceGen;
 
 public static class HandleGenerationHelper
@@ -18,9 +16,11 @@ public static class HandleGenerationHelper
     public const string MarkerClass = "GdalGenerateWrapperAttribute";
     public const string MarkerFullName = $"{MarkerNamespace}.{MarkerClass}";
 
-    static readonly SymbolDisplayFormat s_symbolDisplayFormat = new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
+    static readonly SymbolDisplayFormat s_symbolDisplayFormat =
+        new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
-    internal static string? GenerateExtensionClass(Compilation compilation, HandleGenerator.GenerationInfo.Ok genInfo, SourceProductionContext context)
+    internal static string GenerateExtensionClass(Compilation compilation, HandleGenerator.GenerationInfo.Ok genInfo,
+        SourceProductionContext context)
     {
         StringBuilder resFile = new();
 
@@ -29,22 +29,22 @@ public static class HandleGenerationHelper
 
         string className = genInfo.ClassSymbol.Identifier.ToString();
 
-        TypeDeclarationSyntax parentClass = genInfo.ClassSymbol;
         SyntaxNode? parent = genInfo.ClassSymbol;
 
         while (parent is not null)
         {
-            if (parent is BaseNamespaceDeclarationSyntax ns)
-                parentNamespaces.Push(ns);
-            else if (parent is TypeDeclarationSyntax cls)
+            switch (parent)
             {
-                parentClasses.Push(cls);
-            }
-
-            if (parent is CompilationUnitSyntax cus)
-            {
-                foreach (var use in cus.Usings)
-                    resFile.AppendLine(use.ToString());
+                case BaseNamespaceDeclarationSyntax ns:
+                    parentNamespaces.Push(ns);
+                    break;
+                case TypeDeclarationSyntax cls:
+                    parentClasses.Push(cls);
+                    break;
+                case CompilationUnitSyntax cus:
+                    foreach (var use in cus.Usings)
+                        resFile.AppendLine(use.ToString());
+                    break;
             }
 
             parent = parent.Parent;
@@ -61,10 +61,9 @@ public static class HandleGenerationHelper
         {
             resFile.AppendLine($$"""
 
-                {{cls.Modifiers}} {{cls.Keyword}} {{cls.Identifier}}
-                { 
-                """);
-            cls.Members.OfType<MethodDeclarationSyntax>();
+                                 {{cls.Modifiers}} {{cls.Keyword}} {{cls.Identifier}}
+                                 {
+                                 """);
         }
 
         if (genInfo.GenerateConstruct)
@@ -73,38 +72,32 @@ public static class HandleGenerationHelper
             if (genInfo.BaseHandleType is "GdalInternalHandleNeverOwns")
             {
                 resFile.AppendLine($$"""
-
-                    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
-                    static {{className}} IConstructableHandle<{{className}}>.Construct(bool ownsHandle) => new();
-                """);
+                                     
+                                         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+                                         static {{className}} IConstructableHandle<{{className}}>.Construct(bool ownsHandle) => new();
+                                     """);
             }
             else if (genInfo.BaseHandleType is "GdalInternalHandle")
             {
                 resFile.AppendLine($$"""
-
-                    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
-                    static {{className}} IConstructableHandle<{{className}}>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
-                """);
+                                     
+                                         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+                                         static {{className}} IConstructableHandle<{{className}}>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
+                                     """);
             }
         }
 
         if (genInfo.GenerateConstructor)
         {
             resFile.AppendLine($$"""
-
-                [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
-                {{genInfo.ConstructorVisibility}} {{className}}(bool ownsHandle): base(ownsHandle) { }
-            """);
+                                 
+                                     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+                                     {{genInfo.ConstructorVisibility}} {{className}}(bool ownsHandle): base(ownsHandle) { }
+                                 """);
         }
 
-        foreach (var ns in parentClasses)
-        {
+        for(int i = 0; i < parentClasses.Count + parentNamespaces.Count; i++)
             resFile.AppendLine("}");
-        }
-        foreach (var ns in parentNamespaces)
-        {
-            resFile.AppendLine("}");
-        }
 
         return resFile.ToString();
     }
