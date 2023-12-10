@@ -93,26 +93,16 @@ public class HandleGenerator : IIncrementalGenerator
         if (baseHandle is null)
             return null;
 
-        foreach (INamedTypeSymbol baseInterface in classSymbol.Interfaces)
+        foreach (var baseInterface in classSymbol.Interfaces.Where(baseInterface => baseInterface.IsGenericType &&
+                     baseInterface.ConstructedFrom.ToDisplayString().StartsWith("MMKiwi.GdalNet.IConstructableHandle<")))
         {
-            if (baseInterface.IsGenericType &&
-                baseInterface.ConstructedFrom.ToDisplayString() is "MMKiwi.GdalNet.IConstructableHandle<THandle>")
-            {
-                needsConstructMethod = true;
-                foreach (ISymbol member in baseInterface.GetMembers())
-                {
-                    if (member is IMethodSymbol)
-                    {
-                        hasConstructMethod |= classSymbol.FindImplementationForInterfaceMember(member) is not null;
-                    }
-                }
-            }
+            needsConstructMethod = true;
+            hasConstructMethod = Enumerable.OfType<IMethodSymbol>(baseInterface.GetMembers()).Aggregate(hasConstructMethod, (current, member) => current | classSymbol.FindImplementationForInterfaceMember(member) is not null);
         }
 
-        foreach (IMethodSymbol constructor in classSymbol.Constructors)
+        foreach (var constructor in classSymbol.Constructors.Where(constructor => constructor.Parameters.Length == 1 && constructor.Parameters[0].Type.ToDisplayString() == "bool"))
         {
-            if (constructor.Parameters.Length == 1 && constructor.Parameters[0].Type.ToDisplayString() == "bool")
-                hasConstructor = true;
+            hasConstructor = true;
         }
 
         return new GenerationInfo.Ok

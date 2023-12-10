@@ -88,8 +88,7 @@ public class ConstructGenerator : IIncrementalGenerator
         foreach (INamedTypeSymbol baseInterface in classSymbol.Interfaces)
         {
             if (baseInterface.IsGenericType &&
-                baseInterface.ConstructedFrom.ToDisplayString() is
-                    "MMKiwi.GdalNet.IConstructableWrapper<TRes, THandle>")
+                baseInterface.ConstructedFrom.ToDisplayString().StartsWith("MMKiwi.GdalNet.IConstructableWrapper<"))
             {
                 hasConstructMethod = false;
                 foreach (ISymbol member in baseInterface.GetMembers())
@@ -106,7 +105,7 @@ public class ConstructGenerator : IIncrementalGenerator
             }
 
             if (baseInterface.IsGenericType &&
-                baseInterface.ConstructedFrom.ToDisplayString() is "MMKiwi.GdalNet.IHasHandle<THandle>")
+                baseInterface.ConstructedFrom.ToDisplayString().StartsWith("MMKiwi.GdalNet.IHasHandle<"))
             {
                 // These are only true if it implements IHasHandle
                 hasExplicitHandle = false;
@@ -196,12 +195,9 @@ public class ConstructGenerator : IIncrementalGenerator
             var parent = classSymbol.BaseType;
             while (parent != null)
             {
-                foreach (var baseInterface in parent.Interfaces)
+                if (Enumerable.Any(parent.Interfaces, baseInterface => baseInterface.ToDisplayString() == "System.IDisposable"))
                 {
-                    if (baseInterface.ToDisplayString() == "System.IDisposable")
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
                 parent = parent.BaseType;
@@ -222,52 +218,53 @@ public class ConstructGenerator : IIncrementalGenerator
 
         foreach (GenerationInfo cls in classes.Distinct(GenerationInfo.ClassNameEqualityComparer.Default))
         {
-            if (cls is GenerationInfo.ErrorNotPartial)
+            switch (cls)
             {
-                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00010",
-                        "Class must be partial",
-                        "Class {0} must be partial for the source generator to work.",
-                        "GDal.SourceGenerator",
-                        DiagnosticSeverity.Warning,
-                        true),
-                    cls.ClassSyntax.GetLocation(),
-                    cls.ClassSyntax.Identifier));
-            }
-            else if (cls is GenerationInfo.ErrorDoesNotImplement)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00011",
-                        "Class does not implement IConstructableHandle or IHasHandle",
-                        "Class {0} must implement IConstructableHandle or IHasHandle to generate the wrapper type.",
-                        "GDal.SourceGenerator",
-                        DiagnosticSeverity.Warning,
-                        true),
-                    cls.ClassSyntax.GetLocation(),
-                    cls.ClassSyntax.Identifier));
-            }
-            else if (cls is GenerationInfo.Ok genInfo)
-            {
-                if (genInfo.NeedsConstructMethod is false &&
-                    genInfo.NeedsExplicitHandle is false &&
-                    genInfo.NeedsImplicitHandle is false &&
-                    genInfo.NeedsConstructor is false)
-                    continue;
-
-                if (genInfo.MissingIDisposable)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0008",
-                            "Missing IDisposable",
-                            "Class {0} implements IHasHandle, but does not implement IDisposable.",
+                case GenerationInfo.ErrorNotPartial:
+                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00010",
+                            "Class must be partial",
+                            "Class {0} must be partial for the source generator to work.",
                             "GDal.SourceGenerator",
                             DiagnosticSeverity.Warning,
                             true),
                         cls.ClassSyntax.GetLocation(),
                         cls.ClassSyntax.Identifier));
-                }
+                    break;
+                case GenerationInfo.ErrorDoesNotImplement:
+                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00011",
+                            "Class does not implement IConstructableHandle or IHasHandle",
+                            "Class {0} must implement IConstructableHandle or IHasHandle to generate the wrapper type.",
+                            "GDal.SourceGenerator",
+                            DiagnosticSeverity.Warning,
+                            true),
+                        cls.ClassSyntax.GetLocation(),
+                        cls.ClassSyntax.Identifier));
+                    break;
+                case GenerationInfo.Ok genInfo when genInfo.NeedsConstructMethod is false &&
+                                                    genInfo.NeedsExplicitHandle is false &&
+                                                    genInfo.NeedsImplicitHandle is false &&
+                                                    genInfo.NeedsConstructor is false:
+                    continue;
+                case GenerationInfo.Ok genInfo:
+                    {
+                        if (genInfo.MissingIDisposable)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0008",
+                                    "Missing IDisposable",
+                                    "Class {0} implements IHasHandle, but does not implement IDisposable.",
+                                    "GDal.SourceGenerator",
+                                    DiagnosticSeverity.Warning,
+                                    true),
+                                cls.ClassSyntax.GetLocation(),
+                                cls.ClassSyntax.Identifier));
+                        }
 
-                // generate the source code and add it to the output
-                string result = ConstructGenerationHelper.GenerateExtensionClass(compilation, genInfo, context);
-                context.AddSource($"Construct.{cls.ClassSyntax.ToFullDisplayName()}.g.cs",
-                    SourceText.From(result, Encoding.UTF8));
+                        // generate the source code and add it to the output
+                        string result = ConstructGenerationHelper.GenerateExtensionClass(compilation, genInfo, context);
+                        context.AddSource($"Construct.{cls.ClassSyntax.ToFullDisplayName()}.g.cs",
+                            SourceText.From(result, Encoding.UTF8));
+                        break;
+                    }
             }
         }
     }

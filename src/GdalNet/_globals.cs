@@ -8,3 +8,10 @@ global using System.Runtime.CompilerServices;
 global using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
 [assembly: InternalsVisibleTo("MMKiwi.GdalNet.UnitTests")]
 [assembly: CLSCompliant(true)]
+[assembly: InternalsVisibleTo("MMKiwi.GdalNet.UnitTests.SourceGenerators")]
+[assembly: InternalsVisibleTo(InternalUnitTestConst.AssemblyName)]
+
+internal static class InternalUnitTestConst
+{
+    public const string AssemblyName = "MMKiwi.GdalNet.UnitTests.SourceGenerators.GeneratedSourceTest";
+}

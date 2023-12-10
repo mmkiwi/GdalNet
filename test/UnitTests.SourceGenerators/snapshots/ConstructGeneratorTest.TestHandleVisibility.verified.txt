@@ -1,0 +1,33 @@
+﻿{
+  Generator: {},
+  GeneratedSources: [
+    {
+      HintName: Construct.TestWrapper.Test.g.cs,
+      Source:
+using MMKiwi.GdalNet.InteropAttributes;
+using MMKiwi.GdalNet;
+using System;
+#nullable enable
+namespace Test {
+
+public partial class TestWrapper
+{ 
+
+   [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+   static global::Test.TestWrapper IConstructableWrapper<global::Test.TestWrapper, global::Test.TestHandle>.Construct(global::Test.TestHandle handle) => new(handle);
+
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+    private TestWrapper(global::Test.TestHandle handle) => Handle = handle;
+
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+    private protected global::Test.TestHandle Handle { get; }
+
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+    global::Test.TestHandle IHasHandle<global::Test.TestHandle>.Handle => Handle;
+}
+}
+
+    }
+  ],
+  Diagnostics: null
+}
