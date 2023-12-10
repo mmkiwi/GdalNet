@@ -265,19 +265,21 @@ public class ConstructGeneratorTest
         return Verify(runResult).UseDirectory("snapshots");
     }
 
+    public static IEnumerable<object[]> MemberVisibilities => MemberVisibilityExtensions.GetValues().Select(m=>new object[]{m});
     
-    [Fact]
-    public Task TestConstructorVisibility()
+    [Theory]
+    [MemberData(nameof(MemberVisibilities))]
+    public Task TestConstructorVisibility(MemberVisibility memberVisibility)
     {
         SyntaxTree source = CSharpSyntaxTree.ParseText(
-            """
+            $$"""
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
             using System;
 
             namespace Test;
 
-            [GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.Public)]
+            [GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.{{memberVisibility}})]
             public partial class TestWrapper : IConstructableWrapper<TestWrapper, TestHandle>, IHasHandle<TestHandle>, IDisposable
             {
                 public bool Dispose()
@@ -290,20 +292,21 @@ public class ConstructGeneratorTest
         var driver = GeneratorDriver([source, GetInternalHandle()]);
 
         var runResult = driver.GetRunResult().Results.Single();
-        return Verify(runResult).UseDirectory("snapshots");
+        return Verify(runResult).UseDirectory("snapshots").UseParameters(memberVisibility);
     }
     
-    [Fact]
-    public Task TestHandleVisibility()
+    [Theory]
+    [MemberData(nameof(MemberVisibilities))]
+    public Task TestHandleVisibility(MemberVisibility memberVisibility)
     {
         SyntaxTree source = CSharpSyntaxTree.ParseText(
-            """
+            $$"""
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
             using System;
             namespace Test;
 
-            [GdalGenerateWrapper(HandleVisibility = MemberVisibility.PrivateProtected)]
+            [GdalGenerateWrapper(HandleVisibility = MemberVisibility.{{memberVisibility}})]
             public partial class TestWrapper : IConstructableWrapper<TestWrapper, TestHandle>, IHasHandle<TestHandle>, IDisposable
             {
                 public void Dispose()
@@ -316,7 +319,7 @@ public class ConstructGeneratorTest
         var driver = GeneratorDriver([source, GetInternalHandle()]);
 
         var runResult = driver.GetRunResult().Results.Single();
-        return Verify(runResult).UseDirectory("snapshots");
+        return Verify(runResult).UseDirectory("snapshots").UseParameters(memberVisibility);
     }
 
     [Fact]
@@ -364,17 +367,18 @@ public class ConstructGeneratorTest
         return Verify(runResult).UseDirectory("snapshots");
     }
     
-    [Fact]
-    public Task TestHandleSetisibility()
+    [Theory]
+    [MemberData(nameof(MemberVisibilities))]
+    public Task TestHandleSetVisibility(MemberVisibility memberVisibility)
     {
         SyntaxTree source = CSharpSyntaxTree.ParseText(
-            """
+            $$"""
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
             using System;
             namespace Test;
 
-            [GdalGenerateWrapper(HandleSetVisibility = MemberVisibility.Private)]
+            [GdalGenerateWrapper(HandleSetVisibility = MemberVisibility.{{memberVisibility}})]
             public partial class TestWrapper : IConstructableWrapper<TestWrapper, TestHandle>, IHasHandle<TestHandle>, IDisposable
             {
                 public void Dispose()
@@ -387,7 +391,7 @@ public class ConstructGeneratorTest
         var driver = GeneratorDriver([source, GetInternalHandle()]);
 
         var runResult = driver.GetRunResult().Results.Single();
-        return Verify(runResult).UseDirectory("snapshots");
+        return Verify(runResult).UseDirectory("snapshots").UseParameters(memberVisibility);
     }
 
     static GeneratorDriver GeneratorDriver(IEnumerable<SyntaxTree>? trees = null)
