@@ -2,12 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace MMKiwi.GdalNet.CHelpers;
 
 /// <summary>
@@ -17,10 +11,10 @@ namespace MMKiwi.GdalNet.CHelpers;
 /// or <see cref="Array"/> of strings and then convert at the end.
 /// </summary>
 /// <remarks>
-///  <see cref="Marshallers.CStringArrayMarshal"/> can be used to marshal
+///  <see cref="Marshallers.CStringArrayMarshal" /> can be used to marshal
 ///  any IEnumerable 
 /// </remarks>
-internal sealed unsafe partial class CStringList : IDisposable
+internal sealed partial class CStringList : IDisposable
 {
     public static CStringList Create(string firstString)
     {

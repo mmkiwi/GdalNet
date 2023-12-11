@@ -2,15 +2,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Security.Cryptography.X509Certificates;
-
 namespace MMKiwi.GdalNet;
 
 [Flags]
 internal enum GdalOpenFlags
 {
     None = 0,
-    Readonly = 0x00,
     Update = 0x01,
     Raster = 0x02,
     Vector = 0x04,
@@ -21,7 +18,7 @@ internal enum GdalOpenFlags
     Internal = 0x80
 }
 
-public record class GdalOpenSettings
+public record GdalOpenSettings
 {
     public GdalAccess Access { get; init; } = GdalAccess.ReadOnly;
     public bool RasterDrivers { get; init; } = true;

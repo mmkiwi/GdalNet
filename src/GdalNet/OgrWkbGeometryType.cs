@@ -268,7 +268,7 @@ public enum OgrWkbGeometryType
     MultiPointZM = 3004,         
 
     /// <summary>
-    ///// ISO SQL/MM Part 3. GDAL &gt;= 2.1
+    /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
     MultiLineStringZM = 3005,    
 

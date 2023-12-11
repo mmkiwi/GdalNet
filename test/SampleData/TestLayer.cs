@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet.SampleData;
 
-public record class TestLayer
+public record TestLayer
 {
     public required string Name { get; init; }
     public required int Index { get; init; }

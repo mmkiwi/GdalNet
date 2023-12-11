@@ -9,8 +9,6 @@ using BenchmarkDotNet.Jobs;
 
 using MMKiwi.GdalNet.SampleData;
 
-using Perfolizer.Horology;
-
 namespace Benchmark;
 
 [Config(typeof(Config))]

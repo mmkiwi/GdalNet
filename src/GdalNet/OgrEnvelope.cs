@@ -5,11 +5,11 @@
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(OgrEnvelopeMarshaller))]
-public record class OgrEnvelope(double MinX, double MaxX, double MinY, double MaxY)
+public record OgrEnvelope(double MinX, double MaxX, double MinY, double MaxY)
 {
     public OgrEnvelope() : this(double.NegativeInfinity, double.PositiveInfinity, double.NegativeInfinity, double.PositiveInfinity) { }
 
-    public bool IsEmpty => MinX == double.NegativeInfinity;
+    public bool IsEmpty => double.IsNegativeInfinity(MinX);
 
     public OgrEnvelope Merge(OgrEnvelope other)
         => new(Math.Min(MinX, other.MinX),
@@ -25,19 +25,14 @@ public record class OgrEnvelope(double MinX, double MaxX, double MinY, double Ma
             {
                 return sOther;
             }
-            else
-            {
-                return new(MinX: Math.Min(MinX, sOther.MinX),
-                           MaxX: Math.Max(MaxX, sOther.MaxX),
-                           MinY: Math.Max(MinY, sOther.MinY),
-                           MaxY: Math.Min(MaxY, sOther.MaxY));
 
-            }
+            return new(MinX: Math.Min(MinX, sOther.MinX),
+                MaxX: Math.Max(MaxX, sOther.MaxX),
+                MinY: Math.Max(MinY, sOther.MinY),
+                MaxY: Math.Min(MaxY, sOther.MaxY));
         }
-        else
-        {
-            return new();
-        }
+
+        return new();
     }
 
     public bool Intersects(OgrEnvelope other)
@@ -49,7 +44,7 @@ public record class OgrEnvelope(double MinX, double MaxX, double MinY, double Ma
            MaxX >= other.MaxX && MaxY >= other.MaxY;
 
     [CustomMarshaller(typeof(OgrEnvelope), MarshalMode.Default, typeof(OgrEnvelopeMarshaller))]
-    internal static unsafe class OgrEnvelopeMarshaller
+    internal static class OgrEnvelopeMarshaller
     {
         [StructLayout(LayoutKind.Sequential)]
         internal struct OGREnvelopeUnmanaged

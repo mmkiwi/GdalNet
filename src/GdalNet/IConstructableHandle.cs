@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-internal interface IConstructableHandle<THandle>
+internal interface IConstructableHandle<out THandle>
     where THandle:GdalInternalHandle
 {
     static abstract THandle Construct(bool ownsHandle);

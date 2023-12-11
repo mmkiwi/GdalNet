@@ -4,16 +4,21 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrField
+public class OgrField
 {
     public OgrFeature Feature { get; }
-    public OgrFieldDefinition FieldDefinition { get; }
+
+    private readonly Lazy<OgrFieldDefinition> _fieldDefinition;
+    public OgrFieldDefinition FieldDefinition => _fieldDefinition.Value;
     public int Index { get; }
 
     internal OgrField(OgrFeature feature, int index)
     {
         Feature = feature;
         Index = index;
-        FieldDefinition = OgrFeature.Interop.OGR_F_GetFieldDefnRef(Feature, Index);
+        _fieldDefinition = new(GetFieldDefinition);
     }
+
+    private OgrFieldDefinition GetFieldDefinition()
+        => OgrFeature.Interop.OGR_F_GetFieldDefnRef(this.Feature, this.Index);
 }

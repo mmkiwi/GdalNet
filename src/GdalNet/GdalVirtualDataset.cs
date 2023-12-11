@@ -10,7 +10,7 @@ public sealed partial class GdalVirtualDataset: IDisposable
 {
     private bool _disposedValue;
 
-    public MemoryHandle MemoryHandle { get; private set; }
+    private MemoryHandle MemoryHandle { get; set; }
     public GdalDataset Dataset { get; private set; } = null!;
 
     public unsafe static GdalVirtualDataset Open(Memory<byte> buffer,
@@ -19,21 +19,26 @@ public sealed partial class GdalVirtualDataset: IDisposable
                                                  IReadOnlyDictionary<string, string>? openOptions = null,
                                                  IEnumerable<string>? siblingFiles = null)
     {
-        GdalOpenSettings openFlags = openSettings ?? new();
+        GdalOpenSettings openFlags = openSettings ?? new GdalOpenSettings();
 
         string fileName = $"/vsimem/datasource_{Guid.NewGuid()}";
-        var pin = buffer.Pin();
-        GdalVirtualDataset virtualDataset = Interop.VSIFileFromMemBuffer(fileName, (byte*)pin.Pointer, buffer.Length, false);
+        using var pin = buffer.Pin();
+        GdalVirtualDataset? virtualDataset = Interop.VSIFileFromMemBuffer(fileName, (byte*)pin.Pointer, buffer.Length, false);
+        
         if (virtualDataset is null)
         {
             GdalError.ThrowIfError();
+            throw new InvalidOperationException("Could not create virtual dataset");
         }
 
-        virtualDataset!.MemoryHandle.Dispose();
-        virtualDataset!.MemoryHandle = pin;
+        virtualDataset.MemoryHandle.Dispose();
+        virtualDataset.MemoryHandle = pin;
 
-        virtualDataset.Dataset = GdalDataset.Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles)!;
-        if (virtualDataset.Dataset is null)
+        GdalDataset? dataset =
+            GdalDataset.Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
+
+        virtualDataset.Dataset = dataset!;
+        if (dataset is null)
         {
             GdalError.ThrowIfError();
         }

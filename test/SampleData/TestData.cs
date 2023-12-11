@@ -12,7 +12,7 @@ public static class TestData
     {
         Data = Resources.SampleJpg,
         Datasets = [
-        new TestDataset()
+        new TestDataset
         {
 
             RasterCount = 3,
@@ -26,14 +26,14 @@ public static class TestData
     {
         Data = Resources.PublicDomainGpkg,
         Datasets = [
-        new TestDataset()
+        new TestDataset
         {
             Options = new Dictionary<string, string> { { "Table", "RasterAerial1" } },
             RasterCount = 4,
             RasterXSize = 1741,
             RasterYSize = 2233
         },
-        new TestDataset()
+        new TestDataset
         {
             Options = new Dictionary<string, string> { { "Table", "RasterAerial2" } },
             RasterCount = 4,
@@ -54,5 +54,5 @@ public static class TestData
     public static int LayerCount => Files.Sum(f => f.Layers.Length);
 }
 
-public record class LayerInfo(TestFile File, TestLayer Layer);
-public record class DatasetInfo(TestFile File, TestDataset Dataset);
+public record LayerInfo(TestFile File, TestLayer Layer);
+public record DatasetInfo(TestFile File, TestDataset Dataset);

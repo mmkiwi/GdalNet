@@ -4,6 +4,4 @@
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrGeomFieldDefn
-{
-}
+public class OgrGeomFieldDefn;

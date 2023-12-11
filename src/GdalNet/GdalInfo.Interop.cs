@@ -9,7 +9,7 @@ namespace MMKiwi.GdalNet;
 public static partial class GdalInfo
 {
     [CLSCompliant(false)]
-    internal unsafe static partial class Interop
+    internal static partial class Interop
     {
         static Interop() => GdalError.EnsureInitialize();
 

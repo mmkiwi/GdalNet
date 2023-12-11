@@ -30,7 +30,7 @@ public abstract partial class OgrGeometry: IDisposable
             stringMarshaller.FromManaged(wkt, stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize]);
             {
                 byte* wktPointer = stringMarshaller.ToUnmanaged();
-                var result = Interop.OGR_G_CreateFromWkt(out wktPointer, spatialReference, out geometry);
+                var result = Interop.OGR_G_CreateFromWkt(ref wktPointer, spatialReference, out geometry);
                 GdalError.ThrowIfError();
                 return result;
             }

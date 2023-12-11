@@ -2,10 +2,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Microsoft.VisualBasic.FileIO;
+using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
-public partial class OgrFieldDefinition
+
+[GdalGenerateWrapper]
+public partial class OgrFieldDefinition : IConstructableWrapper<OgrFieldDefinition, OgrFieldDefinition.MarshalHandle>, IHasHandle<OgrFieldDefinition.MarshalHandle>
 {
     public virtual OgrFieldType FieldType
     {
@@ -96,4 +99,7 @@ public partial class OgrFieldDefinition
         // No need to check for null; C function will use empty string if null pointer is passed
         set => Interop.OGR_Fld_SetComment(Handle, value); 
     }
+    
+    [GdalGenerateHandle]
+    internal sealed partial class MarshalHandle : GdalInternalHandleNeverOwns, IConstructableHandle<MarshalHandle>;
 }

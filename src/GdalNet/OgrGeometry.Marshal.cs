@@ -2,9 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Diagnostics.Contracts;
-using System.Reflection;
-
 using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
@@ -21,8 +18,8 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
             return null;
         }
 
-        public sealed class Owns : MarshalHandle { public Owns() : base(true) { } }
-        public sealed class DoesntOwn : MarshalHandle { public DoesntOwn() : base(true) { } }
+        public sealed class Owns() : MarshalHandle(true);
+        public sealed class DoesntOwn() : MarshalHandle(true);
     }
 
     static OgrGeometry IConstructableWrapper<OgrGeometry, MarshalHandle>.Construct(MarshalHandle handle)
@@ -53,7 +50,7 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
     }
 
     [GdalGenerateWrapper]
-    private partial class UnknownGeometry : OgrGeometry, IConstructableWrapper<UnknownGeometry, OgrGeometry.MarshalHandle>
+    private partial class UnknownGeometry : OgrGeometry, IConstructableWrapper<UnknownGeometry, MarshalHandle>
     {
         public UnknownGeometry(MarshalHandle handle) : base(handle)
         {

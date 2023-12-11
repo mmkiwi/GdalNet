@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-internal interface IConstructableWrapper<TRes, in THandle>
+internal interface IConstructableWrapper<out TRes, in THandle>
     where THandle : GdalInternalHandle
 {
     public static abstract TRes Construct(THandle handle);

@@ -1,0 +1,45 @@
+﻿{
+  Generator: {},
+  GeneratedSources: [
+    {
+      HintName: InteropGenerator.Interop.Test.g.cs,
+      Source:
+using MMKiwi.GdalNet.InteropAttributes;
+using MMKiwi.GdalNet;
+using System.Runtime.InteropServices;
+#nullable enable
+namespace Test {
+public partial static class Interop
+{ 
+    public static partial int TestCMethod(TestWrapper dataset)
+    {
+        throw new NotImplementedException();
+    }
+}
+}
+
+    }
+  ],
+  Diagnostics: [
+    {
+      Id: GDSG0005,
+      Title: Partial match,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: : (11,4)-(12,63),
+      MessageFormat: Skipping match for method {0}. Method {1} is missing the LibraryImport attribute.,
+      Message: Skipping match for method TestCMethod(TestWrapper). Method TestCMethod(TestHandle) is missing the LibraryImport attribute.,
+      Category: GDal.SourceGenerator
+    },
+    {
+      Id: GDSG0003,
+      Title: Could not generate wrapper method,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: : (11,4)-(12,63),
+      MessageFormat: Could not generate wrapper method for {0}.,
+      Message: Could not generate wrapper method for TestCMethod(TestWrapper).,
+      Category: GDal.SourceGenerator
+    }
+  ]
+}

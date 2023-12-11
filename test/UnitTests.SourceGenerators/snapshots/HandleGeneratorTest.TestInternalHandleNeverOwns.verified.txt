@@ -1,0 +1,23 @@
+﻿{
+  Generator: {},
+  GeneratedSources: [
+    {
+      HintName: Construct.TestHandleNeverOwns.Test.g.cs,
+      Source:
+using MMKiwi.GdalNet.InteropAttributes;
+using MMKiwi.GdalNet;
+#nullable enable
+namespace Test {
+
+internal sealed partial class TestHandleNeverOwns
+{
+
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+    static TestHandleNeverOwns IConstructableHandle<TestHandleNeverOwns>.Construct(bool ownsHandle) => new();
+}
+}
+
+    }
+  ],
+  Diagnostics: null
+}

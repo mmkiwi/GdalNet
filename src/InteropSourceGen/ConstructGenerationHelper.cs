@@ -2,11 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Collections.Immutable;
 using System.Text;
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using MMKiwi.GdalNet.InteropAttributes;
@@ -21,14 +19,13 @@ public static class ConstructGenerationHelper
 
     static readonly SymbolDisplayFormat s_symbolDisplayFormat = new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
-    internal static string? GenerateExtensionClass(Compilation compilation, ConstructGenerator.GenerationInfo.Ok genInfo, SourceProductionContext context)
+    internal static string GenerateExtensionClass(Compilation compilation, ConstructGenerator.GenerationInfo.Ok genInfo, SourceProductionContext context)
     {
         StringBuilder resFile = new();
 
         Stack<TypeDeclarationSyntax> parentClasses = [];
         Stack<BaseNamespaceDeclarationSyntax> parentNamespaces = [];
 
-        TypeDeclarationSyntax parentClass = genInfo.ClassSyntax;
         SyntaxNode? parent = genInfo.ClassSyntax;
 
         while (parent is not null)
@@ -63,7 +60,6 @@ public static class ConstructGenerationHelper
                 {{cls.Modifiers}} {{cls.Keyword}} {{cls.Identifier}}
                 { 
                 """);
-            cls.Members.OfType<MethodDeclarationSyntax>();
         }
 
         string wrapperType = genInfo.WrapperType.Split('.').Last();
@@ -104,11 +100,7 @@ public static class ConstructGenerationHelper
             """);
         }
 
-        foreach (var ns in parentClasses)
-        {
-            resFile.AppendLine("}");
-        }
-        foreach (var ns in parentNamespaces)
+        for (int i = 0; i < parentClasses.Count + parentNamespaces.Count; i++)
         {
             resFile.AppendLine("}");
         }

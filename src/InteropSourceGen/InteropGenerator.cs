@@ -3,13 +3,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections.Immutable;
-using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
-using System.Xml.Linq;
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -43,14 +39,11 @@ public class InteropGenerator : IIncrementalGenerator
 
         string methodName = methodSymbol.Name;
 
-        foreach (AttributeData attributeData in methodSymbol.GetAttributes())
+        foreach (var attributeData in methodSymbol.GetAttributes()
+                                                  .Where(attributeData => 
+                                                      attributeData.AttributeClass?.Name == InteropGenerationHelper.MarkerClass &&
+                                                      attributeData.AttributeClass.ToDisplayString() == InteropGenerationHelper.MarkerFullName))
         {
-            if (attributeData.AttributeClass?.Name != InteropGenerationHelper.MarkerClass ||
-                attributeData.AttributeClass.ToDisplayString() != InteropGenerationHelper.MarkerFullName)
-            {
-                continue;
-            }
-
             foreach (KeyValuePair<string, TypedConstant> namedArgument in attributeData.NamedArguments)
             {
                 if (namedArgument.Key == "MethodName" && namedArgument.Value.Value?.ToString() is { } ns)
@@ -59,7 +52,7 @@ public class InteropGenerator : IIncrementalGenerator
                 }
             }
 
-            return new(methodSyntax, methodName);
+            return new MethodGenerationInfo(methodSyntax, methodName);
         }
         // we didn't find the attribute we were looking for
         return null;
@@ -71,18 +64,6 @@ public class InteropGenerator : IIncrementalGenerator
         {
             // nothing to do yet
             return;
-        }
-
-        static TypeDeclarationSyntax? GetParentClass(MethodGenerationInfo method)
-        {
-            var parent = method.Method.Parent;
-            while (parent is not null or CompilationUnitSyntax)
-            {
-                if (parent is TypeDeclarationSyntax parentType)
-                    return parentType;
-                parent = parent.Parent;
-            }
-            return null;
         }
 
         IEnumerable<IGrouping<TypeDeclarationSyntax?, MethodGenerationInfo>> distinctClasses = methods.GroupBy(GetParentClass);
@@ -109,6 +90,20 @@ public class InteropGenerator : IIncrementalGenerator
                 string result = InteropGenerationHelper.GenerateExtensionClass(compilation, cls!, context);
                 context.AddSource($"InteropGenerator.{cls.Key.ToFullDisplayName()}.g.cs", SourceText.From(result, Encoding.UTF8));
             }
+        }
+
+        return;
+
+        static TypeDeclarationSyntax? GetParentClass(MethodGenerationInfo method)
+        {
+            var parent = method.Method.Parent;
+            while (parent is not null or CompilationUnitSyntax)
+            {
+                if (parent is TypeDeclarationSyntax parentType)
+                    return parentType;
+                parent = parent.Parent;
+            }
+            return null;
         }
     }
 }

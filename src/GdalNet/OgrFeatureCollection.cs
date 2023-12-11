@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace MMKiwi.GdalNet;
 
-public partial class OgrFeatureCollection : IEnumerable<OgrFeature>
+public class OgrFeatureCollection : IEnumerable<OgrFeature>
 {
     internal OgrFeatureCollection(OgrLayer layer)
     {
@@ -54,8 +54,8 @@ public partial class OgrFeatureCollection : IEnumerable<OgrFeature>
 
         public bool MoveNext()
         {
-            Current = OgrLayer.Interop.OGR_L_GetNextFeature(OgrFeatureCollection.Layer);
-            return Current != null;
+            var current = OgrLayer.Interop.OGR_L_GetNextFeature(OgrFeatureCollection.Layer)!;
+            return (Current = current) != null;
         }
 
         public void Reset()
