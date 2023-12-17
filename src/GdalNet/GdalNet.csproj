@@ -10,6 +10,7 @@
         <RootNamespace>MMKiwi.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
         <IsAotCompatible>true</IsAotCompatible>
         <ReportAnalyzer>true</ReportAnalyzer>
+        <GenerateDocumentationFile>False</GenerateDocumentationFile>
     </PropertyGroup>
     
     <ItemGroup>

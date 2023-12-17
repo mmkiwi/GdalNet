@@ -47,7 +47,6 @@ public class HandleGenerator : IIncrementalGenerator
         AttributeData attribute = context.Attributes[0];
 
         bool needsConstructMethod = false;
-        bool hasConstructor;
         bool hasConstructMethod = false;
         bool generateOwns = true;
         bool generateDoesntOwn = true;
@@ -140,7 +139,7 @@ public class HandleGenerator : IIncrementalGenerator
         }
 
 
-        hasConstructor = classSymbol.Constructors.Any(constructor =>
+        bool hasConstructor = classSymbol.Constructors.Any(constructor =>
             constructor.Parameters.Length == 1 && constructor.Parameters[0].Type.ToDisplayString() == "bool");
         
         return new GenerationInfo.Ok

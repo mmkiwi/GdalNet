@@ -3,15 +3,13 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 
 public abstract partial class OgrGeometry
 {
-    private partial class UnknownGeometry
-    {
-        public UnknownGeometry(OgrGeometryHandle handle) : base(handle)
-        {
-        }
-    }
+    [GdalGenerateWrapper]
+    private partial class UnknownGeometry(OgrGeometryHandle handle) : OgrGeometry(handle) , IConstructableWrapper<UnknownGeometry, OgrGeometryHandle>;
+
 }

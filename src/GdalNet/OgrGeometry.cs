@@ -5,7 +5,6 @@
 using System.Runtime.InteropServices.Marshalling;
 
 using MMKiwi.GdalNet.Handles;
-using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 public abstract partial class OgrGeometry: IDisposable
@@ -140,8 +139,4 @@ public abstract partial class OgrGeometry: IDisposable
         GC.SuppressFinalize(this);
     }
 
-    [GdalGenerateWrapper]
-    private partial class UnknownGeometry : OgrGeometry, IConstructableWrapper<UnknownGeometry, OgrGeometryHandle>
-    {
-    }
 }

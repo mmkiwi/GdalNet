@@ -12,6 +12,7 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet.CHelpers;
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 internal partial class CStringList
 {
     [CLSCompliant(false)]

@@ -387,8 +387,8 @@ public static class OgrWkbGeometryTypeExtensions
     {
         uint eType = (uint)geom;
         return (eType & Wkb25DBitInternalUse) != 0 ||
-               eType >= 1000 && eType < 2000 ||
-               eType >= 3000 && eType < 4000;
+               eType is >= 1000 and < 2000 ||
+               eType is >= 3000 and < 4000;
     }
 
     public static bool HasM(this OgrWkbGeometryType geom)

@@ -3,7 +3,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata;
 
 using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.InteropAttributes;

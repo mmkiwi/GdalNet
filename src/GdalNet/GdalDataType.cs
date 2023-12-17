@@ -16,17 +16,17 @@ public enum GdalDataType
     UInt16 = 2,
     /*! Sixteen bit signed integer */
     Int16 = 3,
-    /*! Thirty two bit unsigned integer */
+    /*! 32 bit unsigned integer */
     UInt32 = 4,
-    /*! Thirty two bit signed integer */
+    /*! 32 bit signed integer */
     Int32 = 5,
     /*! 64 bit unsigned integer (GDAL >= 3.5)*/
     UInt64 = 12,
     /*! 64 bit signed integer  (GDAL >= 3.5)*/
     Int64 = 13,
-    /*! Thirty two bit floating point */
+    /*! 32 bit floating point */
     Float32 = 6,
-    /*! Sixty four bit floating point */
+    /*! 64 bit floating point */
     Float64 = 7,
     /*! Complex Int16 */
     CInt16 = 8,

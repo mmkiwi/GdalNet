@@ -275,7 +275,7 @@ public static class InteropGenerationHelper
 
             if (fullName == "System.Runtime.InteropServices.LibraryImportAttribute")
                 return true;
-            
+
         }
         return false;
     }
@@ -341,7 +341,7 @@ public static class InteropGenerationHelper
                 wrapperMethod.ToDiagString(), candidateInterop.ToDiagString()));
             continue;
 
-            static bool InvalidParametersDiag(IEnumerable<ParameterCompatibility> invalidParameters, MethodDeclarationSyntax wrapperMethod,MethodDeclarationSyntax candidateInterop, SourceProductionContext context)
+            static bool InvalidParametersDiag(IEnumerable<ParameterCompatibility> invalidParameters, MethodDeclarationSyntax wrapperMethod, MethodDeclarationSyntax candidateInterop, SourceProductionContext context)
             {
                 foreach (var invalidParam in invalidParameters)
                 {
@@ -378,9 +378,8 @@ public static class InteropGenerationHelper
         if (wrapperTypeSymbol.Equals(interopTypeSymbol, SymbolEqualityComparer.Default))
             return TransformType.Direct;
 
-        List<ITypeSymbol> hierarchy = [];
+        List<ITypeSymbol> hierarchy = [interopTypeSymbol];
 
-        hierarchy.Add(interopTypeSymbol);
         var parent = interopTypeSymbol.BaseType;
         while (parent is not null)
         {
@@ -436,9 +435,11 @@ public static class InteropGenerationHelper
 
         foreach (var handleType in wrapperTypeSymbol.Interfaces.Where(i => i.Name == "IHasHandle"))
         {
-            List<ITypeSymbol> hierarchy = [];
+            List<ITypeSymbol> hierarchy =
+            [
+                interopTypeSymbol
+            ];
 
-            hierarchy.Add(interopTypeSymbol);
             var parent = interopTypeSymbol.BaseType;
             while (parent is not null)
             {

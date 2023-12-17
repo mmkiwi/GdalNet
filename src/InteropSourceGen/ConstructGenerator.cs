@@ -138,9 +138,8 @@ public class ConstructGenerator : IIncrementalGenerator
                     // Get handle type
                     hasExplicitHandle |= classSymbol.FindImplementationForInterfaceMember(member) is not null;
 
-                    for (int index = 0; index < classSymbol.Constructors.Length; index++)
+                    foreach (var implementedCtor in classSymbol.Constructors)
                     {
-                        IMethodSymbol implementedCtor = classSymbol.Constructors[index];
                         if (implementedCtor.Parameters.Length == 1 && implementedCtor.Parameters[0].Type
                                 .Equals(handleType, SymbolEqualityComparer.Default))
                         {
@@ -240,10 +239,13 @@ public class ConstructGenerator : IIncrementalGenerator
                         cls.ClassSyntax.GetLocation(),
                         cls.ClassSyntax.Identifier));
                     break;
-                case GenerationInfo.Ok genInfo when genInfo.NeedsConstructMethod is false &&
-                                                    genInfo.NeedsExplicitHandle is false &&
-                                                    genInfo.NeedsImplicitHandle is false &&
-                                                    genInfo.NeedsConstructor is false:
+                case GenerationInfo.Ok
+                {
+                    NeedsConstructMethod: false,
+                    NeedsExplicitHandle: false, 
+                    NeedsImplicitHandle: false, 
+                    NeedsConstructor: false,
+                }:
                     continue;
                 case GenerationInfo.Ok genInfo:
                     {
