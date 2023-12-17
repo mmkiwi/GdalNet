@@ -23,7 +23,7 @@ public class GdalInfoTests
     [Fact]
     public void ReleaseDateIsValid()
     {
-        GdalInfo.ReleaseDate.Should().BeOnOrAfter(new DateOnly(2023, 5, 2));
+        GdalInfo.ReleaseDate.Should().HaveLength(8).And.Match(s => Int32.Parse(s) > 20230000);
     }
 
     [Fact]

@@ -2,12 +2,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalDataset : GdalMajorObject
+[GdalGenerateWrapper]
+public sealed partial class GdalDataset : GdalMajorObject, IConstructableWrapper<GdalDataset, GdalDatasetHandle>, IHasHandle<GdalDatasetHandle>
 {
-    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameterInConstructor")] 
-    private GdalDataset(MarshalHandle handle) : base(handle)
+    // ReSharper disable once SuggestBaseTypeForParameterInConstructor
+    private GdalDataset(GdalDatasetHandle handle) : base(handle)
     {
         RasterBands = new GdalBandCollection(this);
         Layers = new OgrLayerCollection(this);
@@ -24,6 +28,8 @@ public sealed partial class GdalDataset : GdalMajorObject
         GdalError.ThrowIfError();
         return dataset!;
     }
+
+    private new GdalDatasetHandle Handle => (GdalDatasetHandle)base.Handle;
 
     public GdalBandCollection RasterBands { get; }
     public OgrLayerCollection Layers { get; }

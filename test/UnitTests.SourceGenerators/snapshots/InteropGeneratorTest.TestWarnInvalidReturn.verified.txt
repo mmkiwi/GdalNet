@@ -29,7 +29,7 @@ public partial static class Interop
       Location: : (11,4)-(12,63),
       MessageFormat: Skipping match for method {0}. Method {1} has an incompatible return type.,
       Message: Skipping match for method TestCMethod(TestWrapper). Method TestCMethod(TestHandle) has an incompatible return type.,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     },
     {
       Id: GDSG0003,
@@ -39,7 +39,7 @@ public partial static class Interop
       Location: : (11,4)-(12,63),
       MessageFormat: Could not generate wrapper method for {0}.,
       Message: Could not generate wrapper method for TestCMethod(TestWrapper).,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     }
   ]
 }

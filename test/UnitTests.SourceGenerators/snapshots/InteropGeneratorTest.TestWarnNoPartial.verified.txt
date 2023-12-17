@@ -25,7 +25,7 @@ public partial static class Interop
       Location: : (11,4)-(12,55),
       MessageFormat: Could not generate wrapper method for {0} because it is not partial,
       Message: Could not generate wrapper method for TestCMethod(TestWrapper) because it is not partial,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     }
   ]
 }

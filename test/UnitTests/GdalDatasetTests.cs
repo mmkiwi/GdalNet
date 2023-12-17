@@ -15,7 +15,7 @@ public sealed class GdalDatasetTests: DatasetTestBase
         Action action = () =>
         {
             using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
-            var dataset = virtualDataset.Dataset;
+            _ = virtualDataset.Dataset;
         };
         action.Should().NotThrow("should exist");
     }
@@ -42,7 +42,7 @@ public sealed class GdalDatasetTests: DatasetTestBase
         using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
         var dataset = virtualDataset.Dataset;
 
-        dataset!.RasterBands.Count.Should().Be(datasetInfo.Dataset.RasterCount);
+        dataset.RasterBands.Count.Should().Be(datasetInfo.Dataset.RasterCount);
     }
 
     [Theory]
@@ -52,9 +52,9 @@ public sealed class GdalDatasetTests: DatasetTestBase
         var datasetInfo = GetDataset(index);
 
         using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
-        var dataset = virtualDataset?.Dataset;
+        var dataset = virtualDataset.Dataset;
 
-        dataset!.RasterXSize.Should().Be(datasetInfo.Dataset.RasterXSize);
+        dataset.RasterXSize.Should().Be(datasetInfo.Dataset.RasterXSize);
     }
 
     [Theory]
@@ -64,9 +64,9 @@ public sealed class GdalDatasetTests: DatasetTestBase
         var datasetInfo = GetDataset(index);
 
         using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
-        var dataset = virtualDataset?.Dataset;
+        var dataset = virtualDataset.Dataset;
 
-        dataset!.RasterYSize.Should().Be(datasetInfo.Dataset.RasterYSize);
+        dataset.RasterYSize.Should().Be(datasetInfo.Dataset.RasterYSize);
     }
 
     [Theory]
@@ -76,8 +76,8 @@ public sealed class GdalDatasetTests: DatasetTestBase
         var datasetInfo = GetDataset(index);
 
         using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
-        var dataset = virtualDataset?.Dataset;
+        var dataset = virtualDataset.Dataset;
 
-        dataset!.Layers.Count.Should().Be(datasetInfo.File.Layers.Length);
+        dataset.Layers.Count.Should().Be(datasetInfo.File.Layers.Length);
     }
 }

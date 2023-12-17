@@ -7,9 +7,8 @@ using FluentAssertions.Execution;
 namespace MMKiwi.GdalNet.UnitTests;
 
 //[Collection("GDAL")]
-public sealed class GdalRasterBandTests:DatasetTestBase
+public sealed class GdalRasterBandTests : DatasetTestBase
 {
-
     [Theory]
     [MemberData(nameof(Datasets))]
     public void TestRasterIterate(int index)
@@ -17,7 +16,8 @@ public sealed class GdalRasterBandTests:DatasetTestBase
         using var _ = new AssertionScope();
         var datasetInfo = GetDataset(index);
 
-        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options)!;
+        using var virtualDataset =
+            GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
         var dataset = virtualDataset.Dataset;
 
         foreach (var band in dataset.RasterBands)
@@ -31,7 +31,8 @@ public sealed class GdalRasterBandTests:DatasetTestBase
         using var _ = new AssertionScope();
         var datasetInfo = GetDataset(index);
 
-        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options)!;
+        using var virtualDataset =
+            GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
         var dataset = virtualDataset.Dataset;
 
         var action = () => dataset.RasterBands[-1];
@@ -45,7 +46,8 @@ public sealed class GdalRasterBandTests:DatasetTestBase
         using var _ = new AssertionScope();
         var datasetInfo = GetDataset(index);
 
-        using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options)!;
+        using var virtualDataset =
+            GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
         var dataset = virtualDataset.Dataset;
 
         var action = () => dataset.RasterBands[dataset.RasterBands.Count + 1];

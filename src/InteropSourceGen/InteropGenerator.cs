@@ -77,7 +77,7 @@ public class InteropGenerator : IIncrementalGenerator
                     context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0001",
                                                                                         "Could not generate method",
                                                                                         "Could not generate wrapper method for {0} because the parent class could not be found",
-                                                                                        "GDal.SourceGenerator",
+                                                                                        "Gdal.SourceGenerator",
                                                                                         DiagnosticSeverity.Warning,
                                                                                         true),
                                                                method.Method.GetLocation(),

@@ -2,6 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Runtime.InteropServices.Marshalling;
+
+using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 public abstract partial class OgrGeometry: IDisposable
 {
@@ -133,5 +138,10 @@ public abstract partial class OgrGeometry: IDisposable
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
+    }
+
+    [GdalGenerateWrapper]
+    private partial class UnknownGeometry : OgrGeometry, IConstructableWrapper<UnknownGeometry, OgrGeometryHandle>
+    {
     }
 }

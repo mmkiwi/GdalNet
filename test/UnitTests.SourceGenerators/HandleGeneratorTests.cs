@@ -2,8 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Runtime.InteropServices;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -208,14 +206,16 @@ public class HandleGeneratorTest
             MetadataReference.CreateFromFile(Path.Combine(dotNetAssemblyPath, "System.Private.CoreLib.dll")),
             MetadataReference.CreateFromFile(Path.Combine(dotNetAssemblyPath, "System.Runtime.dll")),
             MetadataReference.CreateFromFile(typeof(GdalWrapperMethodAttribute).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(GdalInternalHandleNeverOwns).Assembly.Location)
+            MetadataReference.CreateFromFile(typeof(GdalInternalHandleNeverOwns).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(GdalDataset).Assembly.Location)
         ];
 
         var compilation = CSharpCompilation.Create(InternalUnitTestConst.AssemblyName, syntaxTrees: trees, references: references);
         var generator = new HandleGenerator();
 
-
         var driver = CSharpGeneratorDriver.Create(generator);
         return driver.RunGenerators(compilation);
     }
 }
+
+internal class GdalInternalHandleNeverOwns;

@@ -27,8 +27,7 @@ public class HandleGenerator : IIncrementalGenerator
             .ForAttributeWithMetadataName(
                 AttributeFull,
                 predicate: (node, _) => node is ClassDeclarationSyntax, // select methods with attributes
-                transform: GetClasses) // sect the methods with the [GdalWrapperMethod] attribute
-            .Where(static m => m is not null)!; // filter out attributed methods that we don't care about
+                transform: GetClasses); // sect the methods with the [GdalWrapperMethod] attribute
 
         // Combine the selected methods with the `Compilation`
         IncrementalValueProvider<(Compilation, ImmutableArray<GenerationInfo>)> compilationAndMethods
@@ -48,8 +47,14 @@ public class HandleGenerator : IIncrementalGenerator
         AttributeData attribute = context.Attributes[0];
 
         bool needsConstructMethod = false;
-        bool hasConstructor = false;
+        bool hasConstructor;
         bool hasConstructMethod = false;
+        bool generateOwns = true;
+        bool generateDoesntOwn = true;
+        bool needsOwns = false;
+        bool needsDoesntOwn = false;
+        bool hasOwns = false;
+        bool hasDoesntOwn = false;
 
         bool isPartial = classSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword));
 
@@ -63,26 +68,38 @@ public class HandleGenerator : IIncrementalGenerator
 
         foreach (KeyValuePair<string, TypedConstant> namedArgument in attribute.NamedArguments)
         {
-            if (namedArgument.Key == nameof(GdalGenerateHandleAttribute.ConstructorVisibility) &&
-                namedArgument.Value.Value is int cv)
+            switch (namedArgument)
             {
-                constructorVisibility = (MemberVisibility)cv;
+                case { Key: nameof(GdalGenerateHandleAttribute.ConstructorVisibility), Value.Value: int cv }:
+                    constructorVisibility = (MemberVisibility)cv;
+                    break;
+                case { Key: nameof(GdalGenerateHandleAttribute.GenerateOwns), Value.Value: bool bv }:
+                    generateOwns = bv;
+                    break;
+                case { Key: nameof(GdalGenerateHandleAttribute.GenerateDoesntOwn), Value.Value: bool bv }:
+                    generateDoesntOwn = bv;
+                    break;
             }
         }
 
         string? baseHandle = null;
 
+        List<string> parentClasses = [];
+
         var parentClass = classSymbol.BaseType;
         while (parentClass != null)
         {
-            if (parentClass.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandleNeverOwns")
+            string ds = parentClass.ToDisplayString();
+            parentClasses.Add(ds);
+            if (ds == "MMKiwi.GdalNet.Handles.GdalInternalHandleNeverOwns")
             {
                 baseHandle = "GdalInternalHandleNeverOwns";
                 break;
             }
 
-            if (parentClass.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandle")
+            if (ds == "MMKiwi.GdalNet.Handles.GdalInternalHandle")
             {
+                needsDoesntOwn = needsOwns = true;
                 baseHandle = "GdalInternalHandle";
                 break;
             }
@@ -91,24 +108,41 @@ public class HandleGenerator : IIncrementalGenerator
         }
 
         if (baseHandle is null)
-            return new GenerationInfo.ErrorBadBase() {ClassSymbol = classSyntax};
+            return new GenerationInfo.ErrorBadBase() { ClassSymbol = classSyntax, ParentClass = parentClasses };
 
-        foreach (var baseInterface in classSymbol.Interfaces.Where(baseInterface 
+        if ((needsOwns && generateOwns) || (needsDoesntOwn && generateDoesntOwn))
+        {
+            foreach (var member in classSymbol.GetMembers().OfType<INamedTypeSymbol>())
+            {
+                switch (member.Name)
+                {
+                    case "Owns":
+                        hasOwns = true;
+                        break;
+                    case "DoesntOwn":
+                        hasDoesntOwn = true;
+                        break;
+                }
+            }
+        }
+
+        foreach (var baseInterface in classSymbol.Interfaces.Where(baseInterface
                      => baseInterface.IsGenericType &&
-                        baseInterface.ConstructedFrom.ToDisplayString().StartsWith("MMKiwi.GdalNet.IConstructableHandle<")))
+                        baseInterface.ConstructedFrom.ToDisplayString()
+                            .StartsWith("MMKiwi.GdalNet.Handles.IConstructableHandle<")))
         {
             needsConstructMethod = true;
             foreach (IMethodSymbol symbol in baseInterface.GetMembers().OfType<IMethodSymbol>())
             {
-                if (symbol != null) hasConstructMethod = hasConstructMethod | classSymbol.FindImplementationForInterfaceMember(symbol) is not null;
+                if (symbol != null)
+                    hasConstructMethod |= classSymbol.FindImplementationForInterfaceMember(symbol) is not null;
             }
         }
 
-        foreach (var constructor in classSymbol.Constructors.Where(constructor => constructor.Parameters.Length == 1 && constructor.Parameters[0].Type.ToDisplayString() == "bool"))
-        {
-            hasConstructor = true;
-        }
 
+        hasConstructor = classSymbol.Constructors.Any(constructor =>
+            constructor.Parameters.Length == 1 && constructor.Parameters[0].Type.ToDisplayString() == "bool");
+        
         return new GenerationInfo.Ok
         {
             ClassSymbol = classSyntax,
@@ -118,7 +152,9 @@ public class HandleGenerator : IIncrementalGenerator
                 !hasConstructor && baseHandle == "GdalInternalHandle" &&
                 constructorVisibility != MemberVisibility.DoNotGenerate,
             ConstructorVisibility = constructorVisibility.ToStringFast(),
-            IsSealedOrAbstract = classSymbol.IsAbstract || classSymbol.IsSealed
+            IsSealedOrAbstract = classSymbol.IsAbstract || classSymbol.IsSealed,
+            GenerateOwns = needsOwns && generateOwns && !hasOwns,
+            GenerateDoesntOwn = needsDoesntOwn && generateDoesntOwn && !hasDoesntOwn
         };
     }
 
@@ -135,21 +171,21 @@ public class HandleGenerator : IIncrementalGenerator
         {
             switch (cls)
             {
-                case GenerationInfo.ErrorBadBase:
+                case GenerationInfo.ErrorBadBase ebb:
                     context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00018",
                             "Class must be partial",
-                            "Class {0} must subclass GdalInternalHandle.",
-                            "GDal.SourceGenerator",
+                            "Class {0} must subclass GdalInternalHandle. Parent classes: {1}",
+                            "Gdal.SourceGenerator",
                             DiagnosticSeverity.Warning,
                             true),
                         cls.ClassSymbol.GetLocation(),
-                        cls.ClassSymbol.Identifier));
-                    break; 
+                        cls.ClassSymbol.Identifier, string.Join(", ", ebb.ParentClass)));
+                    break;
                 case GenerationInfo.ErrorNotPartial:
                     context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00010",
                             "Class must be partial",
                             "Class {0} must be partial for the source generator to work.",
-                            "GDal.SourceGenerator",
+                            "Gdal.SourceGenerator",
                             DiagnosticSeverity.Warning,
                             true),
                         cls.ClassSymbol.GetLocation(),
@@ -162,7 +198,7 @@ public class HandleGenerator : IIncrementalGenerator
                             context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00012",
                                     "Handle should be sealed or abstract",
                                     "Class {0} should be sealed or abstract.",
-                                    "GDal.SourceGenerator",
+                                    "Gdal.SourceGenerator",
                                     DiagnosticSeverity.Warning,
                                     true),
                                 cls.ClassSymbol.GetLocation(),
@@ -200,7 +236,10 @@ public class HandleGenerator : IIncrementalGenerator
 
         public class ErrorNotPartial : GenerationInfo;
 
-        public class ErrorBadBase : GenerationInfo;
+        public class ErrorBadBase : GenerationInfo
+        {
+            public required IEnumerable<string> ParentClass { get; init; }
+        }
 
         public class Ok : GenerationInfo
         {
@@ -209,6 +248,8 @@ public class HandleGenerator : IIncrementalGenerator
             public required string BaseHandleType { get; init; }
             public required string ConstructorVisibility { get; init; }
             public required bool IsSealedOrAbstract { get; init; }
+            public required bool GenerateOwns { get; init; }
+            public required bool GenerateDoesntOwn { get; init; }
         }
     }
 }

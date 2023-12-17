@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace MMKiwi.GdalNet;
+namespace MMKiwi.GdalNet.Handles;
 
 public sealed partial record GdalError
 {
@@ -20,12 +20,12 @@ public sealed partial record GdalError
         ErrorNum = (ErrorCodes)errorNum;
         Message = message;
     }
+
     public string Message { get; }
     public GdalCplErr Severity { get; }
     public ErrorCodes ErrorNum { get; }
 
-    [field: ThreadStatic]
-    public static GdalError? LastError { get; private set; }
+    [field: ThreadStatic] public static GdalError? LastError { get; private set; }
 
     public static EventHandler<GdalErrorEventArgs>? ErrorRaised { get; }
 
@@ -65,14 +65,13 @@ public sealed partial record GdalError
             OgrError.UnsupportedGeometryType => throw new InvalidDataException("OGR: Unsupported Geometry Type"),
             OgrError.UnsupportedOperation => throw new InvalidOperationException("OGR: Unsupported Operation"),
             OgrError.CorruptData => throw new InvalidDataException("OGR: Corrupt Data"),
-            OgrError.Falure => throw new GdalException("OGR: Failure"),
+            OgrError.Failure => throw new GdalException("OGR: Failure"),
             OgrError.UnsupportedSRS => throw new InvalidDataException("OGR: Unsupported spatial reference"),
             OgrError.InvalidHandle => throw new InvalidDataException("OGR: Invalid handle"),
             OgrError.NonExistingFeature => throw new InvalidDataException("OGR: Non existing feature"),
             _ => throw new GdalException("Unknown OGR exception"),
         };
     }
-
 
     public static void ThrowIfError()
     {
@@ -87,16 +86,26 @@ public sealed partial record GdalError
             {
                 throw LastError.ErrorNum switch
                 {
-                    ErrorCodes.ApplicationDefined => new Exception($"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.OutOfMemory => new InsufficientMemoryException($"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.FileIO => new IOException($"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.OpenFailed => new IOException($"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.IllegalArg => new ArgumentException($"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.NotSupported => new NotSupportedException($"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.AssertionFailed => new Exception($"GDAL ERROR: Code: {(int)LastError.ErrorNum} , {LastError.Message}"),
-                    ErrorCodes.NoWriteAccess => new IOException($"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.UserInterrupt => new OperationCanceledException($"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.ObjectNull => new NullReferenceException($"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    ErrorCodes.ApplicationDefined => new Exception(
+                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    ErrorCodes.OutOfMemory => new InsufficientMemoryException(
+                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    ErrorCodes.FileIO => new IOException(
+                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    ErrorCodes.OpenFailed => new IOException(
+                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    ErrorCodes.IllegalArg => new ArgumentException(
+                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    ErrorCodes.NotSupported => new NotSupportedException(
+                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    ErrorCodes.AssertionFailed => new Exception(
+                        $"GDAL ERROR: Code: {(int)LastError.ErrorNum} , {LastError.Message}"),
+                    ErrorCodes.NoWriteAccess => new IOException(
+                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    ErrorCodes.UserInterrupt => new OperationCanceledException(
+                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    ErrorCodes.ObjectNull => new NullReferenceException(
+                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
                     _ => new Exception($"GDAL ERROR: {LastError.Message}")
                 };
             }
@@ -114,24 +123,26 @@ public sealed partial record GdalError
             return;
         }
 
-        Debug.WriteLine($"GDAL Error Severity:{eventArgs.Error.Severity}, Code: {(int)eventArgs.Error.ErrorNum}, {eventArgs.Error.Message}", "GDAL");
+        Debug.WriteLine(
+            $"GDAL Error Severity:{eventArgs.Error.Severity}, Code: {(int)eventArgs.Error.ErrorNum}, {eventArgs.Error.Message}",
+            "GDAL");
+    }
+}
+
+[CustomMarshaller(typeof(OgrError), MarshalMode.ManagedToUnmanagedOut, typeof(ThrowMarshal))]
+[CustomMarshaller(typeof(GdalCplErr), MarshalMode.ManagedToUnmanagedOut, typeof(ThrowMarshal))]
+public static class ThrowMarshal
+{
+    public static OgrError ConvertToManaged(OgrError unmanaged)
+    {
+        GdalError.ThrowIfError(unmanaged);
+        return unmanaged;
     }
 
-    [CustomMarshaller(typeof(OgrError), MarshalMode.ManagedToUnmanagedOut, typeof(ThrowMarshal))]
-    [CustomMarshaller(typeof(GdalCplErr), MarshalMode.ManagedToUnmanagedOut, typeof(ThrowMarshal))]
-    public static class ThrowMarshal
+    public static GdalCplErr ConvertToManaged(GdalCplErr unmanaged)
     {
-        public static OgrError ConvertToManaged(OgrError unmanaged)
-        {
-            ThrowIfError(unmanaged);
-            return unmanaged;
-        }
-
-        public static GdalCplErr ConvertToManaged(GdalCplErr unmanaged)
-        {
-            ThrowIfError(unmanaged);
-            return unmanaged;
-        }
+        GdalError.ThrowIfError(unmanaged);
+        return unmanaged;
     }
 }
 
@@ -147,15 +158,14 @@ public sealed class GdalErrorEventArgs : EventArgs
 
 public class GdalException : ApplicationException
 {
-    public GdalException()
+    internal GdalException()
+    { }
+
+    internal GdalException(string? message) : base(message)
     {
     }
 
-    public GdalException(string? message) : base(message)
-    {
-    }
-
-    public GdalException(string? message, Exception? innerException) : base(message, innerException)
+    internal GdalException(string? message, Exception? innerException) : base(message, innerException)
     {
     }
 }

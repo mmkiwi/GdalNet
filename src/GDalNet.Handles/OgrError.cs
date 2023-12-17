@@ -2,9 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace MMKiwi.GdalNet;
+namespace MMKiwi.GdalNet.Handles;
 
-[NativeMarshalling(typeof(GdalError.ThrowMarshal))]
+[NativeMarshalling(typeof(ThrowMarshal))]
 public enum OgrError
 {
     None = 0,
@@ -13,7 +13,8 @@ public enum OgrError
     UnsupportedGeometryType = 3,
     UnsupportedOperation = 4,
     CorruptData = 5,
-    Falure = 6,
+    Failure = 6,
+    // ReSharper disable once InconsistentNaming
     UnsupportedSRS = 7,
     InvalidHandle = 8,
     NonExistingFeature = 9

@@ -10,7 +10,7 @@
       Location: : (5,0)-(8,1),
       MessageFormat: Class {0} must subclass GdalInternalHandle.,
       Message: Class TestHandleNeverOwns must subclass GdalInternalHandle.,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     }
   ]
 }

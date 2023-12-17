@@ -2,8 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Runtime.InteropServices;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -237,7 +235,6 @@ public class ConstructGeneratorTest
         return Verify(runResult).UseDirectory("snapshots");
     }
 
-
     [Fact]
     public Task TestInternalHandle()
     {
@@ -410,7 +407,6 @@ public class ConstructGeneratorTest
 
         var compilation = CSharpCompilation.Create(InternalUnitTestConst.AssemblyName, syntaxTrees: trees, references: references);
         var generator = new ConstructGenerator();
-
 
         var driver = CSharpGeneratorDriver.Create(generator);
         return driver.RunGenerators(compilation);

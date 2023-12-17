@@ -4,9 +4,13 @@
 
 using System.Buffers;
 
+using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
-public sealed partial class GdalVirtualDataset: IDisposable
+[GdalGenerateWrapper]
+public sealed partial class GdalVirtualDataset: IDisposable, IConstructableWrapper<GdalVirtualDataset, GdalVirtualDatasetHandle>, IHasHandle<GdalVirtualDatasetHandle>
 {
     private bool _disposedValue;
 

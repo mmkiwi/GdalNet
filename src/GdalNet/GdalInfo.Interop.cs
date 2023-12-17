@@ -2,6 +2,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
+
+using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
@@ -13,14 +19,20 @@ public static partial class GdalInfo
     {
         static Interop() => GdalError.EnsureInitialize();
 
-        [LibraryImport("gdal")]
+        [LibraryImport("gdal", EntryPoint = nameof(GDALVersionInfo))]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [return: MarshalUsing(typeof(Utf8StringNoFree))]
-        internal static partial string GDALVersionInfo(ReadOnlySpan<byte> requestType);
+        private static partial string _GDALVersionInfo(ReadOnlySpan<byte> requestType);
 
-        [LibraryImport("gdal")]
+        [GdalWrapperMethod(MethodName = nameof(_GDALVersionInfo))]
+        public static partial string GDALVersionInfo(ReadOnlySpan<byte> requestType);
+
+        [LibraryImport("gdal", EntryPoint = nameof(GDALAllRegister))]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        internal static partial void GDALAllRegister();
+        private static partial void _GDALAllRegister();
+
+        [GdalWrapperMethod(MethodName = nameof(_GDALAllRegister))]
+        public static partial void GDALAllRegister();
     }
 }
 

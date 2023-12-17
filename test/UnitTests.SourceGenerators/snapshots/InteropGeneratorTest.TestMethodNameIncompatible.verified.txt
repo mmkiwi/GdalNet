@@ -2,7 +2,7 @@
   Generator: {},
   GeneratedSources: [
     {
-      HintName: InteropGenerator.Interop.Test.g.cs,
+      HintName: InteropGenerator.Interop.Parent.Test.g.cs,
       Source:
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet;
@@ -32,7 +32,7 @@ public partial static class Interop
       Location: : (12,8)-(13,67),
       MessageFormat: Skipping match for method {0}. Method {1} does not have the same number of parameters.,
       Message: Skipping match for method TestCMethod(TestWrapper). Method TestCMethodOtherName() does not have the same number of parameters.,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     },
     {
       Id: GDSG0003,
@@ -42,7 +42,7 @@ public partial static class Interop
       Location: : (12,8)-(13,67),
       MessageFormat: Could not generate wrapper method for {0}.,
       Message: Could not generate wrapper method for TestCMethod(TestWrapper).,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     }
   ]
 }
