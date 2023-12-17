@@ -218,6 +218,8 @@ public static class InteropGenerationHelper
 
         methodString.AppendLine(");");
 
+        methodString.AppendLine($"{space}global::MMKiwi.GdalNet.Handles.GdalError.ThrowIfError();");
+
         foreach (var param in interopMethod.Parameters)
         {
             if (param.TransformType == TransformType.WrapperOut)
