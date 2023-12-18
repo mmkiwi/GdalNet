@@ -20,7 +20,6 @@ public abstract partial class OgrGeometry: IDisposable
 
     public static OgrGeometry CreateFromWkt(string wkt, OgrSpatialReference? spatialReference = null)
     {
-
         var err = CreateFromWktMarshal(wkt, spatialReference, out OgrGeometry result);
         GdalError.ThrowIfError(err);
         return result;
@@ -47,65 +46,35 @@ public abstract partial class OgrGeometry: IDisposable
 
     public int Dimension
     {
-        get
-        {
-            var dimension = Interop.OGR_G_GetDimension(this);
-            GdalError.ThrowIfError();
-            return dimension;
-        }
+        get => Interop.OGR_G_GetDimension(this);
     }
 
     public int CoordinateDimension
     {
-        get
-        {
-            int coordDimension = Interop.OGR_G_CoordinateDimension(this);
-            GdalError.ThrowIfError();
-            return coordDimension;
-        }
+        get => Interop.OGR_G_CoordinateDimension(this);
     }
 
     public bool Is3D
     {
-        get
-        {
-            bool is3D = Interop.OGR_G_Is3D(this);
-            GdalError.ThrowIfError();
-            return is3D;
-        }
-        set
-        {
-            Interop.OGR_G_Set3D(this, value);
-            GdalError.ThrowIfError();
-        }
+        get => Interop.OGR_G_Is3D(this);
+        set => Interop.OGR_G_Set3D(this, value);
     }
 
     public OgrGeometry Clone()
-    {
-        var clone = Interop.OGR_G_Clone(this);
-        GdalError.ThrowIfError();
-        return clone;
-    }
+        => Interop.OGR_G_Clone(this);
 
     public OgrEnvelope Envelope
     {
         get
         {
-            OgrEnvelope? result = null;
-            Interop.OGR_G_GetEnvelope(this, ref result);
-            GdalError.ThrowIfError();
+            Interop.OGR_G_GetEnvelope(this, out OgrEnvelope? result);
             return result;
         }
     }
 
     public OgrWkbGeometryType GeometryType
     {
-        get
-        {
-            OgrWkbGeometryType result = Interop.OGR_G_GetGeometryType(this);
-            GdalError.ThrowIfError();
-            return result;
-        }
+        get =>Interop.OGR_G_GetGeometryType(this);
     }
 
     public OgrEnvelope3D Envelope3D
@@ -114,7 +83,6 @@ public abstract partial class OgrGeometry: IDisposable
         {
             OgrEnvelope3D? result = null;
             Interop.OGR_G_GetEnvelope3D(this, ref result);
-            GdalError.ThrowIfError();
             return result;
         }
     }
@@ -139,4 +107,42 @@ public abstract partial class OgrGeometry: IDisposable
         GC.SuppressFinalize(this);
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    private protected struct OgrGeometryRaw
+    {
+        private nint _vFuncTablePtr1;
+        private nint _srsPtr;
+        public uint Flags { get; set; }
+    }
+
+    public bool Equals(OgrGeometry? other)
+    {
+        if (other is null)
+            return false;
+
+        ObjectDisposedException.ThrowIf(Handle.IsClosed, this);
+        ObjectDisposedException.ThrowIf(other.Handle.IsClosed, this);
+
+        return ReferenceEquals(this, other) || Interop.OGR_G_Equals(this, other);
+    }
+
+    public override bool Equals(object? obj)
+        => this.Equals(obj as OgrGeometry);
+
+    public static bool operator ==(OgrGeometry? lhs, OgrGeometry? rhs)
+        => lhs switch
+        {
+            null when rhs is null => true,
+            null => false,
+            _ => lhs.Equals(rhs)
+        };
+
+    public static bool operator !=(OgrGeometry? lhs, OgrGeometry? rhs)
+        => !(lhs == rhs);
+
+    public override int GetHashCode()
+    {
+        ObjectDisposedException.ThrowIf(Handle.IsClosed, this);
+        return Handle.DangerousGetHandle().GetHashCode();
+    }
 }

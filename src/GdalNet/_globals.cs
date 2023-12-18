@@ -3,6 +3,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 global using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
+global using System.Runtime.InteropServices;
+global using MMKiwi.GdalNet.InteropAttributes;
+global using MMKiwi.GdalNet.Handles;
+global using System.Diagnostics.CodeAnalysis;
 
 using System.Runtime.CompilerServices;
 
