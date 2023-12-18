@@ -2,6 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
+
+using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -38,6 +43,7 @@ public partial class GdalMajorObject
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [return:MarshalUsing(typeof(ThrowMarshal))]
         private static partial GdalCplErr GDALSetMetadata(GdalInternalHandle obj, [MarshalUsing(typeof(CStringArrayMarshal))] IReadOnlyDictionary<string,string>? metadata, string? domain);
 
         [GdalWrapperMethod]
@@ -45,6 +51,7 @@ public partial class GdalMajorObject
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [return: MarshalUsing(typeof(ThrowMarshal))]
         private static partial GdalCplErr GDALSetMetadataItem(GdalInternalHandle obj, string name, string? value, string? domain);
 
         [GdalWrapperMethod]

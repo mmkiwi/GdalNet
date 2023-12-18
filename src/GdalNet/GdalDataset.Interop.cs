@@ -2,6 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
+
+using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -16,13 +21,9 @@ public sealed partial class GdalDataset
     {
         static Interop() => GdalError.EnsureInitialize();
 
-        [LibraryImport("gdal")]
-        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        public static partial GdalCplErr GDALClose(nint dataset);
-
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8, EntryPoint = nameof(GDALOpenEx))]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        private static partial MarshalHandle.Owns _GDALOpenEx(string fileName,
+        public static partial GdalDatasetHandle.Owns _GDALOpenEx(string fileName,
                                                                          GdalOpenFlags openFlags,
                                                                          [MarshalUsing(typeof(CStringArrayMarshal))]
                                                                          IEnumerable<string>? allowedDrivers,
@@ -41,47 +42,47 @@ public sealed partial class GdalDataset
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        private static partial int GDALGetRasterCount(MarshalHandle dataset);
+        private static partial int GDALGetRasterCount(GdalDatasetHandle dataset);
 
         [GdalWrapperMethod]
         public static partial int GDALGetRasterCount(GdalDataset dataset);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        public static partial int GDALGetRasterXSize(MarshalHandle dataset);
+        public static partial int GDALGetRasterXSize(GdalDatasetHandle dataset);
 
         [GdalWrapperMethod]
         public static partial int GDALGetRasterXSize(GdalDataset dataset);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        public static partial int GDALGetRasterYSize(MarshalHandle dataset);
+        public static partial int GDALGetRasterYSize(GdalDatasetHandle dataset);
 
         [GdalWrapperMethod]
         public static partial int GDALGetRasterYSize(GdalDataset dataset);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        public static partial GdalRasterBand.MarshalHandle GDALGetRasterBand(MarshalHandle dataset, int bandId);
+        public static partial GdalRasterBandHandle GDALGetRasterBand(GdalDatasetHandle dataset, int bandId);
         [GdalWrapperMethod]
         public static partial GdalRasterBand GDALGetRasterBand(GdalDataset dataset, int bandId);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        public static partial int GDALDatasetGetLayerCount(MarshalHandle dataset);
+        public static partial int GDALDatasetGetLayerCount(GdalDatasetHandle dataset);
         [GdalWrapperMethod]
         public static partial int GDALDatasetGetLayerCount(GdalDataset dataset);
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        public static partial OgrLayer.MarshalHandle GDALDatasetGetLayerByName(MarshalHandle dataset, string layer);
+        public static partial OgrLayerHandle GDALDatasetGetLayerByName(GdalDatasetHandle dataset, string layer);
 
         [GdalWrapperMethod]
         public static partial OgrLayer? GDALDatasetGetLayerByName(GdalDataset dataset, string layer);
 
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        public static partial OgrLayer.MarshalHandle GDALDatasetGetLayer(MarshalHandle dataset, int layerId);
+        public static partial OgrLayerHandle GDALDatasetGetLayer(GdalDatasetHandle dataset, int layerId);
         [GdalWrapperMethod]
         public static partial OgrLayer GDALDatasetGetLayer(GdalDataset dataset, int layerId);
 

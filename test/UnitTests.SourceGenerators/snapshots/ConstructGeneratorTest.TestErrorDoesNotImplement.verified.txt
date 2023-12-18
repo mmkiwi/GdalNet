@@ -10,7 +10,7 @@
       Location: : (5,0)-(8,1),
       MessageFormat: Class {0} must implement IConstructableHandle or IHasHandle to generate the wrapper type.,
       Message: Class TestWrapper must implement IConstructableHandle or IHasHandle to generate the wrapper type.,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     }
   ]
 }

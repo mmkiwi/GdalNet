@@ -2,15 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace MMKiwi.GdalNet;
+using MMKiwi.GdalNet.InteropAttributes;
 
-[NativeMarshalling(typeof(GdalError.ThrowMarshal))]
-public enum GdalCplErr
-{
-    None,
-    Debug,
-    Warning,
-    Failure,
-    Fatal
-}
+namespace MMKiwi.GdalNet.Handles;
 
+[GdalGenerateHandle]
+internal sealed partial class OgrLayerHandle : GdalInternalHandleNeverOwns, IConstructableHandle<OgrLayerHandle>;

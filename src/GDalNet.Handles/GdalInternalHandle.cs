@@ -2,27 +2,27 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace MMKiwi.GdalNet;
+namespace MMKiwi.GdalNet.Handles;
 
-internal abstract class GdalInternalHandle : SafeHandle
+internal abstract partial class GdalInternalHandle : SafeHandle
 {
-    protected GdalInternalHandle(bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
+    private protected GdalInternalHandle(bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
     {
         OwnsHandle = ownsHandle;
     }
 
     public override bool IsInvalid => handle == IntPtr.Zero;
 
-    internal bool OwnsHandle { get; }
+    private bool OwnsHandle { get; }
 
-    public static readonly object ReentrantLock = new();
+    private static readonly object s_reentrantLock = new();
 
     protected override bool ReleaseHandle()
     {
         if (OwnsHandle)
             return false;
         
-        lock (ReentrantLock)
+        lock (s_reentrantLock)
         {
             if (IsInvalid)
                 return false;
@@ -38,13 +38,4 @@ internal abstract class GdalInternalHandle : SafeHandle
     }
 
     protected abstract GdalCplErr? ReleaseHandleCore();
-}
-
-internal abstract class GdalInternalHandleNeverOwns : GdalInternalHandle
-{
-    protected GdalInternalHandleNeverOwns() : base(false) { }
-
-    protected override GdalCplErr? ReleaseHandleCore() => default;
-    protected override bool ReleaseHandle() => true;
-
 }

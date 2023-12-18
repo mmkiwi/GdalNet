@@ -17,8 +17,6 @@ public static class ConstructGenerationHelper
     public const string MarkerClass = "GdalGenerateWrapperAttribute";
     public const string MarkerFullName = $"{MarkerNamespace}.{MarkerClass}";
 
-    static readonly SymbolDisplayFormat s_symbolDisplayFormat = new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
-
     internal static string GenerateExtensionClass(Compilation compilation, ConstructGenerator.GenerationInfo.Ok genInfo, SourceProductionContext context)
     {
         StringBuilder resFile = new();

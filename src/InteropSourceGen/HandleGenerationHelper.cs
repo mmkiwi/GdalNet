@@ -16,9 +16,6 @@ public static class HandleGenerationHelper
     public const string MarkerClass = "GdalGenerateWrapperAttribute";
     public const string MarkerFullName = $"{MarkerNamespace}.{MarkerClass}";
 
-    static readonly SymbolDisplayFormat s_symbolDisplayFormat =
-        new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
-
     internal static string GenerateExtensionClass(Compilation compilation, HandleGenerator.GenerationInfo.Ok genInfo,
         SourceProductionContext context)
     {
@@ -85,6 +82,24 @@ public static class HandleGenerationHelper
                                          static {{className}} IConstructableHandle<{{className}}>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
                                      """);
             }
+        }
+
+        if (genInfo.GenerateOwns)
+        {
+            resFile.AppendLine($$"""
+                                     
+                                     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+                                     public class Owns() : {{className}}(true);
+                                 """);
+        }
+
+        if (genInfo.GenerateDoesntOwn)
+        {
+            resFile.AppendLine($$"""
+                                     
+                                     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+                                     public class DoesntOwn() : {{className}}(false);
+                                 """);
         }
 
         if (genInfo.GenerateConstructor)

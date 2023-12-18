@@ -1,0 +1,10 @@
+{
+    "version": "1",
+    "environments": [
+        {
+            "name": "WSL",
+            "type": "wsl",
+            "wslDistribution": "openSUSE-Leap-15.5"
+        }
+    ]
+}

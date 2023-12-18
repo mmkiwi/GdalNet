@@ -14,7 +14,7 @@ public class OgrLayerTests: LayerTestBase
     public void TestLayerGetName(int index)
     {
         var layerInfo = GetLayer(index);
-        using var virtualDataset = GdalVirtualDataset.Open(layerInfo.File.Data)!;
+        using var virtualDataset = GdalVirtualDataset.Open(layerInfo.File.Data);
         var dataset = virtualDataset.Dataset;
         var layer = dataset.Layers[layerInfo.Layer.Name];
         layer.Name.Should().Be(layerInfo.Layer.Name);
@@ -25,7 +25,7 @@ public class OgrLayerTests: LayerTestBase
     public void TestLayerGetIndex(int index)
     {
         var layerInfo = GetLayer(index);
-        using var virtualDataset = GdalVirtualDataset.Open(layerInfo.File.Data)!;
+        using var virtualDataset = GdalVirtualDataset.Open(layerInfo.File.Data);
         var dataset = virtualDataset.Dataset;
         var layer = dataset.Layers[layerInfo.Layer.Index];
         layer.Name.Should().Be(layerInfo.Layer.Name);

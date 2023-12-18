@@ -8,7 +8,7 @@ namespace MMKiwi.GdalNet.UnitTests;
 
 public abstract class DatasetTestBase
 {
-    public DatasetTestBase()
+    protected DatasetTestBase()
     {
         GdalInfo.RegisterAllDrivers();
     }

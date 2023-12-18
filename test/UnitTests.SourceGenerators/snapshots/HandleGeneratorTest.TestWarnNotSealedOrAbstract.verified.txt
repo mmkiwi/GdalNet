@@ -6,6 +6,7 @@
       Source:
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.Handles;
 #nullable enable
 namespace Test {
 
@@ -25,10 +26,10 @@ internal partial class TestHandleNeverOwns
       Title: Handle should be sealed or abstract,
       Severity: Warning,
       WarningLevel: 1,
-      Location: : (5,0)-(8,1),
+      Location: : (6,0)-(9,1),
       MessageFormat: Class {0} should be sealed or abstract.,
       Message: Class TestHandleNeverOwns should be sealed or abstract.,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     }
   ]
 }

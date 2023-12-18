@@ -2,6 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet.CHelpers;
 
 /// <summary>
@@ -14,7 +17,8 @@ namespace MMKiwi.GdalNet.CHelpers;
 ///  <see cref="Marshallers.CStringArrayMarshal" /> can be used to marshal
 ///  any IEnumerable 
 /// </remarks>
-internal sealed partial class CStringList : IDisposable
+[GdalGenerateWrapper(HandleSetVisibility = MemberVisibility.Private)]
+internal sealed partial class CStringList : IDisposable, IConstructableWrapper<CStringList, CStringListHandle>, IHasHandle<CStringListHandle>
 {
     public static CStringList Create(string firstString)
     {

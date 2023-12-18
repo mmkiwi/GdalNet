@@ -10,4 +10,6 @@ namespace MMKiwi.GdalNet.InteropAttributes;
 public class GdalGenerateHandleAttribute : Attribute
 {
     public MemberVisibility ConstructorVisibility { get; set; } = MemberVisibility.Protected;
+    public bool GenerateOwns { get; set; } = true;
+    public bool GenerateDoesntOwn { get; set; } = true;
 }

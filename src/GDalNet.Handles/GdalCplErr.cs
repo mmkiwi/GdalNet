@@ -2,10 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace MMKiwi.GdalNet;
+namespace MMKiwi.GdalNet.Handles;
 
-internal interface IConstructableHandle<out THandle>
-    where THandle:GdalInternalHandle
+[NativeMarshalling(typeof(ThrowMarshal))]
+public enum GdalCplErr
 {
-    static abstract THandle Construct(bool ownsHandle);
+    None,
+    Debug,
+    Warning,
+    Failure,
+    Fatal
 }

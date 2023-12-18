@@ -2,11 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Runtime.InteropServices;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
+using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet.InteropSourceGen;
 
@@ -128,9 +127,10 @@ public class ConstructGeneratorTest
     private static SyntaxTree GetInternalHandleNeverOwns()
         => CSharpSyntaxTree.ParseText(
             """
-            using MMKiwi.GdalNet.InteropAttributes;
-            using MMKiwi.GdalNet;
-
+            global using MMKiwi.GdalNet.Handles;
+            global using MMKiwi.GdalNet;
+            global using MMKiwi.GdalNet.InteropAttributes;
+            
             namespace Test;
 
             [GdalGenerateHandle]
@@ -143,8 +143,9 @@ public class ConstructGeneratorTest
     private static SyntaxTree GetInternalHandle()
         => CSharpSyntaxTree.ParseText(
             """
-            using MMKiwi.GdalNet.InteropAttributes;
-            using MMKiwi.GdalNet;
+            global using MMKiwi.GdalNet.Handles;
+            global using MMKiwi.GdalNet;
+            global using MMKiwi.GdalNet.InteropAttributes;
 
             namespace Test;
 
@@ -236,7 +237,6 @@ public class ConstructGeneratorTest
         var runResult = driver.GetRunResult().Results.Single();
         return Verify(runResult).UseDirectory("snapshots");
     }
-
 
     [Fact]
     public Task TestInternalHandle()
@@ -405,12 +405,12 @@ public class ConstructGeneratorTest
             MetadataReference.CreateFromFile(Path.Combine(dotNetAssemblyPath, "System.Private.CoreLib.dll")),
             MetadataReference.CreateFromFile(Path.Combine(dotNetAssemblyPath, "System.Runtime.dll")),
             MetadataReference.CreateFromFile(typeof(GdalWrapperMethodAttribute).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(GdalInternalHandleNeverOwns).Assembly.Location)
+            MetadataReference.CreateFromFile(typeof(GdalInternalHandleNeverOwns).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(IConstructableWrapper<,>).Assembly.Location)
         ];
 
         var compilation = CSharpCompilation.Create(InternalUnitTestConst.AssemblyName, syntaxTrees: trees, references: references);
         var generator = new ConstructGenerator();
-
 
         var driver = CSharpGeneratorDriver.Create(generator);
         return driver.RunGenerators(compilation);

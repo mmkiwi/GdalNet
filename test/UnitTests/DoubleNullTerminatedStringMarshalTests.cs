@@ -143,7 +143,7 @@ public unsafe class CStringArrayMarshalTests
     [Fact]
     public void TestManagedToUnmanagedEmptyDictionary()
     {
-        var marshal = CStringArrayMarshal.DictionaryMarshal.ConvertToUnmanaged(new Dictionary<string,string>());
+        var marshal = CStringArrayMarshal.DictionaryMarshal.ConvertToUnmanaged([]);
         try
         {
             byte* result = *marshal;
@@ -158,7 +158,7 @@ public unsafe class CStringArrayMarshalTests
     [Fact]
     public void TestManagedToUnmanagedEmptyEnumerable()
     {
-        var marshal = CStringArrayMarshal.EnumerableMarshal.ConvertToUnmanaged(Array.Empty<string>());
+        var marshal = CStringArrayMarshal.EnumerableMarshal.ConvertToUnmanaged([]);
         try
         {
             byte* result = *marshal;

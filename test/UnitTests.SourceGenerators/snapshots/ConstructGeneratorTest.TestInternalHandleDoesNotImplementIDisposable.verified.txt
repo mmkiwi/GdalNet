@@ -38,7 +38,7 @@ public partial class TestWrapper
       Location: : (6,0)-(9,1),
       MessageFormat: Class {0} implements IHasHandle, but does not implement IDisposable.,
       Message: Class TestWrapper implements IHasHandle, but does not implement IDisposable.,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     }
   ]
 }

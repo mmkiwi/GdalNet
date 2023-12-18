@@ -6,16 +6,18 @@
       Source:
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.Handles;
 using System.Runtime.InteropServices;
 #nullable enable
 namespace Test {
 public partial static class Interop
-{ 
+{
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
     public static partial int TestCMethod(out int dataset)
     {
         int __return_value;
          __return_value = TestCMethod(out dataset);
+        global::MMKiwi.GdalNet.Handles.GdalError.ThrowIfError();
         return __return_value;
 
     }

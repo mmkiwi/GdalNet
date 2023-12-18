@@ -118,13 +118,13 @@ public class ConstructGenerator : IIncrementalGenerator
                 var handleParent = handleType;
                 while (handleParent is not null)
                 {
-                    if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandleNeverOwns")
+                    if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.Handles.GdalInternalHandleNeverOwns")
                     {
                         needsIDisposable = false;
                         break;
                     }
 
-                    if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandle")
+                    if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.Handles.GdalInternalHandle")
                     {
                         needsIDisposable = true;
                         break;
@@ -138,9 +138,8 @@ public class ConstructGenerator : IIncrementalGenerator
                     // Get handle type
                     hasExplicitHandle |= classSymbol.FindImplementationForInterfaceMember(member) is not null;
 
-                    for (int index = 0; index < classSymbol.Constructors.Length; index++)
+                    foreach (var implementedCtor in classSymbol.Constructors)
                     {
-                        IMethodSymbol implementedCtor = classSymbol.Constructors[index];
                         if (implementedCtor.Parameters.Length == 1 && implementedCtor.Parameters[0].Type
                                 .Equals(handleType, SymbolEqualityComparer.Default))
                         {
@@ -224,7 +223,7 @@ public class ConstructGenerator : IIncrementalGenerator
                     context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00010",
                             "Class must be partial",
                             "Class {0} must be partial for the source generator to work.",
-                            "GDal.SourceGenerator",
+                            "Gdal.SourceGenerator",
                             DiagnosticSeverity.Warning,
                             true),
                         cls.ClassSyntax.GetLocation(),
@@ -234,16 +233,19 @@ public class ConstructGenerator : IIncrementalGenerator
                     context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG00011",
                             "Class does not implement IConstructableHandle or IHasHandle",
                             "Class {0} must implement IConstructableHandle or IHasHandle to generate the wrapper type.",
-                            "GDal.SourceGenerator",
+                            "Gdal.SourceGenerator",
                             DiagnosticSeverity.Warning,
                             true),
                         cls.ClassSyntax.GetLocation(),
                         cls.ClassSyntax.Identifier));
                     break;
-                case GenerationInfo.Ok genInfo when genInfo.NeedsConstructMethod is false &&
-                                                    genInfo.NeedsExplicitHandle is false &&
-                                                    genInfo.NeedsImplicitHandle is false &&
-                                                    genInfo.NeedsConstructor is false:
+                case GenerationInfo.Ok
+                {
+                    NeedsConstructMethod: false,
+                    NeedsExplicitHandle: false, 
+                    NeedsImplicitHandle: false, 
+                    NeedsConstructor: false,
+                }:
                     continue;
                 case GenerationInfo.Ok genInfo:
                     {
@@ -252,7 +254,7 @@ public class ConstructGenerator : IIncrementalGenerator
                             context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0008",
                                     "Missing IDisposable",
                                     "Class {0} implements IHasHandle, but does not implement IDisposable.",
-                                    "GDal.SourceGenerator",
+                                    "Gdal.SourceGenerator",
                                     DiagnosticSeverity.Warning,
                                     true),
                                 cls.ClassSyntax.GetLocation(),

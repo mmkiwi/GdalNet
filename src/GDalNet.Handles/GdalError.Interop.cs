@@ -2,13 +2,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace MMKiwi.GdalNet;
+namespace MMKiwi.GdalNet.Handles;
 
 using unsafe CplErrHandle = delegate* unmanaged[Stdcall]<GdalCplErr, int, char*, void>;
 
 public unsafe partial record GdalError
 {
-    [CLSCompliant(false)]
     internal static partial class Interop
     {
         static Interop() => EnsureInitialize();
@@ -24,11 +23,13 @@ public unsafe partial record GdalError
 
     internal static void EnsureInitialize()
     {
-        if (!s_isRegistered)
+        if (s_isRegistered)
         {
-            Interop.CPLSetErrorHandler(GetStdcallAction());
-            s_isRegistered = true;
+            return;
         }
+
+        Interop.CPLSetErrorHandler(GetStdcallAction());
+        s_isRegistered = true;
     }
 
     static bool s_isRegistered;

@@ -32,7 +32,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\GDalNet\GdalNet.csproj" />
+        <ProjectReference Include="..\..\src\GDalNet.Handles\GdalNet.Handles.csproj" />
+        <ProjectReference Include="..\..\src\GdalNet\GdalNet.csproj" />
         <ProjectReference Include="..\..\src\InteropSourceGen\InteropSourceGen.csproj" />
     </ItemGroup>
 

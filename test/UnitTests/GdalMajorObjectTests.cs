@@ -147,7 +147,6 @@ public sealed class GdalMajorObjectTests : DatasetTestBase
         using var virtualDataset = GdalVirtualDataset.Open(datasetInfo.File.Data, openOptions: datasetInfo.Dataset.Options);
         var dataset = virtualDataset.Dataset;
 
-        string[] originalDomains = dataset.MetadataDomainList;
         dataset.SetMetadataItem("Test1", "Value1", "Domain1");
         dataset.SetMetadataItem("Test2", "Value2", "Domain2");
 

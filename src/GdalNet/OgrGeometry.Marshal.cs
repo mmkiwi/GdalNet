@@ -2,27 +2,15 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.InteropAttributes;
 
 namespace MMKiwi.GdalNet;
 
 [GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected)]
-public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle>, IConstructableWrapper<OgrGeometry, OgrGeometry.MarshalHandle>
+public abstract partial class OgrGeometry : IHasHandle<OgrGeometryHandle>, IConstructableWrapper<OgrGeometry, OgrGeometryHandle>
 {
-    [GdalGenerateHandle]
-    internal abstract partial class MarshalHandle : GdalInternalHandle, IConstructableHandle<MarshalHandle>
-    {
-        protected override GdalCplErr? ReleaseHandleCore()
-        {
-            Interop.OGR_G_DestroyGeometry(handle);
-            return null;
-        }
-
-        public sealed class Owns() : MarshalHandle(true);
-        public sealed class DoesntOwn() : MarshalHandle(true);
-    }
-
-    static OgrGeometry IConstructableWrapper<OgrGeometry, MarshalHandle>.Construct(MarshalHandle handle)
+    static OgrGeometry IConstructableWrapper<OgrGeometry, OgrGeometryHandle>.Construct(OgrGeometryHandle handle)
     {
         OgrWkbGeometryType type = Interop.OGR_G_GetGeometryType(handle);
         return type switch
@@ -47,13 +35,5 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometry.MarshalHandle
             OgrWkbGeometryType.LinearRing => throw new NotImplementedException(),//
             _ => new UnknownGeometry(handle),
         };
-    }
-
-    [GdalGenerateWrapper]
-    private partial class UnknownGeometry : OgrGeometry, IConstructableWrapper<UnknownGeometry, MarshalHandle>
-    {
-        public UnknownGeometry(MarshalHandle handle) : base(handle)
-        {
-        }
     }
 }

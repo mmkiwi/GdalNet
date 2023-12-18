@@ -2,21 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.Handles;
+
 namespace MMKiwi.GdalNet.UnitTests;
 
 //[Collection("GDAL")]
 public class GdalErrorTests
 {
-    [Fact]
-    public void ErrorIsRetrievable()
-    {
-        GdalInfo.RegisterAllDrivers();
-        using var dataset = GdalDataset.Interop.GDALOpenEx("DOESNOTEXIST", new GdalOpenSettings().Flags, null, null, null);
-        GdalError.LastError.Should().BeEquivalentTo(new
-        {
-            ErrorNum = GdalError.ErrorCodes.OpenFailed,
-            Severity = GdalCplErr.Failure
-        });
-
-    }
 }

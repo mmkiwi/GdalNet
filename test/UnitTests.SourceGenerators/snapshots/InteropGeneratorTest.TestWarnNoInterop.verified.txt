@@ -6,11 +6,12 @@
       Source:
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.Handles;
 using System.Runtime.InteropServices;
 #nullable enable
 namespace Test {
 public partial static class Interop
-{ 
+{
     public static partial int TestCMethod(TestWrapper dataset)
     {
         throw new NotImplementedException();
@@ -26,10 +27,10 @@ public partial static class Interop
       Title: Could not generate wrapper method,
       Severity: Warning,
       WarningLevel: 1,
-      Location: : (8,4)-(9,63),
+      Location: : (9,4)-(10,63),
       MessageFormat: Could not generate wrapper method for {0}.,
       Message: Could not generate wrapper method for TestCMethod(TestWrapper).,
-      Category: GDal.SourceGenerator
+      Category: Gdal.SourceGenerator
     }
   ]
 }

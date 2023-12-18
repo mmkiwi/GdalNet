@@ -29,6 +29,5 @@ public enum OgrFieldSubType
     /// <summary>
     /// UUID string representation. Only valid for <see cref="OgrFieldType.String"/>.
     /// </summary>
-    UUID = 5,
-    MaxSubType = 5
+    UUID = 5
 }

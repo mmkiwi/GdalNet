@@ -3,6 +3,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections.Immutable;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 
 using MMKiwi.GdalNet.CHelpers;
@@ -152,7 +154,6 @@ internal unsafe static class CStringArrayMarshal
             mem[i] = Utf8StringMarshaller.ConvertToUnmanaged(item);
             i++;
         }
-
 
         mem[count] = null; // The last pointer in the array needs to be null
 

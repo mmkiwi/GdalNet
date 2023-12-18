@@ -4,10 +4,20 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.InteropAttributes;
+
 namespace MMKiwi.GdalNet;
 
-public partial class OgrLayer
+[GdalGenerateWrapper]
+public partial class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHandle<OgrLayerHandle>
 {
+    internal OgrLayer(OgrLayerHandle handle)
+    {
+        Handle = handle;
+        Features = new OgrFeatureCollection(this);
+    }
+
     public string Name
     {
         get

@@ -13,12 +13,8 @@ public static partial class GdalInfo
     });
     public static Version Version => s_version.Value;
 
-    private static readonly Lazy<DateOnly> s_releaseDate = new(() =>
-        {
-            var date = Interop.GDALVersionInfo("RELEASE_DATE"u8);
-            return DateOnly.ParseExact(date, "yyyyMMdd");
-        });
-    public static DateOnly ReleaseDate => s_releaseDate.Value;
+    private static readonly Lazy<string> s_releaseDate = new(() => Interop.GDALVersionInfo("RELEASE_DATE"u8));
+    public static string ReleaseDate => s_releaseDate.Value;
 
     private static readonly Lazy<string> s_buildInfo = new(() => Interop.GDALVersionInfo("BUILD_INFO"u8));
     private static bool s_isRegistered;
