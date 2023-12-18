@@ -7,9 +7,9 @@
       Title: Class must be partial,
       Severity: Warning,
       WarningLevel: 1,
-      Location: : (5,0)-(8,1),
-      MessageFormat: Class {0} must subclass GdalInternalHandle.,
-      Message: Class TestHandleNeverOwns must subclass GdalInternalHandle.,
+      Location: : (6,0)-(9,1),
+      MessageFormat: Class {0} must subclass GdalInternalHandle. Parent classes: {1},
+      Message: Class TestHandleNeverOwns must subclass GdalInternalHandle. Parent classes: SafeHandle,
       Category: Gdal.SourceGenerator
     }
   ]

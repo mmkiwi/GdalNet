@@ -86,7 +86,7 @@ public sealed partial record GdalError
             {
                 throw LastError.ErrorNum switch
                 {
-                    ErrorCodes.ApplicationDefined => new Exception(
+                    ErrorCodes.ApplicationDefined => new GdalException(
                         $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
                     ErrorCodes.OutOfMemory => new InsufficientMemoryException(
                         $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
@@ -98,7 +98,7 @@ public sealed partial record GdalError
                         $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
                     ErrorCodes.NotSupported => new NotSupportedException(
                         $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.AssertionFailed => new Exception(
+                    ErrorCodes.AssertionFailed => new GdalException(
                         $"GDAL ERROR: Code: {(int)LastError.ErrorNum} , {LastError.Message}"),
                     ErrorCodes.NoWriteAccess => new IOException(
                         $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),

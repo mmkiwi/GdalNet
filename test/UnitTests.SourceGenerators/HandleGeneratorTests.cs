@@ -5,6 +5,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
+using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet.InteropSourceGen;
 
@@ -38,7 +39,8 @@ public class HandleGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
-
+            using MMKiwi.GdalNet.Handles;
+            
             namespace Test;
 
             [GdalGenerateHandle]
@@ -60,6 +62,7 @@ public class HandleGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
 
             namespace Test;
 
@@ -82,6 +85,7 @@ public class HandleGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
 
             namespace Test;
 
@@ -104,6 +108,7 @@ public class HandleGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
 
             namespace Test;
 
@@ -126,6 +131,7 @@ public class HandleGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
 
             namespace Test;
 
@@ -153,6 +159,7 @@ public class HandleGeneratorTest
             $$"""
               using MMKiwi.GdalNet.InteropAttributes;
               using MMKiwi.GdalNet;
+              using MMKiwi.GdalNet.Handles;
 
               namespace Test;
 
@@ -175,6 +182,7 @@ public class HandleGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
 
             namespace Test;
 
@@ -207,7 +215,7 @@ public class HandleGeneratorTest
             MetadataReference.CreateFromFile(Path.Combine(dotNetAssemblyPath, "System.Runtime.dll")),
             MetadataReference.CreateFromFile(typeof(GdalWrapperMethodAttribute).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(GdalInternalHandleNeverOwns).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(GdalDataset).Assembly.Location)
+            MetadataReference.CreateFromFile(typeof(IConstructableWrapper<,>).Assembly.Location)
         ];
 
         var compilation = CSharpCompilation.Create(InternalUnitTestConst.AssemblyName, syntaxTrees: trees, references: references);
@@ -217,5 +225,3 @@ public class HandleGeneratorTest
         return driver.RunGenerators(compilation);
     }
 }
-
-internal class GdalInternalHandleNeverOwns;

@@ -6,11 +6,12 @@
       Source:
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.Handles;
 using System.Runtime.InteropServices;
 #nullable enable
 namespace Test {
 public partial static class Interop
-{ 
+{
     public static partial int TestCMethod(TestWrapper dataset)
     {
         throw new NotImplementedException();
@@ -26,7 +27,7 @@ public partial static class Interop
       Title: Partial match,
       Severity: Warning,
       WarningLevel: 1,
-      Location: : (11,4)-(12,63),
+      Location: : (12,4)-(13,63),
       MessageFormat: Skipping match for method {0}. Method {1} is missing the LibraryImport attribute.,
       Message: Skipping match for method TestCMethod(TestWrapper). Method TestCMethod(TestHandle) is missing the LibraryImport attribute.,
       Category: Gdal.SourceGenerator
@@ -36,7 +37,7 @@ public partial static class Interop
       Title: Could not generate wrapper method,
       Severity: Warning,
       WarningLevel: 1,
-      Location: : (11,4)-(12,63),
+      Location: : (12,4)-(13,63),
       MessageFormat: Could not generate wrapper method for {0}.,
       Message: Could not generate wrapper method for TestCMethod(TestWrapper).,
       Category: Gdal.SourceGenerator

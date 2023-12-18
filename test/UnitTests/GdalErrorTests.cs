@@ -9,16 +9,4 @@ namespace MMKiwi.GdalNet.UnitTests;
 //[Collection("GDAL")]
 public class GdalErrorTests
 {
-    [Fact]
-    public void ErrorIsRetrievable()
-    {
-        GdalInfo.RegisterAllDrivers();
-        using var dataset = GdalDataset.Interop.GDALOpenEx("DOESNOTEXIST", new GdalOpenSettings().Flags, null, null, null);
-        GdalError.LastError.Should().BeEquivalentTo(new
-        {
-            ErrorNum = GdalError.ErrorCodes.OpenFailed,
-            Severity = GdalCplErr.Failure
-        });
-
-    }
 }

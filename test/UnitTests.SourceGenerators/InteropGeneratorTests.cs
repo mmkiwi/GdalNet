@@ -5,6 +5,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
+using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet.InteropSourceGen;
 
@@ -35,15 +36,16 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System;
 
             namespace Test;
 
-            public class TestWrapper : IHasHandle<TestHandle>, IConstructableWrapper<TestWrapper, TestHandle>
+            public class TestWrapper : global::MMKiwi.GdalNet.IHasHandle<TestHandle>, global::MMKiwi.GdalNet.IConstructableWrapper<TestWrapper, TestHandle>
             {
             }
             
-            public class TestHandle : IConstructableHandle<TestHandle>
+            public class TestHandle : global::MMKiwi.GdalNet.Handles.GdalInternalHandleNeverOwns, global::MMKiwi.GdalNet.Handles.IConstructableHandle<TestHandle>
             {
             }
             
@@ -57,6 +59,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -84,6 +87,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -111,6 +115,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -140,6 +145,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -167,6 +173,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -194,6 +201,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -221,6 +229,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -248,6 +257,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -275,6 +285,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -302,6 +313,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -332,6 +344,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -359,6 +372,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -386,11 +400,12 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
 
-            public partial static class Interop
+            public static partial class Interop
             {
                 [Dummy]
                 [LibraryImport("TESTLIBRARY")]
@@ -417,6 +432,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -444,6 +460,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -468,6 +485,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -495,6 +513,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -520,6 +539,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -547,6 +567,7 @@ public class InteropGeneratorTest
             """
             using MMKiwi.GdalNet.InteropAttributes;
             using MMKiwi.GdalNet;
+            using MMKiwi.GdalNet.Handles;
             using System.Runtime.InteropServices;
 
             namespace Test;
@@ -587,7 +608,8 @@ public class InteropGeneratorTest
             MetadataReference.CreateFromFile(Path.Combine(dotNetAssemblyPath, "System.Private.CoreLib.dll")),
             MetadataReference.CreateFromFile(Path.Combine(dotNetAssemblyPath, "System.Runtime.dll")),
             MetadataReference.CreateFromFile(typeof(GdalWrapperMethodAttribute).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(GdalInternalHandleNeverOwns).Assembly.Location)
+            MetadataReference.CreateFromFile(typeof(GdalInternalHandleNeverOwns).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(IConstructableWrapper<,>).Assembly.Location),
         ];
 
         var compilation = CSharpCompilation.Create(InternalUnitTestConst.AssemblyName, syntaxTrees: trees, references: references);

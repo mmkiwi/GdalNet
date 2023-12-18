@@ -23,7 +23,7 @@ public sealed partial class GdalDataset
 
         [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8, EntryPoint = nameof(GDALOpenEx))]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-        private static partial GdalDatasetHandle.Owns _GDALOpenEx(string fileName,
+        public static partial GdalDatasetHandle.Owns _GDALOpenEx(string fileName,
                                                                          GdalOpenFlags openFlags,
                                                                          [MarshalUsing(typeof(CStringArrayMarshal))]
                                                                          IEnumerable<string>? allowedDrivers,

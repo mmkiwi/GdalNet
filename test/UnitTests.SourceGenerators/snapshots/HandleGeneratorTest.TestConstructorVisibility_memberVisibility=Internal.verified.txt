@@ -6,6 +6,7 @@
       Source:
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.Handles;
 #nullable enable
 namespace Test {
 
@@ -14,6 +15,12 @@ internal sealed partial class TestHandle
 
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
     static TestHandle IConstructableHandle<TestHandle>.Construct(bool ownsHandle) => ownsHandle ? new Owns() : new DoesntOwn();
+    
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+    public class Owns() : TestHandle(true);
+    
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+    public class DoesntOwn() : TestHandle(false);
 
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
     internal TestHandle(bool ownsHandle): base(ownsHandle) { }

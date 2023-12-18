@@ -118,13 +118,13 @@ public class ConstructGenerator : IIncrementalGenerator
                 var handleParent = handleType;
                 while (handleParent is not null)
                 {
-                    if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandleNeverOwns")
+                    if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.Handles.GdalInternalHandleNeverOwns")
                     {
                         needsIDisposable = false;
                         break;
                     }
 
-                    if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.GdalInternalHandle")
+                    if (handleParent.ToDisplayString() == "MMKiwi.GdalNet.Handles.GdalInternalHandle")
                     {
                         needsIDisposable = true;
                         break;

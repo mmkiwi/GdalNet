@@ -6,6 +6,7 @@
       Source:
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.Handles;
 #nullable enable
 namespace Test {
 

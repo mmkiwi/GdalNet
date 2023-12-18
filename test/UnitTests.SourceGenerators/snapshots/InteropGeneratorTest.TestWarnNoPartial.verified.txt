@@ -6,11 +6,12 @@
       Source:
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.Handles;
 using System.Runtime.InteropServices;
 #nullable enable
 namespace Test {
 public partial static class Interop
-{ 
+{
 }
 }
 
@@ -22,7 +23,7 @@ public partial static class Interop
       Title: Method must be partial,
       Severity: Warning,
       WarningLevel: 1,
-      Location: : (11,4)-(12,55),
+      Location: : (12,4)-(13,55),
       MessageFormat: Could not generate wrapper method for {0} because it is not partial,
       Message: Could not generate wrapper method for TestCMethod(TestWrapper) because it is not partial,
       Category: Gdal.SourceGenerator

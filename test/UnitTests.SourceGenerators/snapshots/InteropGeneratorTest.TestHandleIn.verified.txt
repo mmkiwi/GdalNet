@@ -6,11 +6,12 @@
       Source:
 using MMKiwi.GdalNet.InteropAttributes;
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.Handles;
 using System.Runtime.InteropServices;
 #nullable enable
 namespace Test {
 public partial static class Interop
-{ 
+{
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
     public static partial int TestCMethod(in TestWrapper dataset)
     {
@@ -18,6 +19,7 @@ public partial static class Interop
         ArgumentNullException.ThrowIfNull(dataset);
         TestHandle __param_dataset = ((IHasHandle<TestHandle>)dataset).Handle;
          __return_value = TestCMethod(__param_dataset);
+        global::MMKiwi.GdalNet.Handles.GdalError.ThrowIfError();
         return __return_value;
 
     }

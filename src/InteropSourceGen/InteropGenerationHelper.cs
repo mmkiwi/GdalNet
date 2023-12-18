@@ -19,7 +19,8 @@ public static class InteropGenerationHelper
     public const string HelperClass = "GdalConstructionHelper";
     public const string MarkerFullName = $"{MarkerNamespace}.{MarkerClass}";
 
-    internal static string GenerateExtensionClass(Compilation compilation, IGrouping<TypeDeclarationSyntax, MethodGenerationInfo> classGroup, SourceProductionContext context)
+    internal static string GenerateExtensionClass(Compilation compilation,
+        IGrouping<TypeDeclarationSyntax, MethodGenerationInfo> classGroup, SourceProductionContext context)
     {
         StringBuilder resFile = new();
 
@@ -57,9 +58,9 @@ public static class InteropGenerationHelper
         foreach (var cls in parentClasses)
         {
             resFile.AppendLine($$"""
-                {{cls.Modifiers}} {{cls.Keyword}} {{cls.Identifier}}
-                { 
-                """);
+                                 {{cls.Modifiers}} {{cls.Keyword}} {{cls.Identifier}}
+                                 {
+                                 """);
         }
 
         foreach (MethodGenerationInfo methodInfo in classGroup)
@@ -68,13 +69,13 @@ public static class InteropGenerationHelper
             if (!method.Modifiers.Any(mod => mod.IsKind(SyntaxKind.PartialKeyword)))
             {
                 context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0002",
-                                                                                    "Method must be partial",
-                                                                                    "Could not generate wrapper method for {0} because it is not partial",
-                                                                                    "Gdal.SourceGenerator",
-                                                                                    DiagnosticSeverity.Warning,
-                                                                                    true),
-                                                           method.GetLocation(),
-                                                           method.ToDiagString()));
+                        "Method must be partial",
+                        "Could not generate wrapper method for {0} because it is not partial",
+                        "Gdal.SourceGenerator",
+                        DiagnosticSeverity.Warning,
+                        true),
+                    method.GetLocation(),
+                    method.ToDiagString()));
                 continue;
             }
 
@@ -84,29 +85,29 @@ public static class InteropGenerationHelper
             if (interopMethod == null)
             {
                 context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0003",
-                                                                                    "Could not generate wrapper method",
-                                                                                    "Could not generate wrapper method for {0}.",
-                                                                                    "Gdal.SourceGenerator",
-                                                                                    DiagnosticSeverity.Warning,
-                                                                                    true),
-                                                           method.GetLocation(),
-                                                           method.ToDiagString()));
+                        "Could not generate wrapper method",
+                        "Could not generate wrapper method for {0}.",
+                        "Gdal.SourceGenerator",
+                        DiagnosticSeverity.Warning,
+                        true),
+                    method.GetLocation(),
+                    method.ToDiagString()));
                 resFile.AppendLine($$"""
-                    {{method.Modifiers}} {{method.ReturnType}} {{method.Identifier}}{{method.ParameterList.RemoveAttributes()}}
-                    {
-                        throw new NotImplementedException();
-                    }
-                """);
+                                         {{method.Modifiers}} {{method.ReturnType}} {{method.Identifier}}{{method.ParameterList.RemoveAttributes()}}
+                                         {
+                                             throw new NotImplementedException();
+                                         }
+                                     """);
                 continue;
             }
 
             resFile.AppendLine($$"""
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
-            {{method.Modifiers}} {{method.ReturnType}} {{method.Identifier}}{{method.ParameterList.RemoveAttributes()}}
-            {
-        {{GenerateMethod(method, interopMethod)}}
-            }
-        """);
+                                     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("MMKiwi.GdalNet.SourceGenerator", "0.0.1.000")]
+                                     {{method.Modifiers}} {{method.ReturnType}} {{method.Identifier}}{{method.ParameterList.RemoveAttributes()}}
+                                     {
+                                 {{GenerateMethod(method, interopMethod)}}
+                                     }
+                                 """);
         }
 
         for (int i = 0; i < parentClasses.Count + parentNamespaces.Count; i++)
@@ -138,12 +139,15 @@ public static class InteropGenerationHelper
             {
                 if (param.WrapperParam.Type is NullableTypeSyntax)
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Type} __param_{param.WrapperParam.Identifier} = ({param.WrapperParam.Identifier} as IHasHandle<{param.InteropParam.Type}>)?.Handle ?? {HelperNamespace}.{HelperClass}.GetNullHandle<{param.InteropParam.Type}>();");
+                    methodString.AppendLine(
+                        $"{space}{param.InteropParam.Type} __param_{param.WrapperParam.Identifier} = ({param.WrapperParam.Identifier} as IHasHandle<{param.InteropParam.Type}>)?.Handle ?? {HelperNamespace}.{HelperClass}.GetNullHandle<{param.InteropParam.Type}>();");
                 }
                 else
                 {
-                    methodString.AppendLine($"{space}ArgumentNullException.ThrowIfNull({param.WrapperParam.Identifier});");
-                    methodString.AppendLine($"{space}{param.InteropParam.Type} __param_{param.WrapperParam.Identifier} = ((IHasHandle<{param.InteropParam.Type}>){param.WrapperParam.Identifier}).Handle;");
+                    methodString.AppendLine(
+                        $"{space}ArgumentNullException.ThrowIfNull({param.WrapperParam.Identifier});");
+                    methodString.AppendLine(
+                        $"{space}{param.InteropParam.Type} __param_{param.WrapperParam.Identifier} = ((IHasHandle<{param.InteropParam.Type}>){param.WrapperParam.Identifier}).Handle;");
                 }
             }
 
@@ -155,12 +159,15 @@ public static class InteropGenerationHelper
             {
                 if (param.WrapperParam.Type is NullableTypeSyntax)
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Type} __ref_{param.InteropParam.Identifier}_raw = ({param.WrapperParam.Identifier} as IHasHandle<{param.InteropParam.Type}>)?.Handle ?? {HelperNamespace}.{HelperClass}.GetNullHandle<{param.InteropParam.Type}>();");
+                    methodString.AppendLine(
+                        $"{space}{param.InteropParam.Type} __ref_{param.InteropParam.Identifier}_raw = ({param.WrapperParam.Identifier} as IHasHandle<{param.InteropParam.Type}>)?.Handle ?? {HelperNamespace}.{HelperClass}.GetNullHandle<{param.InteropParam.Type}>();");
                 }
                 else
                 {
-                    methodString.AppendLine($"{space}ArgumentNullException.ThrowIfNull({param.WrapperParam.Identifier});");
-                    methodString.AppendLine($"{space}{param.InteropParam.Type} __ref_{param.InteropParam.Identifier}_raw = ((IHasHandle<{param.InteropParam.Type}>){param.WrapperParam.Identifier}).Handle");
+                    methodString.AppendLine(
+                        $"{space}ArgumentNullException.ThrowIfNull({param.WrapperParam.Identifier});");
+                    methodString.AppendLine(
+                        $"{space}{param.InteropParam.Type} __ref_{param.InteropParam.Identifier}_raw = ((IHasHandle<{param.InteropParam.Type}>){param.WrapperParam.Identifier}).Handle");
                 }
             }
         }
@@ -185,6 +192,7 @@ public static class InteropGenerationHelper
             {
                 methodString.Append(", ");
             }
+
             isFirst = false;
             if (param.TransformType == TransformType.WrapperIn)
             {
@@ -226,22 +234,26 @@ public static class InteropGenerationHelper
             {
                 if (param.WrapperParam.Type is NullableTypeSyntax nts)
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {param.InteropParam.Type}>(__out_{param.InteropParam.Identifier}_raw);");
+                    methodString.AppendLine(
+                        $"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {param.InteropParam.Type}>(__out_{param.InteropParam.Identifier}_raw);");
                 }
                 else
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.Construct<{param.WrapperParam.Type}, {param.InteropParam.Type}>(__out_{param.InteropParam.Identifier}_raw);");
+                    methodString.AppendLine(
+                        $"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.Construct<{param.WrapperParam.Type}, {param.InteropParam.Type}>(__out_{param.InteropParam.Identifier}_raw);");
                 }
             }
             else if (param.TransformType == TransformType.WrapperRef)
             {
                 if (param.WrapperParam.Type is NullableTypeSyntax nts)
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {param.InteropParam.Type}>(__ref_{param.InteropParam.Identifier}_raw);");
+                    methodString.AppendLine(
+                        $"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {param.InteropParam.Type}>(__ref_{param.InteropParam.Identifier}_raw);");
                 }
                 else
                 {
-                    methodString.AppendLine($"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.Construct<{param.WrapperParam.Type}, {param.InteropParam.Type}>(__ref_{param.InteropParam.Identifier}_raw);");
+                    methodString.AppendLine(
+                        $"{space}{param.InteropParam.Identifier} =  {HelperNamespace}.{HelperClass}.Construct<{param.WrapperParam.Type}, {param.InteropParam.Type}>(__ref_{param.InteropParam.Identifier}_raw);");
                 }
             }
         }
@@ -254,9 +266,11 @@ public static class InteropGenerationHelper
         else if (interopMethod.Return == TransformType.WrapperOut)
         {
             if (method.ReturnType is NullableTypeSyntax nts)
-                methodString.AppendLine($"{space}__return_value = {HelperNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {interopMethod.InteropMethod.ReturnType}>(__return_value_raw);");
+                methodString.AppendLine(
+                    $"{space}__return_value = {HelperNamespace}.{HelperClass}.ConstructNullable<{nts.ElementType}, {interopMethod.InteropMethod.ReturnType}>(__return_value_raw);");
             else
-                methodString.AppendLine($"{space}__return_value = {HelperNamespace}.{HelperClass}.Construct<{method.ReturnType}, {interopMethod.InteropMethod.ReturnType}>(__return_value_raw);");
+                methodString.AppendLine(
+                    $"{space}__return_value = {HelperNamespace}.{HelperClass}.Construct<{method.ReturnType}, {interopMethod.InteropMethod.ReturnType}>(__return_value_raw);");
             methodString.AppendLine($"{space}return __return_value;");
         }
 
@@ -267,22 +281,21 @@ public static class InteropGenerationHelper
     {
         foreach (var att in candidateSibling.AttributeLists.SelectMany(attList => attList.Attributes))
         {
-            if (compilation.GetSemanticModel(candidateSibling.SyntaxTree).GetSymbolInfo(att).Symbol is not IMethodSymbol attributeSymbol)
-            {
-                continue;
-            }
+            IMethodSymbol attributeSymbol = (IMethodSymbol)compilation.GetSemanticModel(candidateSibling.SyntaxTree)
+                                                                      .GetSymbolInfo(att).Symbol!;
 
             INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
             string fullName = attributeContainingTypeSymbol.ToDisplayString();
 
             if (fullName == "System.Runtime.InteropServices.LibraryImportAttribute")
                 return true;
-
         }
+
         return false;
     }
 
-    private static MethodTransformations? FindInteropMethod(TypeDeclarationSyntax parentClass, MethodGenerationInfo methodInfo, Compilation compilation, SourceProductionContext context)
+    private static MethodTransformations? FindInteropMethod(TypeDeclarationSyntax parentClass,
+        MethodGenerationInfo methodInfo, Compilation compilation, SourceProductionContext context)
     {
         var wrapperMethod = methodInfo.Method;
         //For now, name must be the same. TODO: Add parameter to attribute to override
@@ -294,33 +307,35 @@ public static class InteropGenerationHelper
             if (candidateInterop.IsEquivalentTo(wrapperMethod)) // Cant match on itself
                 continue;
 
-            if (candidateInterop.ParameterList.Parameters.Count != wrapperMethod.ParameterList.Parameters.Count) // Parameter count must be the same
+            if (candidateInterop.ParameterList.Parameters.Count !=
+                wrapperMethod.ParameterList.Parameters.Count) // Parameter count must be the same
             {
                 context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0004",
-                                                                                    "Partial match",
-                                                                                    "Skipping match for method {0}. Method {1} does not have the same number of parameters.",
-                                                                                    "Gdal.SourceGenerator",
-                                                                                    DiagnosticSeverity.Warning,
-                                                                                    true),
-                                                           wrapperMethod.GetLocation(),
-                                                           wrapperMethod.ToDiagString(), candidateInterop.ToDiagString()));
+                        "Partial match",
+                        "Skipping match for method {0}. Method {1} does not have the same number of parameters.",
+                        "Gdal.SourceGenerator",
+                        DiagnosticSeverity.Warning,
+                        true),
+                    wrapperMethod.GetLocation(),
+                    wrapperMethod.ToDiagString(), candidateInterop.ToDiagString()));
                 continue;
             }
 
             if (!CheckForLibraryImport(candidateInterop, compilation)) // Must have [LibraryImport]
             {
                 context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("GDSG0005",
-                                                                                    "Partial match",
-                                                                                    "Skipping match for method {0}. Method {1} is missing the LibraryImport attribute.",
-                                                                                    "Gdal.SourceGenerator",
-                                                                                    DiagnosticSeverity.Warning,
-                                                                                    true),
-                                           wrapperMethod.GetLocation(),
-                                           wrapperMethod.ToDiagString(), candidateInterop.ToDiagString()));
+                        "Partial match",
+                        "Skipping match for method {0}. Method {1} is missing the LibraryImport attribute.",
+                        "Gdal.SourceGenerator",
+                        DiagnosticSeverity.Warning,
+                        true),
+                    wrapperMethod.GetLocation(),
+                    wrapperMethod.ToDiagString(), candidateInterop.ToDiagString()));
                 continue;
             }
 
-            ImmutableArray<ParameterCompatibility> parameters = IterateParameters(wrapperMethod, compilation, candidateInterop);
+            ImmutableArray<ParameterCompatibility> parameters =
+                IterateParameters(wrapperMethod, compilation, candidateInterop);
             var invalidParameters = parameters.Where(p => p.TransformType is TransformType.Invalid);
             if (InvalidParametersDiag(invalidParameters, wrapperMethod, candidateInterop, context))
             {
@@ -343,7 +358,9 @@ public static class InteropGenerationHelper
                 wrapperMethod.ToDiagString(), candidateInterop.ToDiagString()));
             continue;
 
-            static bool InvalidParametersDiag(IEnumerable<ParameterCompatibility> invalidParameters, MethodDeclarationSyntax wrapperMethod, MethodDeclarationSyntax candidateInterop, SourceProductionContext context)
+            static bool InvalidParametersDiag(IEnumerable<ParameterCompatibility> invalidParameters,
+                MethodDeclarationSyntax wrapperMethod, MethodDeclarationSyntax candidateInterop,
+                SourceProductionContext context)
             {
                 foreach (var invalidParam in invalidParameters)
                 {
@@ -366,16 +383,22 @@ public static class InteropGenerationHelper
         return null;
     }
 
-    private static TransformType CheckReturn(MethodDeclarationSyntax wrapperMethod, MethodDeclarationSyntax candidateInterop, Compilation compilation)
+    private static TransformType CheckReturn(MethodDeclarationSyntax wrapperMethod,
+        MethodDeclarationSyntax candidateInterop, Compilation compilation)
     {
-        if (wrapperMethod.ReturnType is PredefinedTypeSyntax predefined && predefined.Keyword.IsKind(SyntaxKind.VoidKeyword))
+        if (wrapperMethod.ReturnType is PredefinedTypeSyntax predefined &&
+            predefined.Keyword.IsKind(SyntaxKind.VoidKeyword))
             return TransformType.Void;
 
-        if (compilation.GetSemanticModel(wrapperMethod.ReturnType.SyntaxTree, true).GetSymbolInfo(wrapperMethod.ReturnType).Symbol is not ITypeSymbol wrapperTypeSymbol)
-            return TransformType.Invalid;
+        ITypeSymbol wrapperTypeSymbol = (ITypeSymbol)compilation.GetSemanticModel(
+                wrapperMethod.ReturnType.SyntaxTree,
+                true)
+            .GetSymbolInfo(wrapperMethod.ReturnType).Symbol!;
 
-        if (compilation.GetSemanticModel(candidateInterop.ReturnType.SyntaxTree, true).GetSymbolInfo(candidateInterop.ReturnType).Symbol is not ITypeSymbol interopTypeSymbol)
-            return TransformType.Invalid;
+        ITypeSymbol interopTypeSymbol = (ITypeSymbol)compilation.GetSemanticModel(
+                candidateInterop.ReturnType.SyntaxTree,
+                true)
+            .GetSymbolInfo(candidateInterop.ReturnType).Symbol!;
 
         if (wrapperTypeSymbol.Equals(interopTypeSymbol, SymbolEqualityComparer.Default))
             return TransformType.Direct;
@@ -400,37 +423,43 @@ public static class InteropGenerationHelper
         return TransformType.Invalid;
     }
 
-    private static ImmutableArray<ParameterCompatibility> IterateParameters(MethodDeclarationSyntax wrapperMethod, Compilation compilation, MethodDeclarationSyntax candidateInterop)
+    private static ImmutableArray<ParameterCompatibility> IterateParameters(MethodDeclarationSyntax wrapperMethod,
+        Compilation compilation, MethodDeclarationSyntax candidateInterop)
     {
-        var parameters = ImmutableArray.CreateBuilder<ParameterCompatibility>(wrapperMethod.ParameterList.Parameters.Count);
+        var parameters =
+            ImmutableArray.CreateBuilder<ParameterCompatibility>(wrapperMethod.ParameterList.Parameters.Count);
 
         //walk through each parameter
         for (int i = 0; i < wrapperMethod.ParameterList.Parameters.Count; i++)
         {
-            parameters.Add(CheckParameterCompatibility(wrapperMethod.ParameterList.Parameters[i], candidateInterop.ParameterList.Parameters[i], compilation));
+            parameters.Add(CheckParameterCompatibility(wrapperMethod.ParameterList.Parameters[i],
+                candidateInterop.ParameterList.Parameters[i], compilation));
         }
 
         return parameters.ToImmutable();
     }
 
-    private static ParameterCompatibility CheckParameterCompatibility(ParameterSyntax wrapperParam, ParameterSyntax interopParam, Compilation compilation)
+    private static ParameterCompatibility CheckParameterCompatibility(ParameterSyntax wrapperParam,
+        ParameterSyntax interopParam, Compilation compilation)
     {
         if (wrapperParam.Type is null || interopParam.Type is null)
             return new(TransformType.Invalid, interopParam, wrapperParam);
 
-        if (compilation.GetSemanticModel(wrapperParam.Type.SyntaxTree, true).GetSymbolInfo(wrapperParam.Type).Symbol is not ITypeSymbol wrapperTypeSymbol)
+        if (compilation.GetSemanticModel(wrapperParam.Type.SyntaxTree, true).GetSymbolInfo(wrapperParam.Type).Symbol is
+            not ITypeSymbol wrapperTypeSymbol)
             return new(TransformType.Invalid, interopParam, wrapperParam);
 
-        if (compilation.GetSemanticModel(interopParam.Type.SyntaxTree, true).GetSymbolInfo(interopParam.Type).Symbol is not ITypeSymbol interopTypeSymbol)
+        if (compilation.GetSemanticModel(interopParam.Type.SyntaxTree, true).GetSymbolInfo(interopParam.Type).Symbol is
+            not ITypeSymbol interopTypeSymbol)
             return new(TransformType.Invalid, interopParam, wrapperParam);
 
         if (wrapperTypeSymbol.Equals(interopTypeSymbol, SymbolEqualityComparer.Default))
         {
             return new(wrapperParam.Modifiers switch
             {
-            [{ RawKind: (int)SyntaxKind.RefKeyword }] => TransformType.DirectRef,
-            [{ RawKind: (int)SyntaxKind.OutKeyword }] => TransformType.DirectOut,
-            [{ RawKind: (int)SyntaxKind.InKeyword }] => TransformType.DirectIn,
+                [{ RawKind: (int)SyntaxKind.RefKeyword }] => TransformType.DirectRef,
+                [{ RawKind: (int)SyntaxKind.OutKeyword }] => TransformType.DirectOut,
+                [{ RawKind: (int)SyntaxKind.InKeyword }] => TransformType.DirectIn,
                 _ => TransformType.Direct,
             }, interopParam, wrapperParam);
         }
@@ -453,20 +482,27 @@ public static class InteropGenerationHelper
             {
                 return wrapperParam.Modifiers switch
                 {
-                [{ RawKind: (int)SyntaxKind.RefKeyword }] => new(TransformType.WrapperRef, interopParam, wrapperParam),
-                [{ RawKind: (int)SyntaxKind.OutKeyword }] => new(TransformType.WrapperOut, interopParam, wrapperParam),
+                    [{ RawKind: (int)SyntaxKind.RefKeyword }] => new(TransformType.WrapperRef, interopParam,
+                        wrapperParam),
+                    [{ RawKind: (int)SyntaxKind.OutKeyword }] => new(TransformType.WrapperOut, interopParam,
+                        wrapperParam),
                     _ => new(TransformType.WrapperIn, interopParam, wrapperParam)
                 };
-
             }
         }
 
         return new(TransformType.Invalid, interopParam, wrapperParam);
     }
 
-    private record MethodTransformations(MethodDeclarationSyntax InteropMethod, ImmutableArray<ParameterCompatibility> Parameters, TransformType Return);
+    private record MethodTransformations(
+        MethodDeclarationSyntax InteropMethod,
+        ImmutableArray<ParameterCompatibility> Parameters,
+        TransformType Return);
 
-    private readonly record struct ParameterCompatibility(TransformType TransformType, ParameterSyntax InteropParam, ParameterSyntax WrapperParam);
+    private record ParameterCompatibility(
+        TransformType TransformType,
+        ParameterSyntax InteropParam,
+        ParameterSyntax WrapperParam);
 
     private enum TransformType
     {
