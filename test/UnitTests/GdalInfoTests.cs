@@ -4,9 +4,16 @@
 
 namespace MMKiwi.GdalNet.UnitTests;
 
-//[Collection("GDAL")]
+[Collection("Gdal DLL")]
 public class GdalInfoTests
 {
+    public GdalInfoTests(GdalDllFixture fixture)
+    {
+        this.Fixture = fixture;
+    }
+
+    private GdalDllFixture Fixture { get; } 
+    
     [Fact]
     public void CanGetVersion()
     {

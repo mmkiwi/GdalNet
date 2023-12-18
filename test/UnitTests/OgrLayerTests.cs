@@ -6,8 +6,8 @@ using MMKiwi.GdalNet.SampleData;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
-//[Collection("GDAL")]
-public class OgrLayerTests: LayerTestBase
+[Collection("Gdal DLL")]
+public class OgrLayerTests(GdalDllFixture fixture): LayerTestBase(fixture)
 {
     [Theory]
     [MemberData(nameof(Layers))]
@@ -32,7 +32,7 @@ public class OgrLayerTests: LayerTestBase
     }
 }
 
-public class LayerTestBase: DatasetTestBase
+public class LayerTestBase(GdalDllFixture fixture): DatasetTestBase(fixture)
 {
     protected static LayerInfo GetLayer(int index) => TestData.Layers[index];
 

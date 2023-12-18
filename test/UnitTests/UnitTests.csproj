@@ -7,7 +7,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <LangVersion>preview</LangVersion>
+        <LangVersion>12</LangVersion>
         <AssemblyName>MMKiwi.GdalNet.$(MSBuildProjectName)</AssemblyName>
         <RootNamespace>MMKiwi.GdalNet.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
         <NeutralLanguage>en-us</NeutralLanguage>
@@ -16,12 +16,13 @@
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="6.12.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
-        <PackageReference Include="xunit" Version="2.4.2" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+        <PackageReference Include="xunit" Version="2.6.*" />
+        <PackageReference Include="xunit.extensibility.core" Version="2.6.*" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.*">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="6.0.0">
+        <PackageReference Include="coverlet.collector" Version="6.0.*">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>

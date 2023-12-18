@@ -6,10 +6,12 @@ using MMKiwi.GdalNet.SampleData;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
+[Collection("Gdal DLL")]
 public abstract class DatasetTestBase
 {
-    protected DatasetTestBase()
+    protected DatasetTestBase(GdalDllFixture fixture)
     {
+        _ = fixture;
         GdalInfo.RegisterAllDrivers();
     }
 

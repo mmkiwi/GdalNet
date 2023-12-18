@@ -11,19 +11,6 @@
         <IsAotCompatible>true</IsAotCompatible>
         <ReportAnalyzer>true</ReportAnalyzer>
     </PropertyGroup>
-    
-    <ItemGroup>
-        <None Include="..\..\vcpkg_installed\x64-windows\bin\*.dll" LinkBase="dependencies">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <TargetPath>%(Filename)%(Extension)</TargetPath>
-        </None>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\..\vcpkg_installed\x64-windows\bin\*.pdb" LinkBase="dependencies">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <TargetPath>%(Filename)%(Extension)</TargetPath>
-        </None>
-    </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\GDalNet.Handles\GdalNet.Handles.csproj" />
       <ProjectReference Include="..\InteropAttributes\InteropAttributes.csproj" />

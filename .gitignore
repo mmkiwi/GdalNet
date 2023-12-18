@@ -1,4 +1,5 @@
 /vcpkg_installed/
+/vcpkg_installed_*/
 SG_Outputs
 
 *.gpkg-shm

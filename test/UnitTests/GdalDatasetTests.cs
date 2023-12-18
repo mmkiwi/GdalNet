@@ -4,9 +4,13 @@
 
 namespace MMKiwi.GdalNet.UnitTests;
 
-//[Collection("GDAL")]
+[Collection("Gdal DLL")]
 public sealed class GdalDatasetTests: DatasetTestBase
 {
+    public GdalDatasetTests(GdalDllFixture fixture) : base(fixture)
+    {
+    }
+
     [Theory]
     [MemberData(nameof(Datasets))]
     public void TestOpenDoesNotThrow(int index)

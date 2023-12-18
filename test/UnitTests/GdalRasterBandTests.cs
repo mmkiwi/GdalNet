@@ -6,8 +6,8 @@ using FluentAssertions.Execution;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
-//[Collection("GDAL")]
-public sealed class GdalRasterBandTests : DatasetTestBase
+[Collection("Gdal DLL")]
+public sealed class GdalRasterBandTests(GdalDllFixture fixture) : DatasetTestBase(fixture)
 {
     [Theory]
     [MemberData(nameof(Datasets))]
