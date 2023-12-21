@@ -22,7 +22,7 @@ public partial class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, 
     {
         get
         {
-            string name = Interop.OGR_L_GetName(this);
+            string name = OgrApiH.OGR_L_GetName(this);
             GdalError.ThrowIfError();
             return name;
         }
@@ -32,13 +32,13 @@ public partial class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, 
 
     public bool TryGetFeatureById(long id, [NotNullWhen(true)] out OgrFeature? feature)
     {
-        feature = Interop.OGR_L_GetFeature(this, id);
+        feature = OgrApiH.OGR_L_GetFeature(this, id);
         return feature is not null;
     }
 
     public OgrFeature GetFeatureById(long id)
     {
-        var feature = Interop.OGR_L_GetFeature(this, id);
+        var feature = OgrApiH.OGR_L_GetFeature(this, id);
         GdalError.ThrowIfError();
         return feature ?? throw new InvalidOperationException($"Could not get feature with ID {id} from layer {Name}");
     }

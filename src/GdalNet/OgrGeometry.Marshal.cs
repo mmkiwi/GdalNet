@@ -12,7 +12,7 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometryHandle>, ICons
 {
     static OgrGeometry IConstructableWrapper<OgrGeometry, OgrGeometryHandle>.Construct(OgrGeometryHandle handle)
     {
-        OgrWkbGeometryType type = Interop.OGR_G_GetGeometryType(handle);
+        OgrWkbGeometryType type = OgrApiH.OGR_G_GetGeometryType(handle);
         return type switch
         {
             OgrWkbGeometryType.Point => new OgrPoint(handle),//

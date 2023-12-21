@@ -13,7 +13,7 @@ public abstract partial class OgrGeometry: IDisposable
 
     public static OgrGeometry CreateFromWkb(ReadOnlySpan<byte> wkb, OgrSpatialReference? spatialReference = null)
     {
-        var err = Interop.OGR_G_CreateFromWkb(wkb, spatialReference, out OgrGeometry result, wkb.Length);
+        var err = OgrApiH.OGR_G_CreateFromWkb(wkb, spatialReference, out OgrGeometry result, wkb.Length);
         GdalError.ThrowIfError(err);
         return result;
     }
@@ -33,7 +33,7 @@ public abstract partial class OgrGeometry: IDisposable
             stringMarshaller.FromManaged(wkt, stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize]);
             {
                 byte* wktPointer = stringMarshaller.ToUnmanaged();
-                var result = Interop.OGR_G_CreateFromWkt(ref wktPointer, spatialReference, out geometry);
+                var result = OgrApiH.OGR_G_CreateFromWkt(ref wktPointer, spatialReference, out geometry);
                 GdalError.ThrowIfError();
                 return result;
             }
@@ -46,35 +46,35 @@ public abstract partial class OgrGeometry: IDisposable
 
     public int Dimension
     {
-        get => Interop.OGR_G_GetDimension(this);
+        get => OgrApiH.OGR_G_GetDimension(this);
     }
 
     public int CoordinateDimension
     {
-        get => Interop.OGR_G_CoordinateDimension(this);
+        get => OgrApiH.OGR_G_CoordinateDimension(this);
     }
 
     public bool Is3D
     {
-        get => Interop.OGR_G_Is3D(this);
-        set => Interop.OGR_G_Set3D(this, value);
+        get => OgrApiH.OGR_G_Is3D(this);
+        set => OgrApiH.OGR_G_Set3D(this, value);
     }
 
     public OgrGeometry Clone()
-        => Interop.OGR_G_Clone(this);
+        => OgrApiH.OGR_G_Clone(this);
 
     public OgrEnvelope Envelope
     {
         get
         {
-            Interop.OGR_G_GetEnvelope(this, out OgrEnvelope? result);
+            OgrApiH.OGR_G_GetEnvelope(this, out OgrEnvelope? result);
             return result;
         }
     }
 
     public OgrWkbGeometryType GeometryType
     {
-        get =>Interop.OGR_G_GetGeometryType(this);
+        get =>OgrApiH.OGR_G_GetGeometryType(this);
     }
 
     public OgrEnvelope3D Envelope3D
@@ -82,7 +82,7 @@ public abstract partial class OgrGeometry: IDisposable
         get
         {
             OgrEnvelope3D? result = null;
-            Interop.OGR_G_GetEnvelope3D(this, ref result);
+            OgrApiH.OGR_G_GetEnvelope3D(this, ref result);
             return result;
         }
     }
@@ -123,7 +123,7 @@ public abstract partial class OgrGeometry: IDisposable
         ObjectDisposedException.ThrowIf(Handle.IsClosed, this);
         ObjectDisposedException.ThrowIf(other.Handle.IsClosed, this);
 
-        return ReferenceEquals(this, other) || Interop.OGR_G_Equals(this, other);
+        return ReferenceEquals(this, other) || OgrApiH.OGR_G_Equals(this, other);
     }
 
     public override bool Equals(object? obj)

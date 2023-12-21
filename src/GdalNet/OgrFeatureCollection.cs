@@ -38,7 +38,7 @@ public class OgrFeatureCollection : IEnumerable<OgrFeature>
             if (Interlocked.CompareExchange(ref ogrFeatureCollection._isEnumerating, 0, 1) == 1)
                 throw new InvalidOperationException($"Cannot enumerate an {nameof(OgrFeatureCollection)} multiple times. Dispose of the previous IEnumerator before continuing.");
             OgrFeatureCollection = ogrFeatureCollection;
-            OgrLayer.Interop.OGR_L_ResetReading(OgrFeatureCollection.Layer);
+            OgrApiH.OGR_L_ResetReading(OgrFeatureCollection.Layer);
         }
 
         public OgrFeature Current { get; private set; } = null!;
@@ -54,13 +54,13 @@ public class OgrFeatureCollection : IEnumerable<OgrFeature>
 
         public bool MoveNext()
         {
-            var current = OgrLayer.Interop.OGR_L_GetNextFeature(OgrFeatureCollection.Layer)!;
+            var current = OgrApiH.OGR_L_GetNextFeature(OgrFeatureCollection.Layer)!;
             return (Current = current) != null;
         }
 
         public void Reset()
         {
-            OgrLayer.Interop.OGR_L_ResetReading(OgrFeatureCollection.Layer);
+            OgrApiH.OGR_L_ResetReading(OgrFeatureCollection.Layer);
         }
     }
 }

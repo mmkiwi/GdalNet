@@ -12,20 +12,20 @@ public partial class OgrFieldDomain: IDisposable, IConstructableWrapper<OgrField
 {
     private bool _disposedValue;
 
-    public string Name => Interop.OGR_FldDomain_GetName(this);
-    public string Description => Interop.OGR_FldDomain_GetDescription(this);
-    public OgrFieldDomainType DomainType => Interop.OGR_FldDomain_GetDomainType(this);
-    public OgrFieldType FieldType => Interop.OGR_FldDomain_GetFieldType(this);
-    public OgrFieldSubType FieldSubType => Interop.OGR_FldDomain_GetFieldSubType(this);
+    public string Name => OgrApiH.OGR_FldDomain_GetName(this);
+    public string Description => OgrApiH.OGR_FldDomain_GetDescription(this);
+    public OgrFieldDomainType DomainType => OgrApiH.OGR_FldDomain_GetDomainType(this);
+    public OgrFieldType FieldType => OgrApiH.OGR_FldDomain_GetFieldType(this);
+    public OgrFieldSubType FieldSubType => OgrApiH.OGR_FldDomain_GetFieldSubType(this);
     public OgrFieldDomainSplitPolicy SplitPolicy
     {
-        get => Interop.OGR_FldDomain_GetSplitPolicy(this);
-        set => Interop.OGR_FldDomain_SetSplitPolicy(this, value);
+        get => OgrApiH.OGR_FldDomain_GetSplitPolicy(this);
+        set => OgrApiH.OGR_FldDomain_SetSplitPolicy(this, value);
     }
     public OgrFieldDomainMergePolicy MergePolicy
     {
-        get => Interop.OGR_FldDomain_GetMergePolicy(this);
-        set => Interop.OGR_FldDomain_SetMergePolicy(this, value);
+        get => OgrApiH.OGR_FldDomain_GetMergePolicy(this);
+        set => OgrApiH.OGR_FldDomain_SetMergePolicy(this, value);
     }
 
     protected virtual void Dispose(bool disposing)

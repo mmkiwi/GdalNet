@@ -99,7 +99,7 @@ public sealed partial class GdalDataset : GdalMajorObject, IConstructableWrapper
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
         GdalOpenSettings openFlags = openSettings ?? new();
-        var dataset = Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
+        var dataset = GdalH.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
         if (dataset == null)
             throw new GdalException("Could not open file");
         return dataset;
@@ -109,6 +109,6 @@ public sealed partial class GdalDataset : GdalMajorObject, IConstructableWrapper
 
     public GdalBandCollection RasterBands { get; }
     public OgrLayerCollection Layers { get; }
-    public int RasterXSize => Interop.GDALGetRasterXSize(this);
-    public int RasterYSize => Interop.GDALGetRasterYSize(this);
+    public int RasterXSize => GdalH.GDALGetRasterXSize(this);
+    public int RasterYSize => GdalH.GDALGetRasterYSize(this);
 }

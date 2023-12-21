@@ -10,6 +10,6 @@ namespace MMKiwi.GdalNet;
 [GdalGenerateWrapper]
 public sealed partial class GdalRasterBand: IConstructableWrapper<GdalRasterBand, GdalRasterBandHandle>, IHasHandle<GdalRasterBandHandle>
 {
-    public string[] Categories => Interop.GDALGetRasterCategoryNames(this);
-    public GdalDataType DataType => Interop.GDALGetRasterDataType(this);
+    public string[] Categories => GdalH.GDALGetRasterCategoryNames(this);
+    public GdalDataType DataType => GdalH.GDALGetRasterDataType(this);
 }

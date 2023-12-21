@@ -15,7 +15,7 @@ public class OgrPoint : OgrGeometry
 
     public unsafe static OgrPoint Create(double x, double y)
     {
-        OgrGeometry geometry = Interop.OGR_G_CreateGeometry(OgrWkbGeometryType.Point);
+        OgrGeometry geometry = OgrApiH.OGR_G_CreateGeometry(OgrWkbGeometryType.Point);
         if (geometry is not OgrPoint point || point.Handle.IsInvalid)
             throw new InvalidOperationException("Unable to create point geometry, invalid type");
 

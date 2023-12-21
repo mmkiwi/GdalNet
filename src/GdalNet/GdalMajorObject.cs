@@ -14,31 +14,31 @@ public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>, I
 
     public string? Description
     {
-        get => Interop.GDALGetDescription(this);
-        set => Interop.GDALSetDescription(this, value);
+        get => GdalH.GDALGetDescription(this);
+        set => GdalH.GDALSetDescription(this, value);
     }
 
     public Dictionary<string, string> GetMetadata(string? domain = null)
-        => Interop.GDALGetMetadata(this, domain);
+        => GdalH.GDALGetMetadata(this, domain);
 
     public string GetMetadataItem(string name, string? domain = null)
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        return Interop.GDALGetMetadataItem(this, name, domain);
+        return GdalH.GDALGetMetadataItem(this, name, domain);
     }
 
     public void SetMetadata(Dictionary<string, string>? metadata, string? domain = null)
-        => Interop.GDALSetMetadata(this, metadata, domain);
+        => GdalH.GDALSetMetadata(this, metadata, domain);
 
     public void SetMetadataItem(string name, string? value, string? domain = null)
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        Interop.GDALSetMetadataItem(this, name, value, domain);
+        GdalH.GDALSetMetadataItem(this, name, value, domain);
     }
 
-    public string[] MetadataDomainList => Interop.GDALGetMetadataDomainList(this);
+    public string[] MetadataDomainList => GdalH.GDALGetMetadataDomainList(this);
 
     protected virtual void Dispose(bool disposing)
     {

@@ -20,5 +20,5 @@ public class OgrField
     }
 
     private OgrFieldDefinition GetFieldDefinition()
-        => OgrFeature.Interop.OGR_F_GetFieldDefnRef(this.Feature, this.Index);
+        => OgrApiH.OGR_F_GetFieldDefnRef(this.Feature, this.Index);
 }

@@ -12,91 +12,91 @@ public partial class OgrFieldDefinition : IConstructableWrapper<OgrFieldDefiniti
 {
     public virtual OgrFieldType FieldType
     {
-        get => Interop.OGR_Fld_GetType(Handle);
-        set => Interop.OGR_Fld_SetType(Handle, value);
+        get => OgrApiH.OGR_Fld_GetType(Handle);
+        set => OgrApiH.OGR_Fld_SetType(Handle, value);
     }
 
     public virtual OgrFieldSubType FieldSubType
     {
-        get => Interop.OGR_Fld_GetSubType(Handle);
-        set => Interop.OGR_Fld_SetSubType(Handle, value);
+        get => OgrApiH.OGR_Fld_GetSubType(Handle);
+        set => OgrApiH.OGR_Fld_SetSubType(Handle, value);
     }
 
     public string Name
     {
-        get => Interop.OGR_Fld_GetNameRef(Handle);
+        get => OgrApiH.OGR_Fld_GetNameRef(Handle);
         // No need to check for null; C function will use empty string if null pointer is passed
-        set => Interop.OGR_Fld_SetName(Handle, value);
+        set => OgrApiH.OGR_Fld_SetName(Handle, value);
     }
 
     public string AlternativeName
     {
-        get => Interop.OGR_Fld_GetAlternativeNameRef(Handle);
+        get => OgrApiH.OGR_Fld_GetAlternativeNameRef(Handle);
         // No need to check for null; C function will use empty string if null pointer is passed
-        set => Interop.OGR_Fld_SetAlternativeName(Handle, value);
+        set => OgrApiH.OGR_Fld_SetAlternativeName(Handle, value);
     }
 
     public OgrJustification Justification
     {
-        get => Interop.OGR_Fld_GetJustify(Handle);
-        set => Interop.OGR_Fld_SetJustify(Handle, value);
+        get => OgrApiH.OGR_Fld_GetJustify(Handle);
+        set => OgrApiH.OGR_Fld_SetJustify(Handle, value);
     }
 
     public int Width
     {
-        get => Interop.OGR_Fld_GetWidth(Handle);
-        set => Interop.OGR_Fld_SetWidth(Handle, value);
+        get => OgrApiH.OGR_Fld_GetWidth(Handle);
+        set => OgrApiH.OGR_Fld_SetWidth(Handle, value);
     }
 
     public int Precision
     {
-        get => Interop.OGR_Fld_GetPrecision(Handle);
-        set => Interop.OGR_Fld_SetPrecision(Handle, value);
+        get => OgrApiH.OGR_Fld_GetPrecision(Handle);
+        set => OgrApiH.OGR_Fld_SetPrecision(Handle, value);
     }
 
     public OgrTimeZoneFlag TimeZoneFlag
     {
-        get => Interop.OGR_Fld_GetTZFlag(Handle);
-        set => Interop.OGR_Fld_SetTZFlag(Handle, value);
+        get => OgrApiH.OGR_Fld_GetTZFlag(Handle);
+        set => OgrApiH.OGR_Fld_SetTZFlag(Handle, value);
     }
 
     public string? DefaultValue
     {
-        get => Interop.OGR_Fld_GetDefault(Handle);
-        set => Interop.OGR_Fld_SetDefault(Handle, value);
+        get => OgrApiH.OGR_Fld_GetDefault(Handle);
+        set => OgrApiH.OGR_Fld_SetDefault(Handle, value);
     }
 
-    public bool IsDefaultDriverSpecific => Interop.OGR_Fld_IsDefaultDriverSpecific(Handle);
+    public bool IsDefaultDriverSpecific => OgrApiH.OGR_Fld_IsDefaultDriverSpecific(Handle);
 
     public bool IsIgnored
     {
-        get => Interop.OGR_Fld_IsIgnored(Handle);
-        set => Interop.OGR_Fld_SetIgnored(Handle, value);
+        get => OgrApiH.OGR_Fld_IsIgnored(Handle);
+        set => OgrApiH.OGR_Fld_SetIgnored(Handle, value);
     }
 
     public bool IsNullable
     {
-        get => Interop.OGR_Fld_IsNullable(Handle);
-        set => Interop.OGR_Fld_SetNullable(Handle, value);
+        get => OgrApiH.OGR_Fld_IsNullable(Handle);
+        set => OgrApiH.OGR_Fld_SetNullable(Handle, value);
     }
 
     public bool IsUnique
     {
-        get => Interop.OGR_Fld_IsUnique(Handle);
-        set => Interop.OGR_Fld_SetUnique(Handle, value);
+        get => OgrApiH.OGR_Fld_IsUnique(Handle);
+        set => OgrApiH.OGR_Fld_SetUnique(Handle, value);
     }
 
     public string DomainName
     {
-        get => Interop.OGR_Fld_GetDomainName(Handle);
+        get => OgrApiH.OGR_Fld_GetDomainName(Handle);
         // No need to check for null; C function will use empty string if null pointer is passed
-        set => Interop.OGR_Fld_SetDomainName(Handle, value);
+        set => OgrApiH.OGR_Fld_SetDomainName(Handle, value);
     }
 
     public string GetComment
     {
-        get => Interop.OGR_Fld_GetComment(Handle);
+        get => OgrApiH.OGR_Fld_GetComment(Handle);
         // No need to check for null; C function will use empty string if null pointer is passed
-        set => Interop.OGR_Fld_SetComment(Handle, value); 
+        set => OgrApiH.OGR_Fld_SetComment(Handle, value); 
     }
 }

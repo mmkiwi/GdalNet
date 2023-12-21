@@ -23,11 +23,11 @@ public class GdalBandCollection : IReadOnlyList<GdalRasterBand>
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
-            return GdalDataset.Interop.GDALGetRasterBand(Dataset, index + 1) ?? throw new InvalidOperationException();
+            return GdalH.GDALGetRasterBand(Dataset, index + 1) ?? throw new InvalidOperationException();
         }
     }
 
-    public int Count => GdalDataset.Interop.GDALGetRasterCount(Dataset);
+    public int Count => GdalH.GDALGetRasterCount(Dataset);
 
     private GdalDataset Dataset { get; }
 

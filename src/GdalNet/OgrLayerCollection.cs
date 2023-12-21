@@ -22,7 +22,7 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
             if (index < 0 || index >= Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            return GdalDataset.Interop.GDALDatasetGetLayer(Dataset, index);
+            return GdalH.GDALDatasetGetLayer(Dataset, index);
         }
     }
 
@@ -31,13 +31,13 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
         get
         {
             ArgumentNullException.ThrowIfNull(key);
-            return GdalDataset.Interop.GDALDatasetGetLayerByName(Dataset, key) ?? throw new NotImplementedException();
+            return GdalH.GDALDatasetGetLayerByName(Dataset, key) ?? throw new NotImplementedException();
         }
     }
 
     public GdalDataset Dataset { get; }
 
-    public int Count => GdalDataset.Interop.GDALDatasetGetLayerCount(Dataset);
+    public int Count => GdalH.GDALDatasetGetLayerCount(Dataset);
 
     public IEnumerator<OgrLayer> GetEnumerator()
     {
@@ -47,7 +47,7 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
 
     public bool TryGetValue(string key, [MaybeNullWhen(false)] out OgrLayer value)
     {
-        value = GdalDataset.Interop.GDALDatasetGetLayerByName(Dataset, key);
+        value = GdalH.GDALDatasetGetLayerByName(Dataset, key);
         return value != null;
     }
 

@@ -27,7 +27,7 @@ public sealed partial class GdalVirtualDataset: IDisposable, IConstructableWrapp
 
         string fileName = $"/vsimem/datasource_{Guid.NewGuid()}";
         using var pin = buffer.Pin();
-        GdalVirtualDataset? virtualDataset = Interop.VSIFileFromMemBuffer(fileName, (byte*)pin.Pointer, buffer.Length, false);
+        GdalVirtualDataset? virtualDataset = GdalH.VSIFileFromMemBuffer(fileName, (byte*)pin.Pointer, buffer.Length, false);
         
         if (virtualDataset is null)
         {
@@ -39,7 +39,7 @@ public sealed partial class GdalVirtualDataset: IDisposable, IConstructableWrapp
         virtualDataset.MemoryHandle = pin;
 
         GdalDataset? dataset =
-            GdalDataset.Interop.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
+            GdalH.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
 
         virtualDataset.Dataset = dataset!;
         if (dataset is null)

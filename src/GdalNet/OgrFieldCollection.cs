@@ -14,7 +14,7 @@ public class OgrFieldCollection : IReadOnlyList<OgrField>
     }
     public OgrField this[int index] => throw new NotImplementedException();
 
-    public int Count => OgrFeature.Interop.OGR_F_GetFieldCount(Feature);
+    public int Count => OgrApiH.OGR_F_GetFieldCount(Feature);
 
     private OgrFeature Feature { get; }
 

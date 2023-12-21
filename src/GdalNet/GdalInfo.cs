@@ -8,27 +8,27 @@ public static partial class GdalInfo
 {
     private static readonly Lazy<Version> s_version = new(() =>
     {
-        var version = Interop.GDALVersionInfo("RELEASE_NAME"u8);
+        var version = GdalH.GDALVersionInfo("RELEASE_NAME"u8);
         return Version.Parse(version);
     });
     public static Version Version => s_version.Value;
 
-    private static readonly Lazy<string> s_releaseDate = new(() => Interop.GDALVersionInfo("RELEASE_DATE"u8));
+    private static readonly Lazy<string> s_releaseDate = new(() => GdalH.GDALVersionInfo("RELEASE_DATE"u8));
     public static string ReleaseDate => s_releaseDate.Value;
 
-    private static readonly Lazy<string> s_buildInfo = new(() => Interop.GDALVersionInfo("BUILD_INFO"u8));
+    private static readonly Lazy<string> s_buildInfo = new(() => GdalH.GDALVersionInfo("BUILD_INFO"u8));
     private static bool s_isRegistered;
-    private static readonly object s_reentrant_lock = new();
+    private static readonly object s_reentrantLock = new();
 
     public static string BuildInfo => s_buildInfo.Value;
 
     public static void RegisterAllDrivers()
     {
-        lock (s_reentrant_lock)
+        lock (s_reentrantLock)
         {
             if (!s_isRegistered)
             {
-                Interop.GDALAllRegister();
+                GdalH.GDALAllRegister();
                 // GDALAllRegister is not re-entrant safe
                 s_isRegistered = true;
             }
