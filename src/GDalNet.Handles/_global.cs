@@ -7,5 +7,6 @@ global using System.Runtime.InteropServices;
 global using System.Runtime.CompilerServices;
 
 [assembly:InternalsVisibleTo("MMKiwi.GdalNet")]
+[assembly:InternalsVisibleTo("MMKiwi.GdalNet.UnitTests")]
 [assembly: InternalsVisibleTo("MMKiwi.GdalNet.UnitTests.SourceGenerators.GeneratedSourceTest")]
 [assembly: InternalsVisibleTo("MMKiwi.GdalNet.UnitTests.SourceGenerators")]

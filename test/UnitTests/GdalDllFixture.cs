@@ -13,50 +13,63 @@ public sealed partial class GdalDllFixture : IDisposable
 {
     public GdalDllFixture()
     {
-        var assembly = Assembly.GetCallingAssembly();
+        NativeLibrary.SetDllImportResolver(Assembly.GetCallingAssembly(), ResolveDll);
+        NativeLibrary.SetDllImportResolver(typeof(GdalDataset).Assembly, ResolveDll);
+        NativeLibrary.SetDllImportResolver(typeof(Handles.GdalDatasetHandle).Assembly, ResolveDll);
+    }
+
+    private IntPtr ResolveDll(string libraryName, Assembly assembly, DllImportSearchPath? searchpath)
+    {
+        if (libraryName != "gdal")
+            return 0;
+
+        if (gdalPtr != 0)
+            return gdalPtr;
 
         string envName = $"GDAL_LIBPATH_{(Environment.Is64BitProcess ? "X64" : "X86")}";
 
         if (Environment.GetEnvironmentVariable(envName) is { } dllPath)
         {
-            if (!SetDllDirectoryW($"{dllPath}"))
+            if (File.Exists(dllPath))
+            {
+                if (NativeLibrary.TryLoad(dllPath, assembly, searchpath, out gdalPtr))
+                {
+                    return gdalPtr;
+                }
+                else
+                {
+                    throw new Exception($"Could not load GDAL library.");
+                }
+            }
+            else if (!SetDllDirectoryW($"{dllPath}"))
                 throw new Exception($"{Marshal.GetLastWin32Error()}");
         }
 
         // Try load gdal
-        if (NativeLibrary.TryLoad("gdal", assembly, default, out nint try2))
+        if (NativeLibrary.TryLoad("gdal", assembly, searchpath, out gdalPtr))
         {
-            dllPointer = try2;
-            return;
+            return gdalPtr;
         }
 
         // Try load gdald
-        if (NativeLibrary.TryLoad("gdald", assembly, default, out nint try3))
+        if (NativeLibrary.TryLoad("gdald", assembly, searchpath, out gdalPtr))
         {
-            dllPointer = try3;
-            return;
+            return gdalPtr;
         }
+
+        throw new Exception($"Could not load GDAL library.");
     }
 
-    private nint dllPointer;
-
+    private nint gdalPtr;
 
     public void Dispose()
     {
-
-        
-        if(dllPointer != 0)
-            NativeLibrary.Free(dllPointer);
-        
-
+        NativeLibrary.Free(gdalPtr);
     }
 
     [LibraryImport("kernel32", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
-    [return:MarshalAs(UnmanagedType.Bool)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool SetDllDirectoryW(string dllDirectory);
-    
-    
-    
 }
 
 [CollectionDefinition("Gdal DLL")]
