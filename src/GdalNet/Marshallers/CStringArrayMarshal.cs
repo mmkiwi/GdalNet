@@ -3,11 +3,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections.Immutable;
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
-
-using MMKiwi.GdalNet.CHelpers;
 
 namespace MMKiwi.GdalNet.Marshallers;
 
@@ -166,6 +163,6 @@ internal unsafe static class CStringArrayMarshal
         public static string[]? ConvertToManaged(byte** unmanaged) =>
             StringArray.ConvertToManaged(unmanaged);
 
-        public static void Free(byte** unmanaged) => CStringList.Interop.CSLDestroy(unmanaged);
+        public static void Free(byte** unmanaged) => CplH.String.CSLDestroy(unmanaged);
     }
 }

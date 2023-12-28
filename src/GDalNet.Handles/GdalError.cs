@@ -21,13 +21,26 @@ public sealed partial record GdalError
         Message = message;
     }
 
+    public static void EnableDebugLogging()
+    {
+        // This won't raise an exception if it's not been hooked up yet
+        // and prevents double subscribing.
+        ErrorRaised -= DebugError;
+        ErrorRaised += DebugError;
+    }
+    
+    public static void DisableDebugLogging()
+    {
+        ErrorRaised -= DebugError;
+    }
+
     public string Message { get; }
     public GdalCplErr Severity { get; }
     public ErrorCodes ErrorNum { get; }
 
     [field: ThreadStatic] public static GdalError? LastError { get; private set; }
 
-    public static EventHandler<GdalErrorEventArgs>? ErrorRaised { get; }
+    public static EventHandler<GdalErrorEventArgs>? ErrorRaised { get; set; }
 
     public enum ErrorCodes
     {
@@ -47,7 +60,7 @@ public sealed partial record GdalError
     public static void ThrowIfError(GdalCplErr error)
     {
         ThrowIfError();
-        if (error == GdalCplErr.Failure || error == GdalCplErr.Fatal)
+        if (error is GdalCplErr.Failure or GdalCplErr.Fatal)
         {
             throw new GdalException("Unknown GDAL error");
         }
@@ -75,44 +88,41 @@ public sealed partial record GdalError
 
     public static void ThrowIfError()
     {
-        if (LastError == null || LastError.Severity == GdalCplErr.None)
+        if (LastError?.Severity is not (GdalCplErr.Failure or GdalCplErr.Fatal))
         {
             return;
         }
-
-        if (LastError.Severity is GdalCplErr.Failure or GdalCplErr.Fatal)
+        
+        try
         {
-            try
+            throw LastError.ErrorNum switch
             {
-                throw LastError.ErrorNum switch
-                {
-                    ErrorCodes.ApplicationDefined => new GdalException(
-                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.OutOfMemory => new InsufficientMemoryException(
-                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.FileIO => new IOException(
-                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.OpenFailed => new IOException(
-                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.IllegalArg => new ArgumentException(
-                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.NotSupported => new NotSupportedException(
-                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.AssertionFailed => new GdalException(
-                        $"GDAL ERROR: Code: {(int)LastError.ErrorNum} , {LastError.Message}"),
-                    ErrorCodes.NoWriteAccess => new IOException(
-                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.UserInterrupt => new OperationCanceledException(
-                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    ErrorCodes.ObjectNull => new NullReferenceException(
-                        $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                    _ => new Exception($"GDAL ERROR: {LastError.Message}")
-                };
-            }
-            finally
-            {
-                LastError = null;
-            }
+                ErrorCodes.ApplicationDefined => new GdalException(
+                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                ErrorCodes.OutOfMemory => new InsufficientMemoryException(
+                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                ErrorCodes.FileIO => new IOException(
+                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                ErrorCodes.OpenFailed => new IOException(
+                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                ErrorCodes.IllegalArg => new ArgumentException(
+                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                ErrorCodes.NotSupported => new NotSupportedException(
+                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                ErrorCodes.AssertionFailed => new GdalException(
+                    $"GDAL ERROR: Code: {(int)LastError.ErrorNum} , {LastError.Message}"),
+                ErrorCodes.NoWriteAccess => new IOException(
+                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                ErrorCodes.UserInterrupt => new OperationCanceledException(
+                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                ErrorCodes.ObjectNull => new NullReferenceException(
+                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                _ => new Exception($"GDAL ERROR: {LastError.Message}")
+            };
+        }
+        finally
+        {
+            LastError = null;
         }
     }
 

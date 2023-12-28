@@ -10,16 +10,20 @@
         <RootNamespace>MMKiwi.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
         <IsAotCompatible>true</IsAotCompatible>
         <ReportAnalyzer>true</ReportAnalyzer>
+        <DefineConstants>CBSG_OMITHELPER;CBSG_OMITHANDLE;CBSG_OMITWRAPPER;CBSG_OMITHASHANDLE</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\GDalNet.Handles\GdalNet.Handles.csproj" />
-      <ProjectReference Include="..\InteropAttributes\InteropAttributes.csproj" />
-      <ProjectReference Include="..\InteropSourceGen\InteropSourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\GDalNet.Handles\GdalNet.Handles.csproj"/>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="IDisposableAnalyzers" Version="4.0.7">
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        <PrivateAssets>all</PrivateAssets>
-      </PackageReference>
+        <PackageReference Include="IDisposableAnalyzers" Version="4.0.7">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="MMKiwi.CBindingSG" Version="0.1.1" PrivateAssets="all" ExcludeAssets="all"/>
+        <PackageReference Include="MMKiwi.CBindingSG.Core" Version="0.1.1" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Interop\"/>
     </ItemGroup>
 </Project>

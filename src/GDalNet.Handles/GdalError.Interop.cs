@@ -28,20 +28,19 @@ public unsafe partial record GdalError
             return;
         }
 
-        Interop.CPLSetErrorHandler(GetStdcallAction());
+        Interop.CPLSetErrorHandler(&HandleError);
         s_isRegistered = true;
     }
 
     static bool s_isRegistered;
 
-    private static CplErrHandle GetStdcallAction() => (CplErrHandle)Marshal.GetFunctionPointerForDelegate(HandleError);
-
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvStdcall)])]
     private static void HandleError(GdalCplErr error, int errorNum, char* messageUtf8)
     {
         string message = Marshal.PtrToStringUTF8((nint)messageUtf8) ?? string.Empty;
         GdalError errorInfo = new(error, errorNum, message);
         LastError = errorInfo;
-        ErrorRaised?.Invoke(null, new(errorInfo));
+        ErrorRaised?.Invoke(null, new GdalErrorEventArgs(errorInfo));
     }
 
     public static void ResetErrors()

@@ -4,10 +4,24 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+using Microsoft.Win32.SafeHandles;
+
 namespace MMKiwi.GdalNet.Handles;
 
-internal abstract partial class GdalInternalHandle
+internal abstract partial class GdalInternalHandle : SafeHandleZeroOrMinusOneIsInvalid
 {
+    private protected GdalInternalHandle(bool ownsHandle) : base(ownsHandle)
+    {
+
+    }
+
+    protected override bool ReleaseHandle()
+    {
+        return ReleaseHandleCore() is { } and not GdalCplErr.Failure and not GdalCplErr.Fatal;
+    }
+
+    private protected abstract GdalCplErr? ReleaseHandleCore();
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     private protected static partial class Interop
     {

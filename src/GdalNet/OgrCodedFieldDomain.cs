@@ -4,12 +4,13 @@
 
 using Microsoft.VisualBasic.FileIO;
 
+using MMKiwi.CBindingSG;
 using MMKiwi.GdalNet.Handles;
-using MMKiwi.GdalNet.InteropAttributes;
+
 
 namespace MMKiwi.GdalNet;
 
-[GdalGenerateWrapper]
+[CbsgGenerateWrapper]
 public sealed partial class OgrCodedFieldDomain : OgrFieldDomain, IConstructableWrapper<OgrCodedFieldDomain, OgrCodedFieldDomainHandle>, IHasHandle<OgrCodedFieldDomainHandle>
 {
     public static OgrCodedFieldDomain Create(string name, string description, FieldType fieldType, OgrFieldSubType fieldSubType) => throw new NotImplementedException();

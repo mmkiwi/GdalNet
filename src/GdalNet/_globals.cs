@@ -4,7 +4,6 @@
 
 global using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
 global using System.Runtime.InteropServices;
-global using MMKiwi.GdalNet.InteropAttributes;
 global using MMKiwi.GdalNet.Handles;
 global using System.Diagnostics.CodeAnalysis;
 

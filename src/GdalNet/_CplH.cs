@@ -6,9 +6,10 @@ using System.Runtime.CompilerServices;
 
 namespace MMKiwi.GdalNet;
 
+[CLSCompliant(false)]
 internal static partial class CplH
 {
-    internal static partial class String
+    internal unsafe static partial class String
     {
         [LibraryImport("gdal")]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]

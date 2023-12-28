@@ -2,12 +2,15 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Reflection.Metadata;
+
+using MMKiwi.CBindingSG;
 using MMKiwi.GdalNet.Handles;
-using MMKiwi.GdalNet.InteropAttributes;
+
 
 namespace MMKiwi.GdalNet;
 
-[GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected, HandleVisibility = MemberVisibility.Internal)]
+[CbsgGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected, HandleVisibility = MemberVisibility.Internal)]
 public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>, IDisposable
 {
     private bool _disposedValue;
@@ -46,7 +49,7 @@ public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>, I
         {
             if (disposing)
             {
-                Handle.Dispose();
+                this.Handle.Dispose();
             }
             _disposedValue = true;
         }

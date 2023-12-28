@@ -2,12 +2,15 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Reflection.Metadata;
+
+using MMKiwi.CBindingSG;
 using MMKiwi.GdalNet.Handles;
-using MMKiwi.GdalNet.InteropAttributes;
+
 
 namespace MMKiwi.GdalNet;
 
-[GdalGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected)]
+[CbsgGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected)]
 public partial class OgrFieldDomain: IDisposable, IConstructableWrapper<OgrFieldDomain, OgrFieldDomainHandle>, IHasHandle<OgrFieldDomainHandle>
 {
     private bool _disposedValue;

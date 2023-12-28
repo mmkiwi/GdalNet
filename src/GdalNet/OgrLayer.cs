@@ -4,12 +4,13 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+using MMKiwi.CBindingSG;
 using MMKiwi.GdalNet.Handles;
-using MMKiwi.GdalNet.InteropAttributes;
+
 
 namespace MMKiwi.GdalNet;
 
-[GdalGenerateWrapper]
+[CbsgGenerateWrapper]
 public partial class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHandle<OgrLayerHandle>
 {
     internal OgrLayer(OgrLayerHandle handle)

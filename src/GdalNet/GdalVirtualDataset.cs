@@ -3,13 +3,15 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Buffers;
+using System.Reflection.Metadata;
 
+using MMKiwi.CBindingSG;
 using MMKiwi.GdalNet.Handles;
-using MMKiwi.GdalNet.InteropAttributes;
+
 
 namespace MMKiwi.GdalNet;
 
-[GdalGenerateWrapper]
+[CbsgGenerateWrapper]
 public sealed partial class GdalVirtualDataset: IDisposable, IConstructableWrapper<GdalVirtualDataset, GdalVirtualDatasetHandle>, IHasHandle<GdalVirtualDatasetHandle>
 {
     private bool _disposedValue;
