@@ -122,7 +122,7 @@ public abstract partial class OgrGeometry: IDisposable
             return false;
 
         ObjectDisposedException.ThrowIf(Handle.IsClosed, this);
-        ObjectDisposedException.ThrowIf(other.Handle.IsClosed, this);
+        ObjectDisposedException.ThrowIf(other.Handle.IsClosed, other);
 
         return ReferenceEquals(this, other) || OgrApiH.OGR_G_Equals(this, other);
     }
