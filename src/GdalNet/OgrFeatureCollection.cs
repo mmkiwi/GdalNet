@@ -16,17 +16,25 @@ public class OgrFeatureCollection : IEnumerable<OgrFeature>
 
     private OgrLayer Layer { get; }
 
+    public bool TryGetNonEnumeratedCount(out long count)
+    {
+        count = OgrApiH.OGR_L_GetFeatureCount(Layer, false);
+        return count > 0;
+    }
+
+    public long? GetCount(bool onlyIfCheap)
+    {
+        long count = OgrApiH.OGR_L_GetFeatureCount(Layer, false);
+        return count > 0 ? count : null;
+    }
+
     public IEnumerator<OgrFeature> GetEnumerator()
     {
         return new FeatureEnumerator(this);
     }
 
+    [ExcludeFromCodeCoverage]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    public void SetNetByIndex(long index)
-    {
-        throw new NotImplementedException();
-    }
 
     private int _isEnumerating;
 
@@ -35,7 +43,7 @@ public class OgrFeatureCollection : IEnumerable<OgrFeature>
         public FeatureEnumerator(OgrFeatureCollection ogrFeatureCollection)
         {
 
-            if (Interlocked.CompareExchange(ref ogrFeatureCollection._isEnumerating, 0, 1) == 1)
+            if (Interlocked.CompareExchange(ref ogrFeatureCollection._isEnumerating, 1, 0) == 1)
                 throw new InvalidOperationException($"Cannot enumerate an {nameof(OgrFeatureCollection)} multiple times. Dispose of the previous IEnumerator before continuing.");
             OgrFeatureCollection = ogrFeatureCollection;
             OgrApiH.OGR_L_ResetReading(OgrFeatureCollection.Layer);

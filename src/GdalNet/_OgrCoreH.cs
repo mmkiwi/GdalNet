@@ -10,34 +10,13 @@ namespace MMKiwi.GdalNet;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 internal unsafe static partial class OgrCoreH
 {
-    [LibraryImport("gdal", EntryPoint = "OGRMalloc")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial nint OGRMalloc(ulong _0);
-
-    [LibraryImport("gdal", EntryPoint = "OGRCalloc")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial nint OGRCalloc(ulong _0, ulong _1);
-
-    [LibraryImport("gdal", EntryPoint = "OGRRealloc")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial nint OGRRealloc(nint _0, ulong _1);
-
-    [LibraryImport("ogr", EntryPoint = "OGRStrdup", StringMarshalling = StringMarshalling.Utf8)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial sbyte* OGRStrdup(string _0);
-
-    [LibraryImport("gdal", EntryPoint = "OGRFree")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial void OGRFree(nint _0);
-
     [LibraryImport("gdal", EntryPoint = "OGRGeometryTypeToName")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial nint OGRGeometryTypeToName(OgrWkbGeometryType eType);
 
     [LibraryImport("gdal", EntryPoint = "OGRMergeGeometryTypes")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial OgrWkbGeometryType OGRMergeGeometryTypes(OgrWkbGeometryType eMain,
-        OgrWkbGeometryType eExtra);
+    private static partial OgrWkbGeometryType OGRMergeGeometryTypes(OgrWkbGeometryType eMain, OgrWkbGeometryType eExtra);
 
     [LibraryImport("gdal", EntryPoint = "OGRMergeGeometryTypesEx")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

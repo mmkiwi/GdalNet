@@ -3,15 +3,17 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Reflection.Metadata;
+using System.Runtime.InteropServices.Marshalling;
 
-using MMKiwi.CBindingSG;
 using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.Marshallers;
 
 
 namespace MMKiwi.GdalNet;
 
-[CbsgGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected, HandleVisibility = MemberVisibility.Internal)]
-public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>, IDisposable
+[NativeMarshalling(typeof(GdalMarshaller<GdalMajorObject,GdalInternalHandle>))]
+public abstract class GdalMajorObject: IHasHandle<GdalInternalHandle>, IDisposable
 {
     private bool _disposedValue;
 
@@ -61,4 +63,14 @@ public abstract partial class GdalMajorObject: IHasHandle<GdalInternalHandle>, I
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
+
+    private protected GdalMajorObject(GdalInternalHandle handle)
+    {
+        Handle = handle;
+    }
+    
+    internal GdalInternalHandle Handle { get; }
+    
+    [ExcludeFromCodeCoverage]
+    GdalInternalHandle IHasHandle<GdalInternalHandle>.Handle => Handle;
 }

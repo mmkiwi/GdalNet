@@ -3,15 +3,17 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Reflection.Metadata;
+using System.Runtime.InteropServices.Marshalling;
 
-using MMKiwi.CBindingSG;
 using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.Marshallers;
 
 
 namespace MMKiwi.GdalNet;
 
-[CbsgGenerateWrapper(ConstructorVisibility = MemberVisibility.PrivateProtected)]
-public partial class OgrFieldDomain: IDisposable, IConstructableWrapper<OgrFieldDomain, OgrFieldDomainHandle>, IHasHandle<OgrFieldDomainHandle>
+[NativeMarshalling(typeof(GdalMarshaller<OgrFieldDomain,OgrFieldDomainHandle>))]
+public class OgrFieldDomain: IDisposable, IConstructableWrapper<OgrFieldDomain, OgrFieldDomainHandle>, IHasHandle<OgrFieldDomainHandle>
 {
     private bool _disposedValue;
 
@@ -50,4 +52,8 @@ public partial class OgrFieldDomain: IDisposable, IConstructableWrapper<OgrField
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
+    static OgrFieldDomain IConstructableWrapper<OgrFieldDomain, OgrFieldDomainHandle>.Construct(OgrFieldDomainHandle handle) => new(handle);
+    OgrFieldDomainHandle IHasHandle<OgrFieldDomainHandle>.Handle => Handle;
+    internal OgrFieldDomainHandle Handle { get; }
+    private protected OgrFieldDomain(OgrFieldDomainHandle handle) => Handle = handle;
 }

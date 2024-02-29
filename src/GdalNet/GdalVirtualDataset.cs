@@ -4,15 +4,18 @@
 
 using System.Buffers;
 using System.Reflection.Metadata;
+using System.Runtime.InteropServices.Marshalling;
 
-using MMKiwi.CBindingSG;
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.Marshallers;
 
 
 namespace MMKiwi.GdalNet;
 
-[CbsgGenerateWrapper]
-public sealed partial class GdalVirtualDataset: IDisposable, IConstructableWrapper<GdalVirtualDataset, GdalVirtualDatasetHandle>, IHasHandle<GdalVirtualDatasetHandle>
+[NativeMarshalling(typeof(GdalMarshaller<GdalVirtualDataset, GdalVirtualDatasetHandle>))]
+public sealed class GdalVirtualDataset: IDisposable, IConstructableWrapper<GdalVirtualDataset, GdalVirtualDatasetHandle>, IHasHandle<GdalVirtualDatasetHandle>
 {
     private bool _disposedValue;
 
@@ -27,7 +30,7 @@ public sealed partial class GdalVirtualDataset: IDisposable, IConstructableWrapp
     {
         GdalOpenSettings openFlags = openSettings ?? new GdalOpenSettings();
 
-        string fileName = $"/vsimem/datasource_{Guid.NewGuid()}";
+        string fileName = $"/vsimem/datasource_{Guid.NewGuid()}.gpkg";
         using var pin = buffer.Pin();
         GdalVirtualDataset? virtualDataset = GdalH.VSIFileFromMemBuffer(fileName, (byte*)pin.Pointer, buffer.Length, false);
         
@@ -57,6 +60,7 @@ public sealed partial class GdalVirtualDataset: IDisposable, IConstructableWrapp
         {
             if (disposing)
             {
+                //Dataset.Dispose();
                 Handle.Dispose();
                 MemoryHandle.Dispose();
             }
@@ -70,4 +74,12 @@ public sealed partial class GdalVirtualDataset: IDisposable, IConstructableWrapp
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: true);
     }
+    static GdalVirtualDataset IConstructableWrapper<GdalVirtualDataset, GdalVirtualDatasetHandle>.Construct(GdalVirtualDatasetHandle handle) => new(handle);
+
+    private GdalVirtualDataset(GdalVirtualDatasetHandle handle) => this.Handle = handle;
+    
+    internal GdalVirtualDatasetHandle Handle { get; }
+
+    [ExcludeFromCodeCoverage]
+    GdalVirtualDatasetHandle IHasHandle<GdalVirtualDatasetHandle>.Handle => Handle;
 }

@@ -2,6 +2,8 @@
 /vcpkg_installed_*/
 SG_Outputs
 
+.runsettings
+
 *.gpkg-shm
 *.gpkg-wal
 *.aux.xml

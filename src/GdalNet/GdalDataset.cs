@@ -2,14 +2,19 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using MMKiwi.CBindingSG;
+using System.Diagnostics;
+using System.Runtime.InteropServices.Marshalling;
+
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.Marshallers;
 
 
 namespace MMKiwi.GdalNet;
 
-[CbsgGenerateWrapper]
-public sealed partial class GdalDataset : GdalMajorObject, IConstructableWrapper<GdalDataset, GdalDatasetHandle>, IHasHandle<GdalDatasetHandle>
+[NativeMarshalling(typeof(GdalMarshaller<GdalDataset, GdalDatasetHandle>))]
+public sealed class GdalDataset : GdalMajorObject, IConstructableWrapper<GdalDataset, GdalDatasetHandle>, IHasHandle<GdalDatasetHandle>
 {
     // ReSharper disable once SuggestBaseTypeForParameterInConstructor
     private GdalDataset(GdalDatasetHandle handle) : base(handle)
@@ -93,16 +98,16 @@ public sealed partial class GdalDataset : GdalMajorObject, IConstructableWrapper
     /// <exception cref="NotSupportedException">Thrown if the file format is not supported.</exception>
     /// <exception cref="GdalException">Thrown if there is any other issue opening the file.</exception>
     public static GdalDataset Open(string fileName,
-                                    GdalOpenSettings? openSettings = null,
-                                    IEnumerable<string>? allowedDrivers = null,
-                                    IReadOnlyDictionary<string, string>? openOptions = null,
-                                    IEnumerable<string>? siblingFiles = null)
+        GdalOpenSettings? openSettings = null,
+        IEnumerable<string>? allowedDrivers = null,
+        IReadOnlyDictionary<string, string>? openOptions = null,
+        IEnumerable<string>? siblingFiles = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
         GdalOpenSettings openFlags = openSettings ?? new();
         var dataset = GdalH.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
-        if (dataset == null)
-            throw new GdalException("Could not open file");
+        GdalError.ThrowIfError();
+        Debug.Assert(dataset != null, $"Could not open file {fileName}. GDAL returned no error");
         return dataset;
     }
 
@@ -112,4 +117,7 @@ public sealed partial class GdalDataset : GdalMajorObject, IConstructableWrapper
     public OgrLayerCollection Layers { get; }
     public int RasterXSize => GdalH.GDALGetRasterXSize(this);
     public int RasterYSize => GdalH.GDALGetRasterYSize(this);
+
+    static GdalDataset IConstructableWrapper<GdalDataset, GdalDatasetHandle>.Construct(GdalDatasetHandle handle) => new(handle);
+    GdalDatasetHandle IHasHandle<GdalDatasetHandle>.Handle => Handle;
 }

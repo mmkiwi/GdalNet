@@ -3,14 +3,17 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices.Marshalling;
 
-using MMKiwi.CBindingSG;
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.Marshallers;
 
 
 namespace MMKiwi.GdalNet;
 
-[CbsgGenerateWrapper]
+[NativeMarshalling(typeof(GdalMarshallerNeverOwns<OgrLayer,OgrLayerHandle>))]
 public partial class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHandle<OgrLayerHandle>
 {
     internal OgrLayer(OgrLayerHandle handle)
@@ -29,6 +32,12 @@ public partial class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, 
         }
     }
 
+    public long GetFeatureCount(bool force = false)
+    {
+        return OgrApiH.OGR_L_GetFeatureCount(this, force);
+    }
+
+
     public OgrFeatureCollection Features { get; }
 
     public bool TryGetFeatureById(long id, [NotNullWhen(true)] out OgrFeature? feature)
@@ -43,4 +52,8 @@ public partial class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, 
         GdalError.ThrowIfError();
         return feature ?? throw new InvalidOperationException($"Could not get feature with ID {id} from layer {Name}");
     }
+    static OgrLayer IConstructableWrapper<OgrLayer, OgrLayerHandle>.Construct(OgrLayerHandle handle) => new(handle);
+    
+    internal OgrLayerHandle Handle { get; }
+    OgrLayerHandle IHasHandle<OgrLayerHandle>.Handle => Handle;
 }

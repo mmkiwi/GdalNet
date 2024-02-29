@@ -39,6 +39,7 @@ public class GdalBandCollection : IReadOnlyList<GdalRasterBand>
         }
     }
 
+    [ExcludeFromCodeCoverage]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
 

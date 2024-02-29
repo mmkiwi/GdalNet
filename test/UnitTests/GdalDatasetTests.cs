@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Handles;
 
 namespace MMKiwi.GdalNet.UnitTests;
@@ -32,11 +33,8 @@ public sealed class GdalDatasetTests: DatasetTestBase
         Action action = () =>
         {
             using var dataset = GdalDataset.Open("DOESNOTEXIST");
-            if (dataset is not null)
-                throw new Exception(dataset.Description);
-            throw new Exception("X");
         };
-        action.Should().Throw<GdalException>();
+        action.Should().Throw<IOException>();
     }
 
     [Theory]

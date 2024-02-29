@@ -21,7 +21,10 @@ public sealed class GdalRasterBandTests(GdalDllFixture fixture) : DatasetTestBas
         var dataset = virtualDataset.Dataset;
 
         foreach (var band in dataset.RasterBands)
+        {
             band.DataType.Should().Be(GdalDataType.Byte);
+            band.Categories.Should().BeNull();
+        }
     }
 
     [Theory]

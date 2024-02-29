@@ -1,13 +1,74 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.Marshalling;
 
-namespace MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.Marshallers;
 
-public sealed partial record GdalError
+namespace MMKiwi.GdalNet.Error;
+
+using unsafe CplErrHandle = delegate* unmanaged[Stdcall]<GdalCplErr, int, char*, void>;
+
+public unsafe partial record GdalError
 {
+    internal static partial class Interop
+    {
+        [LibraryImport("gdal")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial CplErrHandle CPLSetErrorHandler(CplErrHandle newHandler);
+
+        [LibraryImport("gdal")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial void CPLErrorReset();
+        
+        [LibraryImport("gdal")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial int CPLGetLastErrorType();
+        
+        [LibraryImport("gdal")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        public static partial int CPLGetLastErrorNo();
+
+        [LibraryImport("gdal")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [return:MarshalUsing(typeof(Utf8StringNoFree))]
+        public static partial string CPLGetLastErrorMsg();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void Initialize()
+    {
+        if (s_isRegistered)
+        {
+            return;
+        }
+
+        Interop.CPLSetErrorHandler(&HandleError);
+        s_isRegistered = true;
+    }
+
+    [ThreadStatic]
+    static bool s_isRegistered;
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvStdcall)])]
+    private static void HandleError(GdalCplErr error, int errorNum, char* messageUtf8)
+    {
+        string message = Marshal.PtrToStringUTF8((nint)messageUtf8) ?? string.Empty;
+        GdalError errorInfo = new(error, errorNum, message);
+        LastError = errorInfo;
+        ErrorRaised?.Invoke(null, new GdalErrorEventArgs(errorInfo));
+    }
+
+    public static void ResetErrors()
+    {
+        Interop.CPLErrorReset();
+        LastError = null;
+    }
+
 #if DEBUG
     static GdalError()
     {
@@ -20,6 +81,13 @@ public sealed partial record GdalError
         ErrorNum = (ErrorCodes)errorNum;
         Message = message;
     }
+    
+    private GdalError()
+    {
+        Severity = (GdalCplErr)Interop.CPLGetLastErrorType();
+        ErrorNum = (ErrorCodes)Interop.CPLGetLastErrorNo();
+        Message = Interop.CPLGetLastErrorMsg();
+    }
 
     public static void EnableDebugLogging()
     {
@@ -28,7 +96,7 @@ public sealed partial record GdalError
         ErrorRaised -= DebugError;
         ErrorRaised += DebugError;
     }
-    
+
     public static void DisableDebugLogging()
     {
         ErrorRaised -= DebugError;
@@ -88,41 +156,42 @@ public sealed partial record GdalError
 
     public static void ThrowIfError()
     {
-        if (LastError?.Severity is not (GdalCplErr.Failure or GdalCplErr.Fatal))
+        GdalError lastError = new(); 
+        if (lastError?.Severity is not (GdalCplErr.Failure or GdalCplErr.Fatal))
         {
             return;
         }
-        
+
         try
         {
-            throw LastError.ErrorNum switch
+            throw lastError.ErrorNum switch
             {
                 ErrorCodes.ApplicationDefined => new GdalException(
-                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    $"GDAL ERROR: Code:{(int)lastError.ErrorNum}, {lastError.Message}"),
                 ErrorCodes.OutOfMemory => new InsufficientMemoryException(
-                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    $"GDAL ERROR: Code:{(int)lastError.ErrorNum}, {lastError.Message}"),
                 ErrorCodes.FileIO => new IOException(
-                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    $"GDAL ERROR: Code:{(int)lastError.ErrorNum}, {lastError.Message}"),
                 ErrorCodes.OpenFailed => new IOException(
-                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    $"GDAL ERROR: Code:{(int)lastError.ErrorNum}, {lastError.Message}"),
                 ErrorCodes.IllegalArg => new ArgumentException(
-                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    $"GDAL ERROR: Code:{(int)lastError.ErrorNum}, {lastError.Message}"),
                 ErrorCodes.NotSupported => new NotSupportedException(
-                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    $"GDAL ERROR: Code:{(int)lastError.ErrorNum}, {lastError.Message}"),
                 ErrorCodes.AssertionFailed => new GdalException(
-                    $"GDAL ERROR: Code: {(int)LastError.ErrorNum} , {LastError.Message}"),
+                    $"GDAL ERROR: Code: {(int)lastError.ErrorNum} , {lastError.Message}"),
                 ErrorCodes.NoWriteAccess => new IOException(
-                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    $"GDAL ERROR: Code:{(int)lastError.ErrorNum}, {lastError.Message}"),
                 ErrorCodes.UserInterrupt => new OperationCanceledException(
-                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
+                    $"GDAL ERROR: Code:{(int)lastError.ErrorNum}, {lastError.Message}"),
                 ErrorCodes.ObjectNull => new NullReferenceException(
-                    $"GDAL ERROR: Code:{(int)LastError.ErrorNum}, {LastError.Message}"),
-                _ => new Exception($"GDAL ERROR: {LastError.Message}")
+                    $"GDAL ERROR: Code:{(int)lastError.ErrorNum}, {lastError.Message}"),
+                _ => new Exception($"GDAL ERROR: {lastError.Message}")
             };
         }
         finally
         {
-            LastError = null;
+            Interop.CPLErrorReset();
         }
     }
 
@@ -169,7 +238,8 @@ public sealed class GdalErrorEventArgs : EventArgs
 public class GdalException : ApplicationException
 {
     internal GdalException()
-    { }
+    {
+    }
 
     internal GdalException(string? message) : base(message)
     {

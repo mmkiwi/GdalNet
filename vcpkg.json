@@ -1,9 +1,9 @@
 {
-    "dependencies": [
-        {
-            "name": "gdal",
-            "version>=": "3.7.0"
-        }
-    ],
-    "builtin-baseline": "c8696863d371ab7f46e213d8f5ca923c4aef2a00"
+  "dependencies": [
+    {
+      "name": "gdal",
+      "version>=": "3.7.0"
+    }
+  ],
+  "builtin-baseline": "2ac6ba173be85207a7bac4f0f02f5486f9fd4c0f"
 }

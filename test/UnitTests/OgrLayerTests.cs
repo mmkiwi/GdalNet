@@ -36,5 +36,14 @@ public class LayerTestBase(GdalDllFixture fixture): DatasetTestBase(fixture)
 {
     protected static LayerInfo GetLayer(int index) => TestData.Layers[index];
 
-    public static IEnumerable<object[]> Layers => Enumerable.Range(0, TestData.LayerCount).Select(x => new object[] { x });
+    public static TheoryData<int> Layers
+    {
+        get
+        {
+            TheoryData<int> res = new();
+            foreach (var i in Enumerable.Range(0, TestData.LayerCount))
+                res.Add(i);
+            return res;
+        }
+    }
 }

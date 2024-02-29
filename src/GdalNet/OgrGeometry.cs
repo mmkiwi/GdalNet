@@ -5,9 +5,14 @@
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices.Marshalling;
 
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
+
+[NativeMarshalling(typeof(GdalMarshaller<OgrGeometry, OgrGeometryHandle>))]
 public abstract partial class OgrGeometry: IDisposable
 {
     private bool _disposedValue;

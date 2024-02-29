@@ -10,12 +10,14 @@ global using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 using MMKiwi.GdalNet;
+using MMKiwi.GdalNet.Interop;
 
 [assembly: InternalsVisibleTo("MMKiwi.GdalNet.UnitTests")]
 [assembly: CLSCompliant(true)]
 [assembly: InternalsVisibleTo("MMKiwi.GdalNet.UnitTests.SourceGenerators")]
 [assembly: InternalsVisibleTo(InternalUnitTestConst.AssemblyName)]
 [assembly: DisableRuntimeMarshalling]
+
 namespace MMKiwi.GdalNet;
 
 internal static class InternalUnitTestConst

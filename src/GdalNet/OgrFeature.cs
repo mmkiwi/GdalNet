@@ -2,16 +2,19 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Diagnostics.Contracts;
 using System.Reflection.Metadata;
+using System.Runtime.InteropServices.Marshalling;
 
-using MMKiwi.CBindingSG;
 using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.Marshallers;
 
 
 namespace MMKiwi.GdalNet;
 
-[CbsgGenerateWrapper]
-public sealed partial class OgrFeature : IDisposable , IConstructableWrapper<OgrFeature, OgrFeatureHandle>, IHasHandle<OgrFeatureHandle>
+[NativeMarshalling(typeof(GdalMarshaller<OgrFeature, OgrFeatureHandle>))]
+public sealed class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, OgrFeatureHandle>, IHasHandle<OgrFeatureHandle>
 {
     private bool _disposedValue;
 
@@ -21,16 +24,25 @@ public sealed partial class OgrFeature : IDisposable , IConstructableWrapper<Ogr
         {
             if (disposing)
             {
-                Handle.Dispose();
+                this.Handle.Dispose();
             }
 
             _disposedValue = true;
         }
     }
 
+    public long Fid { get => OgrApiH.OGR_F_GetFID(this); set => OgrApiH.OGR_F_SetFID(this, value); }
+
     public void Dispose()
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: true);
     }
+    static OgrFeature IConstructableWrapper<OgrFeature, OgrFeatureHandle>.Construct(OgrFeatureHandle handle)
+        => new(handle);
+    OgrFeatureHandle IHasHandle<OgrFeatureHandle>.Handle => Handle;
+
+    private OgrFeature(OgrFeatureHandle handle) => Handle = handle;
+    
+    internal OgrFeatureHandle Handle { get; }
 }

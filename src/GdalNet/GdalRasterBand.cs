@@ -2,15 +2,26 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using MMKiwi.CBindingSG;
+using System.Runtime.InteropServices.Marshalling;
+
 using MMKiwi.GdalNet.Handles;
+using MMKiwi.GdalNet.Interop;
+using MMKiwi.GdalNet.Marshallers;
 
 
 namespace MMKiwi.GdalNet;
 
-[CbsgGenerateWrapper]
-public sealed partial class GdalRasterBand: IConstructableWrapper<GdalRasterBand, GdalRasterBandHandle>, IHasHandle<GdalRasterBandHandle>
+[NativeMarshalling(typeof(GdalMarshallerNeverOwns<GdalRasterBand,GdalRasterBandHandle>))]
+public class GdalRasterBand: IConstructableWrapper<GdalRasterBand, GdalRasterBandHandle>, IHasHandle<GdalRasterBandHandle>
 {
+    private GdalRasterBand(GdalRasterBandHandle handle)
+    {
+        Handle = handle;
+    }
+    private GdalRasterBandHandle Handle { get; }
     public string[] Categories => GdalH.GDALGetRasterCategoryNames(this);
     public GdalDataType DataType => GdalH.GDALGetRasterDataType(this);
+
+    static GdalRasterBand IConstructableWrapper<GdalRasterBand, GdalRasterBandHandle>.Construct(GdalRasterBandHandle handle) => new(handle);
+    GdalRasterBandHandle IHasHandle<GdalRasterBandHandle>.Handle => Handle;
 }

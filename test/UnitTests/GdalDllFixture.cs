@@ -5,6 +5,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.UnitTests;
 
 namespace MMKiwi.GdalNet.UnitTests;
@@ -15,7 +16,9 @@ public sealed partial class GdalDllFixture : IDisposable
     {
         NativeLibrary.SetDllImportResolver(Assembly.GetCallingAssembly(), ResolveDll);
         NativeLibrary.SetDllImportResolver(typeof(GdalDataset).Assembly, ResolveDll);
-        NativeLibrary.SetDllImportResolver(typeof(Handles.GdalDatasetHandle).Assembly, ResolveDll);
+
+        GdalInfo.RegisterAllDrivers();
+        GdalError.EnableDebugLogging();
     }
 
     private IntPtr ResolveDll(string libraryName, Assembly assembly, DllImportSearchPath? searchpath)
@@ -64,8 +67,13 @@ public sealed partial class GdalDllFixture : IDisposable
 
     public void Dispose()
     {
-        NativeLibrary.Free(gdalPtr);
+        lock (s_reentrantLock)
+        {
+            NativeLibrary.Free(gdalPtr);
+        }
     }
+
+    static readonly object s_reentrantLock = new object();
 
     [LibraryImport("kernel32", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
