@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet.Interop;
 
-public interface IConstructableWrapper<out TRes, in THandle> where THandle : global::System.Runtime.InteropServices.SafeHandle
+public interface IConstructableWrapper<out TRes, in THandle> where THandle : SafeHandle
 {
     public static abstract TRes Construct(THandle handle);
 }

@@ -2,7 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 
 using MMKiwi.GdalNet.Interop;
@@ -207,13 +206,13 @@ internal static partial class OgrApiH
     public static partial OgrCodedFieldDomain OGR_CodedFldDomain_Create(string name, string? description, OgrFieldType fieldType, OgrFieldSubType fieldSubType, nint enumeration);
     
     [LibraryImport("gdal")]
-    public static partial OgrError OGR_G_CreateFromWkb(ReadOnlySpan<byte> wkbData, OgrSpatialReference spatialReference, 
+    public static partial OgrError OGR_G_CreateFromWkb(ReadOnlySpan<byte> wkbData, OgrSpatialReference? spatialReference, 
         [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry,OgrGeometryHandle>))] out OgrGeometry geometry, int nBytes);
     [LibraryImport("gdal")]
-    public unsafe static partial OgrError OGR_G_CreateFromWkt(ref byte* wkbData, OgrSpatialReference spatialReference, 
+    public unsafe static partial OgrError OGR_G_CreateFromWkt(ref byte* wkbData, OgrSpatialReference? spatialReference, 
         [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry,OgrGeometryHandle>))] out OgrGeometry geometry);
     [LibraryImport("gdal")]
-    public unsafe static partial OgrError OGR_G_CreateFromFgf(out byte* wkbData, OgrSpatialReference spatialReference, 
+    public unsafe static partial OgrError OGR_G_CreateFromFgf(out byte* wkbData, OgrSpatialReference? spatialReference, 
         [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry,OgrGeometryHandle>))] out OgrGeometry geometry, int nBytes, out int nBytesConsumed);
     
     [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
@@ -293,7 +292,7 @@ internal static partial class OgrApiH
 
     [LibraryImport("gdal")]
     [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrFeature, OgrFeatureHandle>))]
-    public static partial OgrFeature OGR_L_GetFeature(OgrLayer layer, long index);
+    public static partial OgrFeature? OGR_L_GetFeature(OgrLayer layer, long index);
 
     [LibraryImport("gdal")]
     public static partial OgrWkbGeometryType OGR_L_GetGeomType(OgrLayer layer);

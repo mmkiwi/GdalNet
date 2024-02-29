@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet.Interop;
 
-public interface IHasHandle<out THandle> where THandle : global::System.Runtime.InteropServices.SafeHandle
+public interface IHasHandle<out THandle> where THandle : SafeHandle
 {
     public THandle Handle { get; }
 }

@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet;
 
-public static partial class GdalInfo
+public static class GdalInfo
 {
     private static readonly Lazy<Version> s_version = new(() =>
     {

@@ -3,10 +3,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 
-using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -59,7 +57,7 @@ internal static partial class GdalH
     [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
     [return:MarshalUsing(typeof(GdalOwnsMarshaller<GdalDataset,GdalDatasetHandle>))]
-    public static partial GdalDataset GDALOpenEx(string fileName,
+    public static partial GdalDataset? GDALOpenEx(string fileName,
         GdalOpenFlags openFlags,
         [MarshalUsing(typeof(CStringArrayMarshal))]
         IEnumerable<string>? allowedDrivers,
@@ -95,12 +93,12 @@ internal static partial class GdalH
 
     [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-    public static partial OgrLayer GDALDatasetGetLayerByName(GdalDataset dataset, string layer);
+    public static partial OgrLayer? GDALDatasetGetLayerByName(GdalDataset dataset, string layer);
 
 
     [LibraryImport("gdal")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
-    public static partial OgrLayer GDALDatasetGetLayer(GdalDataset dataset, int layerId);
+    public static partial OgrLayer? GDALDatasetGetLayer(GdalDataset dataset, int layerId);
 
 
     [LibraryImport("gdal", StringMarshalling = StringMarshalling.Utf8)]

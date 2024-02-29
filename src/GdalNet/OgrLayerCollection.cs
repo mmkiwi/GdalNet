@@ -3,7 +3,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+
+using MMKiwi.GdalNet.Error;
 
 namespace MMKiwi.GdalNet;
 
@@ -22,7 +23,9 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
             if (index < 0 || index >= Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            return GdalH.GDALDatasetGetLayer(Dataset, index);
+            var res = GdalH.GDALDatasetGetLayer(Dataset, index);
+            GdalError.ThrowIfError();
+            return res ?? throw new GdalException("Unknown error retrieving layer");
         }
     }
 

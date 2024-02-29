@@ -147,7 +147,7 @@ public static class GdalOwnsMarshaller<TWrapper, THandle>
         /// Retrieve the managed handle from the marshaller.
         /// </summary>
         /// <returns>The managed handle.</returns>
-        public TWrapper ToManaged() => _newHandle is { IsInvalid: false } ? TWrapper.Construct(_newHandle) : null;
+        public TWrapper? ToManaged() => _newHandle is { IsInvalid: false } ? TWrapper.Construct(_newHandle) : null;
 
         /// <summary>
         /// Free any resources and reference counts owned by the marshaller.
@@ -159,7 +159,7 @@ public static class GdalOwnsMarshaller<TWrapper, THandle>
             // unnecessarily.
             if (!_initialized)
             {
-                _newHandle!.Dispose();
+                _newHandle.Dispose();
             }
         }
     }

@@ -4,10 +4,8 @@
 
 using System.Runtime.InteropServices.Marshalling;
 
-using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
-
 
 namespace MMKiwi.GdalNet;
 

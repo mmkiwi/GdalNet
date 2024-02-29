@@ -4,15 +4,13 @@
 
 using System.Runtime.InteropServices.Marshalling;
 
-using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
-
 
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(GdalMarshaller<GdalDriver, GdalInternalHandle>))]
-public partial class GdalDriver : IConstructableWrapper<GdalDriver, GdalDriverHandle>, IHasHandle<GdalDriverHandle>
+public class GdalDriver : IConstructableWrapper<GdalDriver, GdalDriverHandle>, IHasHandle<GdalDriverHandle>
 {
     private GdalDriver(GdalDriverHandle handle) => Handle = handle;
     internal GdalDriverHandle Handle { get; }

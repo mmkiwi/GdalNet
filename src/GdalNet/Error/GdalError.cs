@@ -15,6 +15,7 @@ using unsafe CplErrHandle = delegate* unmanaged[Stdcall]<GdalCplErr, int, char*,
 
 public unsafe partial record GdalError
 {
+    [CLSCompliant(false)]
     internal static partial class Interop
     {
         [LibraryImport("gdal")]
@@ -54,6 +55,7 @@ public unsafe partial record GdalError
     [ThreadStatic]
     static bool s_isRegistered;
 
+    [CLSCompliant(false)]
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvStdcall)])]
     private static void HandleError(GdalCplErr error, int errorNum, char* messageUtf8)
     {
@@ -82,11 +84,14 @@ public unsafe partial record GdalError
         Message = message;
     }
     
-    private GdalError()
+    public static GdalError? GetLastError()
     {
-        Severity = (GdalCplErr)Interop.CPLGetLastErrorType();
-        ErrorNum = (ErrorCodes)Interop.CPLGetLastErrorNo();
-        Message = Interop.CPLGetLastErrorMsg();
+        var severity = (GdalCplErr)Interop.CPLGetLastErrorType();
+        if (severity != GdalCplErr.None)
+        {
+            return new GdalError(severity, Interop.CPLGetLastErrorNo(), Interop.CPLGetLastErrorMsg());
+        }
+        return null;
     }
 
     public static void EnableDebugLogging()
@@ -156,7 +161,7 @@ public unsafe partial record GdalError
 
     public static void ThrowIfError()
     {
-        GdalError lastError = new(); 
+        GdalError? lastError = GetLastError(); 
         if (lastError?.Severity is not (GdalCplErr.Failure or GdalCplErr.Fatal))
         {
             return;

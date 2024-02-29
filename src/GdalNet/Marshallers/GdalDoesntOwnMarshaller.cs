@@ -159,7 +159,7 @@ public static class GdalDoesntOwnMarshaller<TWrapper, THandle>
             // unnecessarily.
             if (!_initialized)
             {
-                _newHandle!.Dispose();
+                _newHandle.Dispose();
             }
         }
     }

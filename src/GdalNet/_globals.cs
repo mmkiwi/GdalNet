@@ -6,11 +6,9 @@ global using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.Suppress
 global using System.Runtime.InteropServices;
 global using MMKiwi.GdalNet.Handles;
 global using System.Diagnostics.CodeAnalysis;
-
 using System.Runtime.CompilerServices;
 
 using MMKiwi.GdalNet;
-using MMKiwi.GdalNet.Interop;
 
 [assembly: InternalsVisibleTo("MMKiwi.GdalNet.UnitTests")]
 [assembly: CLSCompliant(true)]

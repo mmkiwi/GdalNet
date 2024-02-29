@@ -25,5 +25,5 @@ internal sealed class OgrCodedFieldDomainHandle : OgrFieldDomainHandle, IConstru
     {
     }
     
-    public static OgrCodedFieldDomainHandle Construct(bool ownsHandle) => new(ownsHandle);
+    public new static OgrCodedFieldDomainHandle Construct(bool ownsHandle) => new(ownsHandle);
 }

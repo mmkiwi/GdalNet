@@ -8,7 +8,7 @@ namespace MMKiwi.GdalNet;
 
 [CLSCompliant(false)]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-internal unsafe static partial class OgrCoreH
+internal static partial class OgrCoreH
 {
     [LibraryImport("gdal", EntryPoint = "OGRGeometryTypeToName")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

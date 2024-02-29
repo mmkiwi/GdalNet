@@ -3,14 +3,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Buffers;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices.Marshalling;
 
 using MMKiwi.GdalNet.Error;
-using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
-
 
 namespace MMKiwi.GdalNet;
 
@@ -46,11 +43,16 @@ public sealed class GdalVirtualDataset: IDisposable, IConstructableWrapper<GdalV
         GdalDataset? dataset =
             GdalH.GDALOpenEx(fileName, openFlags.Flags, allowedDrivers, openOptions, siblingFiles);
 
-        virtualDataset.Dataset = dataset!;
+       
         if (dataset is null)
         {
             GdalError.ThrowIfError();
         }
+        else
+        {
+            virtualDataset.Dataset = dataset;
+        }
+
         return virtualDataset;
     }
 

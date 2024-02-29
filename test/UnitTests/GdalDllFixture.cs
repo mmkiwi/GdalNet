@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 using MMKiwi.GdalNet.Error;
-using MMKiwi.GdalNet.UnitTests;
 
 namespace MMKiwi.GdalNet.UnitTests;
 
@@ -39,12 +38,9 @@ public sealed partial class GdalDllFixture : IDisposable
                 {
                     return gdalPtr;
                 }
-                else
-                {
-                    throw new Exception($"Could not load GDAL library.");
-                }
+                throw new Exception("Could not load GDAL library.");
             }
-            else if (!SetDllDirectoryW($"{dllPath}"))
+            if (!SetDllDirectoryW($"{dllPath}"))
                 throw new Exception($"{Marshal.GetLastWin32Error()}");
         }
 
@@ -60,7 +56,7 @@ public sealed partial class GdalDllFixture : IDisposable
             return gdalPtr;
         }
 
-        throw new Exception($"Could not load GDAL library.");
+        throw new Exception("Could not load GDAL library.");
     }
 
     private nint gdalPtr;

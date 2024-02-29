@@ -2,19 +2,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices.Marshalling;
 
 using MMKiwi.GdalNet.Error;
-using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
-
 
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(GdalMarshallerNeverOwns<OgrLayer,OgrLayerHandle>))]
-public partial class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHandle<OgrLayerHandle>
+public class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHandle<OgrLayerHandle>
 {
     internal OgrLayer(OgrLayerHandle handle)
     {

@@ -4,7 +4,7 @@
 
 namespace MMKiwi.GdalNet.Interop;
 
-public interface IConstructableHandleNeverOwns<out THandle> where THandle : global::System.Runtime.InteropServices.SafeHandle
+public interface IConstructableHandleNeverOwns<out THandle> where THandle : SafeHandle
 {
     static abstract THandle Construct();
 

@@ -4,15 +4,13 @@
 
 using System.Runtime.InteropServices.Marshalling;
 
-using MMKiwi.GdalNet.Handles;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
-
 
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(GdalMarshallerNeverOwns<OgrFieldDefinition, OgrFieldDefinitionHandle>))]
-public partial class OgrFieldDefinition : IConstructableWrapper<OgrFieldDefinition, OgrFieldDefinitionHandle>, IHasHandle<OgrFieldDefinitionHandle>
+public class OgrFieldDefinition : IConstructableWrapper<OgrFieldDefinition, OgrFieldDefinitionHandle>, IHasHandle<OgrFieldDefinitionHandle>
 {
     public virtual OgrFieldType FieldType
     {
