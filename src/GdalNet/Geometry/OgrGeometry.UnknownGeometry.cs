@@ -4,7 +4,7 @@
 
 using MMKiwi.GdalNet.Interop;
 
-namespace MMKiwi.GdalNet;
+namespace MMKiwi.GdalNet.Geometry;
 
 public abstract partial class OgrGeometry
 {

@@ -5,6 +5,7 @@
 using System.Runtime.InteropServices.Marshalling;
 
 using MMKiwi.GdalNet.Error;
+using MMKiwi.GdalNet.Geometry;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -204,38 +205,40 @@ internal static partial class OgrApiH
     public static partial void OGR_FldDomain_SetMergePolicy(OgrFieldDomain domain, OgrFieldDomainMergePolicy value);
 
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
-    [return:MarshalUsing(typeof(GdalOwnsMarshaller<OgrCodedFieldDomain, OgrCodedFieldDomainHandle>))]
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrCodedFieldDomain, OgrCodedFieldDomainHandle>))]
     public static partial OgrCodedFieldDomain OGR_CodedFldDomain_Create(string name, string? description, OgrFieldType fieldType, OgrFieldSubType fieldSubType, nint enumeration);
-    
+
     [LibraryImport(GdalH.GdalDll)]
-    public static partial OgrError OGR_G_CreateFromWkb(ReadOnlySpan<byte> wkbData, OgrSpatialReference? spatialReference, 
-        [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry,OgrGeometryHandle>))] out OgrGeometry geometry, int nBytes);
+    public static partial OgrError OGR_G_CreateFromWkb(ReadOnlySpan<byte> wkbData, OgrSpatialReference? spatialReference,
+        [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
+        out OgrGeometry geometry, int nBytes);
     [LibraryImport(GdalH.GdalDll)]
-    public unsafe static partial OgrError OGR_G_CreateFromWkt(ref byte* wkbData, OgrSpatialReference? spatialReference, 
-        [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry,OgrGeometryHandle>))] out OgrGeometry geometry);
+    public unsafe static partial OgrError OGR_G_CreateFromWkt(ref byte* wkbData, OgrSpatialReference? spatialReference,
+        [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
+        out OgrGeometry geometry);
     [LibraryImport(GdalH.GdalDll)]
-    public unsafe static partial OgrError OGR_G_CreateFromFgf(out byte* wkbData, OgrSpatialReference? spatialReference, 
-        [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry,OgrGeometryHandle>))] out OgrGeometry geometry, int nBytes, out int nBytesConsumed);
-    
+    public unsafe static partial OgrError OGR_G_CreateFromFgf(out byte* wkbData, OgrSpatialReference? spatialReference,
+        [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
+        out OgrGeometry geometry, int nBytes, out int nBytesConsumed);
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
-    [return:MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_CreateFromGML(string gmlData);
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
-    [return:MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_CreateGeometryFromJson(string jsonData);
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
-    [return:MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_CreateGeometryFromEsriJson(string jsonData);
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
-    [return:MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_CreateGeometry(OgrWkbGeometryType geometryType);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public unsafe static partial OgrWkbGeometryType OGR_G_GetGeometryType(OgrGeometry geometry);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public unsafe static partial OgrWkbGeometryType OGR_G_GetGeometryType(OgrGeometryHandle geometry);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial int OGR_G_GetDimension(OgrGeometry geometry);
     [LibraryImport(GdalH.GdalDll)]
@@ -251,7 +254,7 @@ internal static partial class OgrApiH
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_G_SetMeasured(OgrGeometry geometry, [MarshalAs(UnmanagedType.Bool)] bool isMeasured);
     [LibraryImport(GdalH.GdalDll)]
-    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry,OgrGeometryHandle>))] 
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_Clone(OgrGeometry geometry);
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_G_GetEnvelope(OgrGeometry geometry, [NotNull] out OgrEnvelope? envelope);
@@ -275,6 +278,10 @@ internal static partial class OgrApiH
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool OGR_G_Equals(OgrGeometry geom1, OgrGeometry geom2);
 
+    [LibraryImport(GdalH.GdalDll)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial OgrPoint OGR_G_Value(OgrCurve geometry, double dfDistance);
+    
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(Utf8StringNoFree))]
     public static partial string OGR_L_GetName(OgrLayer layer);
@@ -341,11 +348,9 @@ internal static partial class OgrApiH
 
     [LibraryImport(GdalH.GdalDll)]
     [GdalEnforceErrorHandling(false)]
-
     public static partial void OGR_F_Destroy(nint feature);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     [GdalEnforceErrorHandling(false)]
-
     public static partial void OGR_FldDomain_Destroy(nint domain);
 }

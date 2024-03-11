@@ -5,7 +5,7 @@
 using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Interop;
 
-namespace MMKiwi.GdalNet;
+namespace MMKiwi.GdalNet.Geometry;
 
 public abstract partial class OgrGeometry : IHasHandle<OgrGeometryHandle>, IConstructableWrapper<OgrGeometry, OgrGeometryHandle>
 {
@@ -17,7 +17,7 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometryHandle>, ICons
     internal OgrGeometryHandle Handle { get; }
     OgrGeometryHandle IHasHandle<OgrGeometryHandle>.Handle => Handle;
     
-    static OgrGeometry IConstructableWrapper<OgrGeometry, OgrGeometryHandle>.Construct(OgrGeometryHandle handle)
+    static OgrGeometry IConstructableWrapper<Geometry.OgrGeometry, OgrGeometryHandle>.Construct(OgrGeometryHandle handle)
     {
         OgrWkbGeometryType type = OgrApiH.OGR_G_GetGeometryType(handle);
         GdalError.ThrowIfError();
@@ -35,7 +35,7 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometryHandle>, ICons
             OgrWkbGeometryType.CurvePolygon => throw new NotImplementedException(),//
             OgrWkbGeometryType.MultiCurve => throw new NotImplementedException(),//
             OgrWkbGeometryType.MultiSurface => throw new NotImplementedException(),//
-            OgrWkbGeometryType.Curve => throw new NotImplementedException(),
+            OgrWkbGeometryType.Curve => new OgrCurve(handle),
             OgrWkbGeometryType.Surface => throw new NotImplementedException(),
             OgrWkbGeometryType.PolyhedralSurface => throw new NotImplementedException(),//
             OgrWkbGeometryType.TIN => throw new NotImplementedException(),//

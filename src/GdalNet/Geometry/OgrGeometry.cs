@@ -5,10 +5,9 @@
 using System.Runtime.InteropServices.Marshalling;
 
 using MMKiwi.GdalNet.Error;
-using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
 
-namespace MMKiwi.GdalNet;
+namespace MMKiwi.GdalNet.Geometry;
 
 [NativeMarshalling(typeof(GdalMarshaller<OgrGeometry, OgrGeometryHandle>))]
 public abstract partial class OgrGeometry : IDisposable

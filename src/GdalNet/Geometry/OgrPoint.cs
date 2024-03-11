@@ -2,10 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Runtime.InteropServices.Marshalling;
+
 using MMKiwi.GdalNet.Error;
+using MMKiwi.GdalNet.Marshallers;
 
-namespace MMKiwi.GdalNet;
+namespace MMKiwi.GdalNet.Geometry;
 
+[NativeMarshalling(typeof(GdalMarshaller<OgrPoint, OgrGeometryHandle>))]
 public class OgrPoint : OgrGeometry
 {
     internal OgrPoint(OgrGeometryHandle handle) : base(handle)
