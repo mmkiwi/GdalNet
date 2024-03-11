@@ -4,6 +4,7 @@
 
 using System.Runtime.InteropServices.Marshalling;
 
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -17,8 +18,25 @@ public class GdalRasterBand: IConstructableWrapper<GdalRasterBand, GdalRasterBan
         Handle = handle;
     }
     private GdalRasterBandHandle Handle { get; }
-    public string[] Categories => GdalH.GDALGetRasterCategoryNames(this);
-    public GdalDataType DataType => GdalH.GDALGetRasterDataType(this);
+    public string[] Categories
+    {
+        get
+        {
+            var result = GdalH.GDALGetRasterCategoryNames(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+
+    public GdalDataType DataType
+    {
+        get
+        {
+            var result = GdalH.GDALGetRasterDataType(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
 
     static GdalRasterBand IConstructableWrapper<GdalRasterBand, GdalRasterBandHandle>.Construct(GdalRasterBandHandle handle) => new(handle);
     GdalRasterBandHandle IHasHandle<GdalRasterBandHandle>.Handle => Handle;

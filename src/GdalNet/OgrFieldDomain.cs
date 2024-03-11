@@ -4,6 +4,7 @@
 
 using System.Runtime.InteropServices.Marshalling;
 
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -14,20 +15,78 @@ public class OgrFieldDomain: IDisposable, IConstructableWrapper<OgrFieldDomain, 
 {
     private bool _disposedValue;
 
-    public string Name => OgrApiH.OGR_FldDomain_GetName(this);
-    public string Description => OgrApiH.OGR_FldDomain_GetDescription(this);
-    public OgrFieldDomainType DomainType => OgrApiH.OGR_FldDomain_GetDomainType(this);
-    public OgrFieldType FieldType => OgrApiH.OGR_FldDomain_GetFieldType(this);
-    public OgrFieldSubType FieldSubType => OgrApiH.OGR_FldDomain_GetFieldSubType(this);
+    public string Name
+    {
+        get
+        {
+            var result = OgrApiH.OGR_FldDomain_GetName(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+    public string Description
+    {
+        get
+        {
+            var result = OgrApiH.OGR_FldDomain_GetDescription(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+    public OgrFieldDomainType DomainType
+    {
+        get
+        {
+            var result = OgrApiH.OGR_FldDomain_GetDomainType(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+    public OgrFieldType FieldType
+    {
+        get
+        {
+            var result = OgrApiH.OGR_FldDomain_GetFieldType(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+    public OgrFieldSubType FieldSubType
+    {
+        get
+        {
+            var result = OgrApiH.OGR_FldDomain_GetFieldSubType(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
     public OgrFieldDomainSplitPolicy SplitPolicy
     {
-        get => OgrApiH.OGR_FldDomain_GetSplitPolicy(this);
-        set => OgrApiH.OGR_FldDomain_SetSplitPolicy(this, value);
+        get
+        {
+            var result = OgrApiH.OGR_FldDomain_GetSplitPolicy(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+        set
+        {
+            OgrApiH.OGR_FldDomain_SetSplitPolicy(this, value);
+            GdalError.ThrowIfError();
+        }
     }
     public OgrFieldDomainMergePolicy MergePolicy
     {
-        get => OgrApiH.OGR_FldDomain_GetMergePolicy(this);
-        set => OgrApiH.OGR_FldDomain_SetMergePolicy(this, value);
+        get
+        {
+            var result = OgrApiH.OGR_FldDomain_GetMergePolicy(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+        set
+        {
+            OgrApiH.OGR_FldDomain_SetMergePolicy(this, value);
+            GdalError.ThrowIfError();
+        }
     }
 
     protected virtual void Dispose(bool disposing)

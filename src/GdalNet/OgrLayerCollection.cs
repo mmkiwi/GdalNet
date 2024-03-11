@@ -34,13 +34,23 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
         get
         {
             ArgumentNullException.ThrowIfNull(key);
-            return GdalH.GDALDatasetGetLayerByName(Dataset, key) ?? throw new NotImplementedException();
+            var result = GdalH.GDALDatasetGetLayerByName(Dataset, key);
+            GdalError.ThrowIfError();
+                return result ?? throw new GdalException($"Error getting layer {key}. GDAL did not report an error.");
         }
     }
 
     public GdalDataset Dataset { get; }
 
-    public int Count => GdalH.GDALDatasetGetLayerCount(Dataset);
+    public int Count
+    {
+        get
+        {
+            var result = GdalH.GDALDatasetGetLayerCount(Dataset);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
 
     public IEnumerator<OgrLayer> GetEnumerator()
     {
@@ -51,6 +61,7 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
     public bool TryGetValue(string key, [MaybeNullWhen(false)] out OgrLayer value)
     {
         value = GdalH.GDALDatasetGetLayerByName(Dataset, key);
+        GdalError.ThrowIfError();
         return value != null;
     }
 

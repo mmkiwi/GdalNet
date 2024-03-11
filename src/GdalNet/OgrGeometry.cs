@@ -11,25 +11,23 @@ using MMKiwi.GdalNet.Marshallers;
 namespace MMKiwi.GdalNet;
 
 [NativeMarshalling(typeof(GdalMarshaller<OgrGeometry, OgrGeometryHandle>))]
-public abstract partial class OgrGeometry: IDisposable
+public abstract partial class OgrGeometry : IDisposable
 {
     private bool _disposedValue;
 
     public static OgrGeometry CreateFromWkb(ReadOnlySpan<byte> wkb, OgrSpatialReference? spatialReference = null)
     {
-        var err = OgrApiH.OGR_G_CreateFromWkb(wkb, spatialReference, out OgrGeometry result, wkb.Length);
-        GdalError.ThrowIfError(err);
+        OgrApiH.OGR_G_CreateFromWkb(wkb, spatialReference, out OgrGeometry result, wkb.Length).ThrowIfError();
         return result;
     }
 
     public static OgrGeometry CreateFromWkt(string wkt, OgrSpatialReference? spatialReference = null)
     {
-        var err = CreateFromWktMarshal(wkt, spatialReference, out OgrGeometry result);
-        GdalError.ThrowIfError(err);
+        CreateFromWktMarshal(wkt, spatialReference, out OgrGeometry result);
         return result;
     }
 
-    private static unsafe OgrError CreateFromWktMarshal(string wkt, OgrSpatialReference? spatialReference, out OgrGeometry geometry)
+    private static unsafe void CreateFromWktMarshal(string wkt, OgrSpatialReference? spatialReference, out OgrGeometry geometry)
     {
         scoped Utf8StringMarshaller.ManagedToUnmanagedIn stringMarshaller = new();
         try
@@ -37,9 +35,7 @@ public abstract partial class OgrGeometry: IDisposable
             stringMarshaller.FromManaged(wkt, stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize]);
             {
                 byte* wktPointer = stringMarshaller.ToUnmanaged();
-                var result = OgrApiH.OGR_G_CreateFromWkt(ref wktPointer, spatialReference, out geometry);
-                GdalError.ThrowIfError();
-                return result;
+                OgrApiH.OGR_G_CreateFromWkt(ref wktPointer, spatialReference, out geometry).ThrowIfError();
             }
         }
         finally
@@ -50,35 +46,64 @@ public abstract partial class OgrGeometry: IDisposable
 
     public int Dimension
     {
-        get => OgrApiH.OGR_G_GetDimension(this);
+        get
+        {
+            var result = OgrApiH.OGR_G_GetDimension(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
     }
 
     public int CoordinateDimension
     {
-        get => OgrApiH.OGR_G_CoordinateDimension(this);
+        get
+        {
+            var result = OgrApiH.OGR_G_CoordinateDimension(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
     }
 
     public bool Is3D
     {
-        get => OgrApiH.OGR_G_Is3D(this);
-        set => OgrApiH.OGR_G_Set3D(this, value);
+        get
+        {
+            var result = OgrApiH.OGR_G_Is3D(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+        set
+        {
+            OgrApiH.OGR_G_Set3D(this, value);
+            GdalError.ThrowIfError();
+        }
     }
 
     public OgrGeometry Clone()
-        => OgrApiH.OGR_G_Clone(this);
+    {
+        var result = OgrApiH.OGR_G_Clone(this);
+        GdalError.ThrowIfError();
+        return result;
+    }
 
     public OgrEnvelope Envelope
     {
         get
         {
             OgrApiH.OGR_G_GetEnvelope(this, out OgrEnvelope? result);
+            GdalError.ThrowIfError();
             return result;
         }
     }
 
     public OgrWkbGeometryType GeometryType
     {
-        get =>OgrApiH.OGR_G_GetGeometryType(this);
+        get
+        {
+            var result = OgrApiH.OGR_G_GetGeometryType(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
     }
 
     public OgrEnvelope3D Envelope3D
@@ -87,6 +112,7 @@ public abstract partial class OgrGeometry: IDisposable
         {
             OgrEnvelope3D? result = null;
             OgrApiH.OGR_G_GetEnvelope3D(this, ref result);
+            GdalError.ThrowIfError();
             return result;
         }
     }
@@ -114,8 +140,8 @@ public abstract partial class OgrGeometry: IDisposable
     [StructLayout(LayoutKind.Sequential)]
     private protected struct OgrGeometryRaw
     {
-        private nint _vFuncTablePtr1;
-        private nint _srsPtr;
+        private readonly nint _vFuncTablePtr1;
+        private readonly nint _srsPtr;
         public uint Flags { get; set; }
     }
 
@@ -127,7 +153,12 @@ public abstract partial class OgrGeometry: IDisposable
         ObjectDisposedException.ThrowIf(Handle.IsClosed, this);
         ObjectDisposedException.ThrowIf(other.Handle.IsClosed, other);
 
-        return ReferenceEquals(this, other) || OgrApiH.OGR_G_Equals(this, other);
+        if (ReferenceEquals(this, other))
+            return true;
+
+        var ogrIsEqual = OgrApiH.OGR_G_Equals(this, other);
+        GdalError.ThrowIfError();
+        return ogrIsEqual;
     }
 
     public override bool Equals(object? obj)

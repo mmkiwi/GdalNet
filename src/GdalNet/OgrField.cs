@@ -2,6 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.Error;
+
 namespace MMKiwi.GdalNet;
 
 public class OgrField
@@ -20,5 +22,9 @@ public class OgrField
     }
 
     private OgrFieldDefinition GetFieldDefinition()
-        => OgrApiH.OGR_F_GetFieldDefnRef(this.Feature, this.Index);
+    {
+        var result = OgrApiH.OGR_F_GetFieldDefnRef(this.Feature, this.Index);
+        GdalError.ThrowIfError();
+        return result;
+    }
 }

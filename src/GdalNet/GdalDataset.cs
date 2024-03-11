@@ -113,8 +113,25 @@ public sealed class GdalDataset : GdalMajorObject, IConstructableWrapper<GdalDat
 
     public GdalBandCollection RasterBands { get; }
     public OgrLayerCollection Layers { get; }
-    public int RasterXSize => GdalH.GDALGetRasterXSize(this);
-    public int RasterYSize => GdalH.GDALGetRasterYSize(this);
+    public int RasterXSize
+    {
+        get
+        {
+            var result = GdalH.GDALGetRasterXSize(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+
+    public int RasterYSize
+    {
+        get
+        {
+            int result = GdalH.GDALGetRasterYSize(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
 
     static GdalDataset IConstructableWrapper<GdalDataset, GdalDatasetHandle>.Construct(GdalDatasetHandle handle) => new(handle);
     GdalDatasetHandle IHasHandle<GdalDatasetHandle>.Handle => Handle;

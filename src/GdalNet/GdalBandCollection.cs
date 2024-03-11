@@ -4,6 +4,8 @@
 
 using System.Collections;
 
+using MMKiwi.GdalNet.Error;
+
 namespace MMKiwi.GdalNet;
 
 public class GdalBandCollection : IReadOnlyList<GdalRasterBand>
@@ -23,11 +25,21 @@ public class GdalBandCollection : IReadOnlyList<GdalRasterBand>
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
-            return GdalH.GDALGetRasterBand(Dataset, index + 1) ?? throw new InvalidOperationException();
+            var result = GdalH.GDALGetRasterBand(Dataset, index + 1);
+            GdalError.ThrowIfError();
+            return result ?? throw new InvalidOperationException("Could not get Raster Band and GDAL reported no errors");
         }
     }
 
-    public int Count => GdalH.GDALGetRasterCount(Dataset);
+    public int Count
+    {
+        get
+        {
+            var result = GdalH.GDALGetRasterCount(Dataset);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
 
     private GdalDataset Dataset { get; }
 

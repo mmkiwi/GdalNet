@@ -4,6 +4,7 @@
 
 using System.Runtime.InteropServices.Marshalling;
 
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -27,7 +28,16 @@ public sealed class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, 
         }
     }
 
-    public long Fid { get => OgrApiH.OGR_F_GetFID(this); set => OgrApiH.OGR_F_SetFID(this, value); }
+    public long Fid
+    {
+        get
+        {
+            var result = OgrApiH.OGR_F_GetFID(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+        set => OgrApiH.OGR_F_SetFID(this, value).ThrowIfError();
+    }
 
     public void Dispose()
     {
@@ -39,6 +49,6 @@ public sealed class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, 
     OgrFeatureHandle IHasHandle<OgrFeatureHandle>.Handle => Handle;
 
     private OgrFeature(OgrFeatureHandle handle) => Handle = handle;
-    
+
     internal OgrFeatureHandle Handle { get; }
 }

@@ -31,7 +31,9 @@ public class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHand
 
     public long GetFeatureCount(bool force = false)
     {
-        return OgrApiH.OGR_L_GetFeatureCount(this, force);
+        var result = OgrApiH.OGR_L_GetFeatureCount(this, force);
+        GdalError.ThrowIfError();
+        return result;
     }
 
 
@@ -40,6 +42,7 @@ public class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHand
     public bool TryGetFeatureById(long id, [NotNullWhen(true)] out OgrFeature? feature)
     {
         feature = OgrApiH.OGR_L_GetFeature(this, id);
+        GdalError.ThrowIfError();
         return feature is not null;
     }
 

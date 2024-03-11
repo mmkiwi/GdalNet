@@ -4,15 +4,19 @@
 
 using System.Runtime.CompilerServices;
 
+using MMKiwi.GdalNet.Error;
+
 namespace MMKiwi.GdalNet;
 
 [CLSCompliant(false)]
 internal static partial class CplH
 {
+    [GdalEnforceErrorHandling(true)]
     internal unsafe static partial class String
     {
-        [LibraryImport("gdal")]
+        [LibraryImport(GdalH.GdalDll)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [GdalEnforceErrorHandling(false)]
         public static partial void CSLDestroy(byte** unmanaged);
     }
 }

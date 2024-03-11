@@ -2,6 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.Error;
+
 namespace MMKiwi.GdalNet;
 
 public class OgrPoint : OgrGeometry
@@ -13,6 +15,7 @@ public class OgrPoint : OgrGeometry
     public unsafe static OgrPoint Create(double x, double y)
     {
         OgrGeometry geometry = OgrApiH.OGR_G_CreateGeometry(OgrWkbGeometryType.Point);
+        GdalError.ThrowIfError();
         if (geometry is not OgrPoint point || point.Handle.IsInvalid)
             throw new InvalidOperationException("Unable to create point geometry, invalid type");
 

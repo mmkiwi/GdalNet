@@ -18,4 +18,10 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\GdalNet.Analyzers.Internal\GdalNet.Analyzers.Internal.csproj"
+                          PrivateAssets="all"
+                          ReferenceOutputAssembly="false"
+                          OutputItemType="Analyzer"/>
+    </ItemGroup>
 </Project>

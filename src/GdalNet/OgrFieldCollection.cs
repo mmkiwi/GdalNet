@@ -4,6 +4,8 @@
 
 using System.Collections;
 
+using MMKiwi.GdalNet.Error;
+
 namespace MMKiwi.GdalNet;
 
 public class OgrFieldCollection : IReadOnlyList<OgrField>
@@ -14,7 +16,15 @@ public class OgrFieldCollection : IReadOnlyList<OgrField>
     }
     public OgrField this[int index] => throw new NotImplementedException();
 
-    public int Count => OgrApiH.OGR_F_GetFieldCount(Feature);
+    public int Count
+    {
+        get
+        {
+            var result = OgrApiH.OGR_F_GetFieldCount(Feature);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
 
     private OgrFeature Feature { get; }
 

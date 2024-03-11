@@ -8,6 +8,7 @@ namespace MMKiwi.GdalNet.Handles;
 
 internal sealed class GdalDatasetHandle : GdalInternalHandle, IConstructableHandle<GdalDatasetHandle>
 {
+    [SuppressMessage("Reliability", "GDAL0001:Missing call to ThrowIfError()", Justification = "Can't throw exceptions in Destructor")]
     private protected override bool ReleaseHandleCore() => GdalH.GDALClose(handle) is not (GdalCplErr.Failure or GdalCplErr.Fatal);
          
     private GdalDatasetHandle(bool ownsHandle) : base(ownsHandle)

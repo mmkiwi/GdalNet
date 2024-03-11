@@ -4,6 +4,7 @@
 
 using System.Runtime.InteropServices.Marshalling;
 
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -16,31 +17,54 @@ public abstract class GdalMajorObject: IHasHandle<GdalInternalHandle>, IDisposab
 
     public string? Description
     {
-        get => GdalH.GDALGetDescription(this);
-        set => GdalH.GDALSetDescription(this, value);
+        get
+        {
+            string? result = GdalH.GDALGetDescription(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+        set
+        {
+            GdalH.GDALSetDescription(this, value);
+            GdalError.ThrowIfError();
+        }
     }
 
     public Dictionary<string, string> GetMetadata(string? domain = null)
-        => GdalH.GDALGetMetadata(this, domain);
+    {
+        var result = GdalH.GDALGetMetadata(this, domain);
+        GdalError.ThrowIfError();
+        return result;
+    }
 
     public string GetMetadataItem(string name, string? domain = null)
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        return GdalH.GDALGetMetadataItem(this, name, domain);
+        var result = GdalH.GDALGetMetadataItem(this, name, domain);
+        GdalError.ThrowIfError();
+        return result;
     }
 
     public void SetMetadata(Dictionary<string, string>? metadata, string? domain = null)
-        => GdalH.GDALSetMetadata(this, metadata, domain);
+        => GdalH.GDALSetMetadata(this, metadata, domain).ThrowIfError();
 
     public void SetMetadataItem(string name, string? value, string? domain = null)
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        GdalH.GDALSetMetadataItem(this, name, value, domain);
+        GdalH.GDALSetMetadataItem(this, name, value, domain).ThrowIfError();
     }
 
-    public string[] MetadataDomainList => GdalH.GDALGetMetadataDomainList(this);
+    public string[] MetadataDomainList
+    {
+        get
+        {
+            string[] result = GdalH.GDALGetMetadataDomainList(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
 
     protected virtual void Dispose(bool disposing)
     {

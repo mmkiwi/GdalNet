@@ -5,6 +5,8 @@
 using System.Collections;
 using System.Diagnostics;
 
+using MMKiwi.GdalNet.Error;
+
 namespace MMKiwi.GdalNet;
 
 public class OgrFeatureCollection : IEnumerable<OgrFeature>
@@ -19,12 +21,14 @@ public class OgrFeatureCollection : IEnumerable<OgrFeature>
     public bool TryGetNonEnumeratedCount(out long count)
     {
         count = OgrApiH.OGR_L_GetFeatureCount(Layer, false);
+        GdalError.ThrowIfError();
         return count > 0;
     }
 
     public long? GetCount(bool onlyIfCheap)
     {
         long count = OgrApiH.OGR_L_GetFeatureCount(Layer, false);
+        GdalError.ThrowIfError();
         return count > 0 ? count : null;
     }
 
@@ -47,6 +51,7 @@ public class OgrFeatureCollection : IEnumerable<OgrFeature>
                 throw new InvalidOperationException($"Cannot enumerate an {nameof(OgrFeatureCollection)} multiple times. Dispose of the previous IEnumerator before continuing.");
             OgrFeatureCollection = ogrFeatureCollection;
             OgrApiH.OGR_L_ResetReading(OgrFeatureCollection.Layer);
+            GdalError.ThrowIfError();
         }
 
         public OgrFeature Current { get; private set; } = null!;
@@ -63,12 +68,14 @@ public class OgrFeatureCollection : IEnumerable<OgrFeature>
         public bool MoveNext()
         {
             var current = OgrApiH.OGR_L_GetNextFeature(OgrFeatureCollection.Layer)!;
+            GdalError.ThrowIfError();
             return (Current = current) != null;
         }
 
         public void Reset()
         {
             OgrApiH.OGR_L_ResetReading(OgrFeatureCollection.Layer);
+            GdalError.ThrowIfError();
         }
     }
 }

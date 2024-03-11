@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using MMKiwi.GdalNet.Error;
 using MMKiwi.GdalNet.Interop;
 
 namespace MMKiwi.GdalNet;
@@ -19,6 +20,7 @@ public abstract partial class OgrGeometry : IHasHandle<OgrGeometryHandle>, ICons
     static OgrGeometry IConstructableWrapper<OgrGeometry, OgrGeometryHandle>.Construct(OgrGeometryHandle handle)
     {
         OgrWkbGeometryType type = OgrApiH.OGR_G_GetGeometryType(handle);
+        GdalError.ThrowIfError();
         return type switch
         {
             OgrWkbGeometryType.Point => new OgrPoint(handle),//

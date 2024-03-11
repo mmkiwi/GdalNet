@@ -4,76 +4,79 @@
 
 using System.Runtime.CompilerServices;
 
+using MMKiwi.GdalNet.Error;
+
 namespace MMKiwi.GdalNet;
 
 [CLSCompliant(false)]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[GdalEnforceErrorHandling]
 internal static partial class OgrCoreH
 {
-    [LibraryImport("gdal", EntryPoint = "OGRGeometryTypeToName")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGRGeometryTypeToName")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial nint OGRGeometryTypeToName(OgrWkbGeometryType eType);
 
-    [LibraryImport("gdal", EntryPoint = "OGRMergeGeometryTypes")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGRMergeGeometryTypes")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial OgrWkbGeometryType OGRMergeGeometryTypes(OgrWkbGeometryType eMain, OgrWkbGeometryType eExtra);
 
-    [LibraryImport("gdal", EntryPoint = "OGRMergeGeometryTypesEx")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGRMergeGeometryTypesEx")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial OgrWkbGeometryType OGRMergeGeometryTypesEx(OgrWkbGeometryType eMain, OgrWkbGeometryType eExtra, int bAllowPromotingToCurves);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_Flatten")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_Flatten")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial OgrWkbGeometryType OGR_GT_Flatten(OgrWkbGeometryType eType);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_SetZ")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_SetZ")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial OgrWkbGeometryType OGR_GT_SetZ(OgrWkbGeometryType eType);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_SetM")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_SetM")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial OgrWkbGeometryType OGR_GT_SetM(OgrWkbGeometryType eType);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_SetModifier")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_SetModifier")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial OgrWkbGeometryType OGR_GT_SetModifier(OgrWkbGeometryType eType,
         int bSetZ,
         int bSetM);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_HasZ")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_HasZ")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int OGR_GT_HasZ(OgrWkbGeometryType eType);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_HasM")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_HasM")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int OGR_GT_HasM(OgrWkbGeometryType eType);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_IsSubClassOf")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_IsSubClassOf")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int OGR_GT_IsSubClassOf(OgrWkbGeometryType eType,
         OgrWkbGeometryType eSuperType);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_IsCurve")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_IsCurve")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int OGR_GT_IsCurve(OgrWkbGeometryType _0);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_IsSurface")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_IsSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int OGR_GT_IsSurface(OgrWkbGeometryType _0);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_IsNonLinear")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_IsNonLinear")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int OGR_GT_IsNonLinear(OgrWkbGeometryType _0);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_GetCollection")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_GetCollection")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial OgrWkbGeometryType OGR_GT_GetCollection(OgrWkbGeometryType eType);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_GetCurve")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_GetCurve")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial OgrWkbGeometryType OGR_GT_GetCurve(OgrWkbGeometryType eType);
 
-    [LibraryImport("gdal", EntryPoint = "OGR_GT_GetLinear")]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_GetLinear")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial OgrWkbGeometryType OGR_GT_GetLinear(OgrWkbGeometryType eType);
 
@@ -81,19 +84,10 @@ internal static partial class OgrCoreH
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int OGR_GET_MS(float fSec);
 
-    [LibraryImport("gdal", EntryPoint = "OGRParseDate", StringMarshalling = StringMarshalling.Utf8)]
+    [LibraryImport(GdalH.GdalDll, EntryPoint = "OGRParseDate", StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int OGRParseDate(string pszInput,
         nint psOutput,
         int nOptions);
 
-    [LibraryImport("gdal", EntryPoint = "GDALVersionInfo", StringMarshalling = StringMarshalling.Utf8)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial nint GDALVersionInfo(string _0);
-
-    [LibraryImport("gdal", EntryPoint = "GDALCheckVersion", StringMarshalling = StringMarshalling.Utf8)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial int GDALCheckVersion(int nVersionMajor,
-        int nVersionMinor,
-        string pszCallingComponentName);
 }

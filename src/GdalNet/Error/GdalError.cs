@@ -18,23 +18,23 @@ public unsafe partial record GdalError
     [CLSCompliant(false)]
     internal static partial class Interop
     {
-        [LibraryImport("gdal")]
+        [LibraryImport(GdalH.GdalDll)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial CplErrHandle CPLSetErrorHandler(CplErrHandle newHandler);
 
-        [LibraryImport("gdal")]
+        [LibraryImport(GdalH.GdalDll)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial void CPLErrorReset();
         
-        [LibraryImport("gdal")]
+        [LibraryImport(GdalH.GdalDll)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial int CPLGetLastErrorType();
         
-        [LibraryImport("gdal")]
+        [LibraryImport(GdalH.GdalDll)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         public static partial int CPLGetLastErrorNo();
 
-        [LibraryImport("gdal")]
+        [LibraryImport(GdalH.GdalDll)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [return:MarshalUsing(typeof(Utf8StringNoFree))]
         public static partial string CPLGetLastErrorMsg();
@@ -87,15 +87,12 @@ public unsafe partial record GdalError
     public static GdalError? GetLastError()
     {
         var severity = (GdalCplErr)Interop.CPLGetLastErrorType();
-        if (severity != GdalCplErr.None)
-        {
-            return new GdalError(severity, Interop.CPLGetLastErrorNo(), Interop.CPLGetLastErrorMsg());
-        }
-        return null;
+        return severity == GdalCplErr.None ? null : new GdalError(severity, Interop.CPLGetLastErrorNo(), Interop.CPLGetLastErrorMsg());
     }
 
     public static void EnableDebugLogging()
     {
+        Initialize();
         // This won't raise an exception if it's not been hooked up yet
         // and prevents double subscribing.
         ErrorRaised -= DebugError;
@@ -159,6 +156,7 @@ public unsafe partial record GdalError
         };
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfError()
     {
         GdalError? lastError = GetLastError(); 
@@ -166,6 +164,11 @@ public unsafe partial record GdalError
         {
             return;
         }
+
+        ThrowLastError(lastError);
+    }
+    private static void ThrowLastError(GdalError lastError)
+    {
 
         try
         {
