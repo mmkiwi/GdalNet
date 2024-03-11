@@ -173,55 +173,59 @@ public unsafe class CStringArrayMarshalTests
     [MemberData(nameof(TestStrings))]
     public void TestUnmanagedToManaged(string[] data)
     {
-#warning TODO
-        /*
-        using CStringList csl = CStringList.Create(data[0]);
-        for (int i = 1; i < data.Length; i++)
+        byte*[] utf8Data = new byte*[data.Length + 1];
+        try
         {
-            csl.AddString(data[i]);
+            for (int i = 0; i < data.Length; i++)
+            {
+                var x = Utf8StringMarshaller.ConvertToUnmanaged(data[i]);
+                utf8Data[i] = x;
+            }
+
+            string[]? result = null;
+            fixed (byte** utf8Ptr = utf8Data)
+            {
+                result = CStringArrayMarshal.StringArray.ConvertToManaged(utf8Ptr);
+            }
+
+            result.Should().BeEquivalentTo(data);
         }
-
-        string[]? result = CStringArrayMarshal.StringArray.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
-
-        result.Should().BeEquivalentTo(data);
-*/
-    }
-
-    [Theory]
-    [MemberData(nameof(TestDictionaries))]
-    public void TestUnmanagedToManagedDictionary(Dictionary<string, string> data)
-    { 
-#warning TODO
-/*
-string[] dataArray = data.Select(kvp => $"{kvp.Key}={kvp.Value}").ToArray();
-using CStringList csl = CStringList.Create(dataArray[0]);
-for (int i = 1; i < dataArray.Length; i++)
-{
-    csl.AddString(dataArray[i]);
-}
-
-string[]? result = CStringArrayMarshal.StringArray.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
-
-result.Should().BeEquivalentTo(dataArray);
-*/
+        finally
+        {
+            for (int i = 1; i < data.Length; i++)
+            {
+                Utf8StringMarshaller.Free(utf8Data[i]);
+            }
+        }
     }
 
     [Theory]
     [MemberData(nameof(TestStrings))]
     public void TestUnmanagedToManagedEnumerable(string[] data)
     {
-#warning TODO
-/*
-using CStringList csl = CStringList.Create(data[0]);
-for (int i = 1; i < data.Length; i++)
-{
-    csl.AddString(data[i]);
-}
+        byte*[] utf8Data = new byte*[data.Length + 1];
+        try
+        {
+            for (int i = 0; i < data.Length; i++)
+            {
+                utf8Data[i] = Utf8StringMarshaller.ConvertToUnmanaged(data[i]);
+            }
 
-IEnumerable<string>? result = CStringArrayMarshal.EnumerableMarshal.ConvertToManaged((byte**)csl.Handle.DangerousGetHandle());
+            IEnumerable<string>? result = null;
+            fixed (byte** utf8Ptr = utf8Data)
+            {
+                result = CStringArrayMarshal.EnumerableMarshal.ConvertToManaged(utf8Ptr);
+            }
 
-result.Should().BeEquivalentTo(data);
-*/
+            result.Should().BeEquivalentTo(data);
+        }
+        finally
+        {
+            for (int i = 1; i < data.Length; i++)
+            {
+                Utf8StringMarshaller.Free(utf8Data[i]);
+            }
+        }
     }
 
     [Fact]
