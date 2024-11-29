@@ -31,6 +31,59 @@ public class OgrPoint : OgrGeometry
         return point;
     }
 
+    public unsafe static OgrPoint CreateZ(double x, double y, double z)
+    {
+        OgrGeometry geometry = OgrApiH.OGR_G_CreateGeometry(OgrWkbGeometryType.Point);
+        GdalError.ThrowIfError();
+        if (geometry is not OgrPoint point || point.Handle.IsInvalid)
+            throw new InvalidOperationException("Unable to create point geometry, invalid type");
+
+        geometry.Is3D = true;
+        
+        OgrPointRaw* raw = (OgrPointRaw*)point.Handle.DangerousGetHandle();
+        
+        raw->X = x;
+        raw->Y = y;
+        raw->Z = z;
+        
+        return point;
+    }
+    
+    public unsafe static OgrPoint CreateZM(double x, double y, double z, double m)
+    {
+        OgrGeometry geometry = OgrApiH.OGR_G_CreateGeometry(OgrWkbGeometryType.PointZM);
+        GdalError.ThrowIfError();
+        if (geometry is not OgrPoint point || point.Handle.IsInvalid)
+            throw new InvalidOperationException("Unable to create point geometry, invalid type");
+
+        geometry.Is3D = true;
+        
+        OgrPointRaw* raw = (OgrPointRaw*)point.Handle.DangerousGetHandle();
+        
+        raw->X = x;
+        raw->Y = y;
+        raw->Z = z;
+        raw->M = m;
+        
+        return point;
+    }
+    
+    public unsafe static OgrPoint CreateM(double x, double y, double m)
+    {
+        OgrGeometry geometry = OgrApiH.OGR_G_CreateGeometry(OgrWkbGeometryType.PointM);
+        GdalError.ThrowIfError();
+        if (geometry is not OgrPoint point || point.Handle.IsInvalid)
+            throw new InvalidOperationException("Unable to create point geometry, invalid type");
+        
+        OgrPointRaw* raw = (OgrPointRaw*)point.Handle.DangerousGetHandle();
+        
+        raw->X = x;
+        raw->Y = y;
+        raw->M = m;
+        
+        return point;
+    }
+    
     public unsafe double X
     {
         get => RawPointer->X;

@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Xunit;
 
 using Verifier =
-    Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<MMKiwi.GdalNet.Analyzers.Internal.GdalMissingErrorCheckAnalyzer>;
+    Microsoft.CodeAnalysis.CSharp.Testing.CSharpAnalyzerVerifier<MMKiwi.GdalNet.Analyzers.Internal.GdalMissingErrorCheckAnalyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace MMKiwi.GdalNet.Analyzers.Internal.Tests;
 
@@ -80,7 +80,7 @@ namespace MMKiwi.GdalNet.Interop
             .WithMessage("Missing call to GdalError.ThrowIfError() after method TestMethod")
             .WithSpan("/0/Test1.cs", 16, 13, 16, 42)
             .WithArguments("TestMethod");
-        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, XUnitVerifier>
+        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>
         {
             TestState =
             {
@@ -132,7 +132,7 @@ namespace MMKiwi.GdalNet.Interop
             .WithSpan("/0/Test1.cs", 16, 21, 16, 50)
             .WithArguments("TestMethod");
 
-        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, XUnitVerifier>
+        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>
         {
             TestState =
             {
@@ -185,7 +185,7 @@ namespace MMKiwi.GdalNet.Interop
             .WithSpan("/0/Test1.cs", 16, 13, 16, 42)
             .WithArguments("TestMethod");
 
-        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, XUnitVerifier>
+        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>
         {
             TestState =
             {
@@ -234,7 +234,7 @@ namespace MMKiwi.GdalNet.Interop
                         }
                         """;
 
-        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, XUnitVerifier>
+        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>
         {
             TestState =
             {
@@ -276,7 +276,7 @@ namespace MMKiwi.GdalNet.Interop
                         }
                         """;
 
-        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, XUnitVerifier>
+        var analyzer = new CSharpAnalyzerTest<GdalMissingErrorCheckAnalyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>
         {
             TestState =
             {

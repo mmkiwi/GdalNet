@@ -9,361 +9,361 @@ public enum OgrWkbGeometryType
     /// <summary>
     /// unknown type, non-standard
     /// </summary>
-    Unknown = 0,
+    Unknown = 0b0,
 
     /// <summary>
     /// 0-dimensional geometric object, standard
     /// </summary>
-    Point = 1,
+    Point = 0b1,
 
     ///<summary>
     ///1-dimensional geometric object with linear interpolation between Points, standard
     ///</summary>
-    LineString = 2,
+    LineString = 0b10,
 
     ///<summary>
     ///  planar 2-dimensional geometric object defined
     ///  by 1 exterior boundary and 0 or more interior
     ///  boundaries, standard
     ///</summary>
-    Polygon = 3,
+    Polygon = 0b11,
 
     ///<summary>
     ///GeometryCollection of Points, standard
     ///</summary>
-    MultiPoint = 4,
+    MultiPoint = 0b100,
 
     ///<summary>
     ///GeometryCollection of LineStrings, standard
     ///</summary>
-    MultiLineString = 5,
+    MultiLineString = 0b101,
 
     /// <summary>
     /// GeometryCollection of Polygons, standard 
     /// </summary>
-    MultiPolygon = 6,
+    MultiPolygon = 0b110,
 
     /// <summary>
     ///  geometric object that is a collection of 1 or more geometric objects, standard
     /// </summary>
-    GeometryCollection = 7,
+    GeometryCollection = 0b111,
 
     /// <summary>
     /// one or more circular arc segments connected end to end, ISO SQL/MM Part 3.
     /// GDAL &gt;= 2.0
     /// </summary>
-    CircularString = 8,
+    CircularString = 0b1000,
 
     /// <summary>
     /// sequence of contiguous curves, ISO SQL/MM Part 3. GDAL &gt;= 2.0
     /// </summary>
-    CompoundCurve = 9,
+    CompoundCurve = 0b1001,
 
     /// <summary>
     /// planar surface, defined by 1 exterior boundary and zero or more interior
     /// boundaries, that are curves. ISO SQL/MM Part 3. GDAL &gt;= 2.0
     /// </summary>
-    CurvePolygon = 10,
+    CurvePolygon = 0b1010,
 
     /// <summary>
     /// GeometryCollection of Curves, ISO SQL/MM Part 3. GDAL &gt;= 2.0
     /// </summary>
-    MultiCurve = 11,
+    MultiCurve = 0b1011,
 
     /// <summary>
     /// GeometryCollection of Surfaces, ISO SQL/MM Part 3. GDAL &gt;= 2.0
     /// </summary>
-    MultiSurface = 12,
+    MultiSurface = 0b1100,
 
     /// <summary>
     /// Curve (abstract type). ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    Curve = 13,
+    Curve = 0b1101,
 
     /// <summary>
     ///  Surface (abstract type). ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    Surface = 14,
+    Surface = 0b1110,
 
     /// <summary>
     /// a contiguous collection of polygons, which share common boundary
     /// segments, ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    PolyhedralSurface = 15,
+    PolyhedralSurface = 0b1111,
 
     /// <summary>
     /// a PolyhedralSurface consisting only of Triangle patches
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    TIN = 16,
+    TIN = 0b10000,
 
     /// <summary>
     /// a Triangle. ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    Triangle = 17,
+    Triangle = 0b10001,
 
     /// <summary>
     /// non-standard, for pure attribute records
     /// </summary>
-    None = 100,
+    None = 0b1100100,
 
     /// <summary>
     /// non-standard, just for createGeometry() 
     /// </summary>
-    LinearRing = 101,
+    LinearRing = 0b1100101,
 
     /// <summary>
     /// CircularString with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.0
     /// </summary>
-    CircularStringZ = 1008,
+    CircularStringZ = 0b1111110000,
 
     /// <summary>
     /// CompoundCurve with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.0
     /// </summary>
-    CompoundCurveZ = 1009,
+    CompoundCurveZ = 0b1111110001,
 
     /// <summary>
     /// CurvePolygon with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.0
     /// </summary>
-    CurvePolygonZ = 1010,
+    CurvePolygonZ = 0b1111110010,
 
     /// <summary>
     /// MultiCurve with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.0 
     /// </summary>
-    MultiCurveZ = 1011,
+    MultiCurveZ = 0b1111110011,
 
     /// <summary>
     /// MultiSurface with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.0
     /// </summary>
-    MultiSurfaceZ = 1012,
+    MultiSurfaceZ = 0b1111110100,
 
     /// <summary>
     /// Curve with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    CurveZ = 1013,
+    CurveZ = 0b1111110101,
 
     /// <summary>
     /// Surface with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    SurfaceZ = 1014,
+    SurfaceZ = 0b1111110110,
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    PolyhedralSurfaceZ = 1015,
+    PolyhedralSurfaceZ = 0b1111110111,
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    TINZ = 1016,
+    TINZ = 0b1111111000,
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    TriangleZ = 1017,
+    TriangleZ = 0b1111111001,
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    PointM = 2001,              
+    PointM = 0b11111010001,              
     
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    LineStringM = 2002,         
+    LineStringM = 0b11111010010,         
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    PolygonM = 2003,            
+    PolygonM = 0b11111010011,            
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiPointM = 2004,         
+    MultiPointM = 0b11111010100,         
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiLineStringM = 2005,    
+    MultiLineStringM = 0b11111010101,    
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiPolygonM = 2006,       
+    MultiPolygonM = 0b11111010110,       
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    GeometryCollectionM = 2007, 
+    GeometryCollectionM = 0b11111010111, 
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    CircularStringM = 2008,     
+    CircularStringM = 0b11111011000,     
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    CompoundCurveM = 2009,      
+    CompoundCurveM = 0b11111011001,      
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    CurvePolygonM = 2010,       
+    CurvePolygonM = 0b11111011010,       
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiCurveM = 2011,         
+    MultiCurveM = 0b11111011011,         
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiSurfaceM = 2012,       
+    MultiSurfaceM = 0b11111011100,       
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    CurveM = 2013,              
+    CurveM = 0b11111011101,              
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    SurfaceM = 2014,            
+    SurfaceM = 0b11111011110,            
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    PolyhedralSurfaceM = 2015,  
+    PolyhedralSurfaceM = 0b11111011111,  
     
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    TINM = 2016,                
+    TINM = 0b11111100000,                
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    TriangleM = 2017,           
+    TriangleM = 0b11111100001,           
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    PointZM = 3001,              
+    PointZM = 0b101110111001,              
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    LineStringZM = 3002,         
+    LineStringZM = 0b101110111010,         
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    PolygonZM = 3003,            
+    PolygonZM = 0b101110111011,            
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiPointZM = 3004,         
+    MultiPointZM = 0b101110111100,         
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiLineStringZM = 3005,    
+    MultiLineStringZM = 0b101110111101,    
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiPolygonZM = 3006,       
+    MultiPolygonZM = 0b101110111110,       
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    GeometryCollectionZM = 3007, 
+    GeometryCollectionZM = 0b101110111111, 
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    CircularStringZM = 3008,     
+    CircularStringZM = 0b101111000000,     
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    CompoundCurveZM = 3009,      
+    CompoundCurveZM = 0b101111000001,      
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    CurvePolygonZM = 3010,       
+    CurvePolygonZM = 0b101111000010,       
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiCurveZM = 3011,         
+    MultiCurveZM = 0b101111000011,         
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    MultiSurfaceZM = 3012,       
+    MultiSurfaceZM = 0b101111000100,       
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    CurveZM = 3013,              
+    CurveZM = 0b101111000101,              
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.1
     /// </summary>
-    SurfaceZM = 3014,            
+    SurfaceZM = 0b101111000110,            
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    PolyhedralSurfaceZM = 3015,  
+    PolyhedralSurfaceZM = 0b101111000111,  
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    TINZM = 3016,                
+    TINZM = 0b101111001000,                
 
     /// <summary>
     /// ISO SQL/MM Part 3. GDAL &gt;= 2.3
     /// </summary>
-    TriangleZM = 3017,
+    TriangleZM = 0b101111001001,
 
     /// <summary>
     /// 2.5D extension as per 99-402
     /// </summary>
-    Point25D = -2147483647,
+    Point25D = -0b1111111111111111111111111111111,
 
     /// <summary>
     /// 2.5D extension as per 99-402
     /// </summary>
-    LineString25D = -2147483646,        
+    LineString25D = -0b1111111111111111111111111111110,        
 
     /// <summary>
     /// 2.5D extension as per 99-402
     /// </summary>
-    Polygon25D = -2147483645,           
+    Polygon25D = -0b1111111111111111111111111111101,           
 
     /// <summary>
     /// 2.5D extension as per 99-402
     /// </summary>
-    MultiPoint25D = -2147483644,        
+    MultiPoint25D = -0b1111111111111111111111111111100,        
 
     /// <summary>
     /// 2.5D extension as per 99-402
     /// </summary>
-    MultiLineString25D = -2147483643,   
+    MultiLineString25D = -0b1111111111111111111111111111011,   
 
     /// <summary>
     /// 2.5D extension as per 99-402
     /// </summary>
-    MultiPolygon25D = -2147483642,      
+    MultiPolygon25D = -0b1111111111111111111111111111010,      
 
     /// <summary>
     /// 2.5D extension as per 99-402
     /// </summary>
-    GeometryCollection25D = -2147483641 
+    GeometryCollection25D = -0b1111111111111111111111111111001 
 }

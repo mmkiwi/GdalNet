@@ -31,6 +31,7 @@ public static class GdalInfo
         return v;
     });
     private static bool s_isRegistered;
+    
     private static readonly object s_reentrantLock = new();
 
     public static string BuildInfo => s_buildInfo.Value;

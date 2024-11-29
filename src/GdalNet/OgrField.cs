@@ -18,7 +18,7 @@ public class OgrField
     {
         Feature = feature;
         Index = index;
-        _fieldDefinition = new(GetFieldDefinition);
+        _fieldDefinition = new Lazy<OgrFieldDefinition>(GetFieldDefinition);
     }
 
     private OgrFieldDefinition GetFieldDefinition()

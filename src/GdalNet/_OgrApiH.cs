@@ -18,6 +18,12 @@ internal static partial class OgrApiH
 {
     [LibraryImport(GdalH.GdalDll)]
     public static partial int OGR_F_GetFieldCount(OgrFeature feature);
+    
+    [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    public static partial int OGR_F_GetFieldIndex(OgrFeature feature, string name);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_F_UnsetField(OgrFeature feature, int index);
 
     [LibraryImport(GdalH.GdalDll)]
     public static partial int OGR_F_GetFieldAsInteger(OgrFeature fieldDefinition, int index);
@@ -28,6 +34,17 @@ internal static partial class OgrApiH
     [LibraryImport(GdalH.GdalDll)]
     public static partial long OGR_F_GetFID(OgrFeature fieldDefinition);
 
+    [LibraryImport(GdalH.GdalDll)]
+    [return:MarshalAs(UnmanagedType.Bool)]
+    public static partial bool OGR_F_IsFieldNull(OgrFeature feature, int index);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    [return:MarshalAs(UnmanagedType.Bool)]
+    public static partial bool OGR_F_IsFieldSet(OgrFeature feature, int index);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    [return:MarshalAs(UnmanagedType.Bool)]
+    public static partial bool OGR_F_IsFieldSetAndNotNull(OgrFeature feature, int index);
 
     [LibraryImport(GdalH.GdalDll)]
     public static partial long OGR_F_GetFieldAsInteger64(OgrFeature fieldDefinition, int index);
@@ -49,30 +66,76 @@ internal static partial class OgrApiH
 
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(CountElementName = nameof(count))]
-    public static partial int[] OGR_F_GetFieldAsIntegerList(OgrFeature fieldDefinition, int index, out int count);
+    public static partial int[]? OGR_F_GetFieldAsIntegerList(OgrFeature fieldDefinition, int index, out int count);
 
 
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(CountElementName = nameof(count))]
-    public static partial long[] OGR_F_GetFieldAsInteger64List(OgrFeature fieldDefinition, int index,
+    public static partial long[]? OGR_F_GetFieldAsInteger64List(OgrFeature fieldDefinition, int index,
         out int count);
 
 
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(CountElementName = nameof(count))]
-    public static partial double[] OGR_F_GetFieldAsDoubleList(OgrFeature fieldDefinition, int index,
+    public static partial double[]? OGR_F_GetFieldAsDoubleList(OgrFeature fieldDefinition, int index,
         out int count);
 
 
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(CStringArrayMarshal))]
-    public static partial string[] OGR_F_GetFieldAsStringList(OgrFeature fieldDefinition, int index);
+    public static partial string[]? OGR_F_GetFieldAsStringList(OgrFeature fieldDefinition, int index);
 
 
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(CountElementName = nameof(count))]
-    public static partial byte[] OGR_F_GetFieldAsBinary(OgrFeature fieldDefinition, int index, out int count);
+    public static partial byte[]? OGR_F_GetFieldAsBinary(OgrFeature fieldDefinition, int index, out int count);
 
+    
+    [LibraryImport(GdalH.GdalDll)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool OGR_F_GetFieldAsDateTime(OgrFeature fieldDefinition, int index, out int year, out int month, out int day, out int hour, out int minute, out int second, out int tzFlag);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool OGR_F_GetFieldAsDateTimeEx(OgrFeature fieldDefinition, int index, out int year, out int month, out int day, out int hour, out int minute, out float second, out int tzFlag);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_F_SetFieldInteger(OgrFeature fieldDefinition, int index, int value);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_F_SetFieldInteger64(OgrFeature fieldDefinition, int index, long value);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_F_SetFieldDouble(OgrFeature fieldDefinition, int index, double value);
+    
+    [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    public static partial void OGR_F_SetFieldString(OgrFeature fieldDefinition, int index, string? value);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_F_SetFieldIntegerList(OgrFeature fieldDefinition, int index, int count, int[]? value);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_F_SetFieldInteger64List(OgrFeature fieldDefinition, int index, int count, long[]? value);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_F_SetFieldDoubleList(OgrFeature fieldDefinition, int index, int count, double[]? value);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_F_SetFieldStringList(OgrFeature fieldDefinition, int index, [MarshalUsing(typeof(CStringArrayMarshal))] string[]? value);
+    
+        
+    [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    public static partial void OGR_F_SetFieldBinary(OgrFeature fieldDefinition, int index, int count, byte[]? value);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_F_SetFieldDateTimeEx(OgrFeature fieldDefinition, int index, int year, int month, int day, int hour, int minute, float totalSeconds, int tzFlag);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial int OGR_F_GetGeomFieldCount(OgrFeature fieldDefinition);
+    
+    [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    public static partial int OGR_F_GetGeomFieldIndex(OgrFeature fieldDefinition, string name);
+    
     [LibraryImport(GdalH.GdalDll)]
     public static partial OgrFieldDefinition OGR_F_GetFieldDefnRef(OgrFeature feature, int index);
 
@@ -279,13 +342,19 @@ internal static partial class OgrApiH
     public static partial bool OGR_G_Equals(OgrGeometry geom1, OgrGeometry geom2);
 
     [LibraryImport(GdalH.GdalDll)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial OgrPoint OGR_G_Value(OgrCurve geometry, double dfDistance);
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
+    public static partial OgrGeometry? OGR_G_Value(OgrCurve geometry, double dfDistance);
+
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial double OGR_G_Length(OgrGeometry geometry);
     
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(Utf8StringNoFree))]
     public static partial string OGR_L_GetName(OgrLayer layer);
 
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial int OGR_G_GetPointCount(OgrCurve point);
+    
     [LibraryImport(GdalH.GdalDll)]
     public static partial long OGR_L_GetFeatureCount(OgrLayer layer, [MarshalAs(UnmanagedType.Bool)] bool force);
 
