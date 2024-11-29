@@ -6,6 +6,7 @@ using System.Collections;
 using System.Diagnostics;
 
 using MMKiwi.GdalNet.Error;
+using MMKiwi.GdalNet.Interop;
 
 namespace MMKiwi.GdalNet;
 
@@ -25,6 +26,17 @@ public class OgrFeatureCollection : IEnumerable<OgrFeature>
         return count > 0;
     }
 
+    public void Add(OgrFeature feature)
+    {
+        OgrApiH.OGR_L_CreateFeature(Layer, feature).ThrowIfError();
+    }
+    
+    public void Add(params ReadOnlySpan<OgrFeature> features)
+    {
+        foreach(var feature in features)
+            OgrApiH.OGR_L_CreateFeature(Layer, feature).ThrowIfError();
+    }
+    
     public long? GetCount(bool onlyIfCheap)
     {
         long count = OgrApiH.OGR_L_GetFeatureCount(Layer, false);

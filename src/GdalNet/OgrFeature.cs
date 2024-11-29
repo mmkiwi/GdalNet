@@ -5,6 +5,7 @@
 using System.Runtime.InteropServices.Marshalling;
 
 using MMKiwi.GdalNet.Error;
+using MMKiwi.GdalNet.Geometry;
 using MMKiwi.GdalNet.Interop;
 using MMKiwi.GdalNet.Marshallers;
 
@@ -16,6 +17,13 @@ public sealed class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, 
 {
     private bool _disposedValue;
 
+    public static OgrFeature Create(OgrFeatureDefinition featureDefinition)
+    {
+        var result = OgrApiH.OGR_F_Create(featureDefinition);
+        GdalError.ThrowIfError();
+        return result ?? throw new OutOfMemoryException();
+    }
+    
     private void Dispose(bool disposing)
     {
         if (!_disposedValue)
@@ -62,6 +70,26 @@ public sealed class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, 
         return isNull;
     }
 
+    public void SetNull(int index)
+    {
+        OgrApiH.OGR_F_SetFieldNull(this, index);
+        GdalError.ThrowIfError();
+    }
+
+    public OgrGeometry Geometry
+    {
+        get
+        {
+            var result = OgrApiH.OGR_F_GetGeometryRef(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+        set
+        {
+            OgrApiH.OGR_F_SetGeometry(this, value).ThrowIfError();
+        }
+    }
+    
     public bool IsSetAndNotNull(int index)
     {
         bool isNull = OgrApiH.OGR_F_IsFieldSetAndNotNull(this, index);

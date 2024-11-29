@@ -36,7 +36,7 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
             ArgumentNullException.ThrowIfNull(key);
             var result = GdalH.GDALDatasetGetLayerByName(Dataset, key);
             GdalError.ThrowIfError();
-                return result ?? throw new GdalException($"Error getting layer {key}. GDAL did not report an error.");
+            return result ?? throw new GdalException($"Error getting layer {key}. GDAL did not report an error.");
         }
     }
 
@@ -67,4 +67,11 @@ public class OgrLayerCollection : IReadOnlyList<OgrLayer>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    public OgrLayer Create(string name, OgrSpatialReference? spatialReference = null,
+        OgrWkbGeometryType geometryType = OgrWkbGeometryType.Unknown, string[]? options = null)
+    {
+        var result = GdalH.GDALDatasetCreateLayer(Dataset, name, spatialReference, geometryType, options);
+        GdalError.ThrowIfError();
+        return result;
+    }
 }

@@ -31,8 +31,10 @@ internal static class GdalMarshallerNeverOwns<TWrapper, THandle>
         /// Initializes the marshaller from a managed handle.
         /// </summary>
         /// <param name="wrapper">The managed handle.</param>
-        public void FromManaged(TWrapper wrapper)
+        public void FromManaged(TWrapper? wrapper)
         {
+            if (wrapper is null)
+                return;
             _handle = wrapper.Handle;
             _handle.DangerousAddRef(ref _addRefd);
         }
@@ -41,7 +43,7 @@ internal static class GdalMarshallerNeverOwns<TWrapper, THandle>
         /// Get the unmanaged handle.
         /// </summary>
         /// <returns>The unmanaged handle.</returns>
-        public IntPtr ToUnmanaged() => _handle!.DangerousGetHandle();
+        public IntPtr ToUnmanaged() => _handle?.DangerousGetHandle() ?? IntPtr.Zero;
 
         /// <summary>
         /// Release any references keeping the managed handle alive.

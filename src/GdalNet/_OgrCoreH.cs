@@ -19,11 +19,13 @@ internal static partial class OgrCoreH
 
     [LibraryImport(GdalH.GdalDll, EntryPoint = "OGRMergeGeometryTypes")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial OgrWkbGeometryType OGRMergeGeometryTypes(OgrWkbGeometryType eMain, OgrWkbGeometryType eExtra);
+    private static partial OgrWkbGeometryType
+        OGRMergeGeometryTypes(OgrWkbGeometryType eMain, OgrWkbGeometryType eExtra);
 
     [LibraryImport(GdalH.GdalDll, EntryPoint = "OGRMergeGeometryTypesEx")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial OgrWkbGeometryType OGRMergeGeometryTypesEx(OgrWkbGeometryType eMain, OgrWkbGeometryType eExtra, int bAllowPromotingToCurves);
+    private static partial OgrWkbGeometryType OGRMergeGeometryTypesEx(OgrWkbGeometryType eMain,
+        OgrWkbGeometryType eExtra, int bAllowPromotingToCurves);
 
     [LibraryImport(GdalH.GdalDll, EntryPoint = "OGR_GT_Flatten")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -89,5 +91,4 @@ internal static partial class OgrCoreH
     private static partial int OGRParseDate(string pszInput,
         nint psOutput,
         int nOptions);
-
 }

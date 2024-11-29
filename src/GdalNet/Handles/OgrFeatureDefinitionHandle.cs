@@ -7,18 +7,16 @@ using MMKiwi.GdalNet.Interop;
 
 namespace MMKiwi.GdalNet.Handles;
 
-internal sealed class OgrFieldDefinitionHandle : GdalInternalHandle, IConstructableHandle<OgrFieldDefinitionHandle>
+internal class OgrFeatureDefinitionHandle : GdalInternalHandle, IConstructableHandle<OgrFeatureDefinitionHandle>
 {
-    private OgrFieldDefinitionHandle(bool ownsHandle) : base(ownsHandle)
-    {
-    }
-
     private protected override bool ReleaseHandleCore()
     {
-        OgrApiH.OGR_Fld_Destroy(handle);
+        OgrApiH.OGR_FD_Destroy(handle);
         GdalError.ThrowIfError();
         return true;
     }
-
-    public static OgrFieldDefinitionHandle Construct(bool ownsHandle) => new(ownsHandle);
+    private OgrFeatureDefinitionHandle(bool ownsHandle) : base(ownsHandle)
+    {
+    }
+    public static OgrFeatureDefinitionHandle Construct(bool ownsHandle) => new(ownsHandle);
 }

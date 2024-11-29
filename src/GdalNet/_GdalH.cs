@@ -125,4 +125,26 @@ internal static partial class GdalH
     [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
     [GdalEnforceErrorHandling(false)]
     public static partial int VSIFCloseL(nint dataset);
+    
+    
+    [LibraryImport(GdalDll)]
+    public static partial int GDALGetDriverCount();
+    
+    [LibraryImport(GdalDll)]
+    [return:MarshalUsing(typeof(GdalMarshallerNeverOwns<GdalDriver,GdalDriverHandle>))]
+    public static partial GdalDriver? GDALGetDriver(int index);
+    
+    [LibraryImport(GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    [return:MarshalUsing(typeof(GdalMarshallerNeverOwns<GdalDriver,GdalDriverHandle>))]
+    public static partial GdalDriver? GDALGetDriverByName(string name);
+
+    [LibraryImport(GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<GdalDataset, GdalDatasetHandle>))]
+    public static partial GdalDataset? GDALCreate(GdalDriver driver, string name, int width, int height, int numBands,
+        GdalDataType dataType, [MarshalUsing(typeof(CStringArrayMarshal))] string[]? options);
+
+    [LibraryImport(GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    [return: MarshalUsing(typeof(GdalMarshallerNeverOwns<OgrLayer, OgrLayerHandle>))]
+    public static partial OgrLayer GDALDatasetCreateLayer(GdalDataset dataset, string name,
+        OgrSpatialReference? spatialReference, OgrWkbGeometryType geometryType, string[]? options);
 }

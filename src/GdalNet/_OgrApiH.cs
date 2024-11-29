@@ -18,10 +18,10 @@ internal static partial class OgrApiH
 {
     [LibraryImport(GdalH.GdalDll)]
     public static partial int OGR_F_GetFieldCount(OgrFeature feature);
-    
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial int OGR_F_GetFieldIndex(OgrFeature feature, string name);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_F_UnsetField(OgrFeature feature, int index);
 
@@ -35,15 +35,18 @@ internal static partial class OgrApiH
     public static partial long OGR_F_GetFID(OgrFeature fieldDefinition);
 
     [LibraryImport(GdalH.GdalDll)]
-    [return:MarshalAs(UnmanagedType.Bool)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool OGR_F_IsFieldNull(OgrFeature feature, int index);
     
     [LibraryImport(GdalH.GdalDll)]
-    [return:MarshalAs(UnmanagedType.Bool)]
-    public static partial bool OGR_F_IsFieldSet(OgrFeature feature, int index);
-    
+    public static partial void OGR_F_SetFieldNull(OgrFeature feature, int index);
+
     [LibraryImport(GdalH.GdalDll)]
-    [return:MarshalAs(UnmanagedType.Bool)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool OGR_F_IsFieldSet(OgrFeature feature, int index);
+
+    [LibraryImport(GdalH.GdalDll)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool OGR_F_IsFieldSetAndNotNull(OgrFeature feature, int index);
 
     [LibraryImport(GdalH.GdalDll)]
@@ -90,53 +93,61 @@ internal static partial class OgrApiH
     [return: MarshalUsing(CountElementName = nameof(count))]
     public static partial byte[]? OGR_F_GetFieldAsBinary(OgrFeature fieldDefinition, int index, out int count);
 
-    
+
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool OGR_F_GetFieldAsDateTime(OgrFeature fieldDefinition, int index, out int year, out int month, out int day, out int hour, out int minute, out int second, out int tzFlag);
-    
+    public static partial bool OGR_F_GetFieldAsDateTime(OgrFeature fieldDefinition, int index, out int year,
+        out int month, out int day, out int hour, out int minute, out int second, out int tzFlag);
+
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool OGR_F_GetFieldAsDateTimeEx(OgrFeature fieldDefinition, int index, out int year, out int month, out int day, out int hour, out int minute, out float second, out int tzFlag);
-    
+    public static partial bool OGR_F_GetFieldAsDateTimeEx(OgrFeature fieldDefinition, int index, out int year,
+        out int month, out int day, out int hour, out int minute, out float second, out int tzFlag);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_F_SetFieldInteger(OgrFeature fieldDefinition, int index, int value);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_F_SetFieldInteger64(OgrFeature fieldDefinition, int index, long value);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_F_SetFieldDouble(OgrFeature fieldDefinition, int index, double value);
-    
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial void OGR_F_SetFieldString(OgrFeature fieldDefinition, int index, string? value);
-    
+
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_F_SetFieldIntegerList(OgrFeature fieldDefinition, int index, int count, int[]? value);
-    
+    public static partial void
+        OGR_F_SetFieldIntegerList(OgrFeature fieldDefinition, int index, int count, int[]? value);
+
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_F_SetFieldInteger64List(OgrFeature fieldDefinition, int index, int count, long[]? value);
-    
+    public static partial void OGR_F_SetFieldInteger64List(OgrFeature fieldDefinition, int index, int count,
+        long[]? value);
+
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_F_SetFieldDoubleList(OgrFeature fieldDefinition, int index, int count, double[]? value);
-    
+    public static partial void OGR_F_SetFieldDoubleList(OgrFeature fieldDefinition, int index, int count,
+        double[]? value);
+
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_F_SetFieldStringList(OgrFeature fieldDefinition, int index, [MarshalUsing(typeof(CStringArrayMarshal))] string[]? value);
-    
-        
+    public static partial void OGR_F_SetFieldStringList(OgrFeature fieldDefinition, int index,
+        [MarshalUsing(typeof(CStringArrayMarshal))] string[]? value);
+
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial void OGR_F_SetFieldBinary(OgrFeature fieldDefinition, int index, int count, byte[]? value);
-    
+
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_F_SetFieldDateTimeEx(OgrFeature fieldDefinition, int index, int year, int month, int day, int hour, int minute, float totalSeconds, int tzFlag);
-    
+    public static partial void OGR_F_SetFieldDateTimeEx(OgrFeature fieldDefinition, int index, int year, int month,
+        int day, int hour, int minute, float totalSeconds, int tzFlag);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial int OGR_F_GetGeomFieldCount(OgrFeature fieldDefinition);
-    
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial int OGR_F_GetGeomFieldIndex(OgrFeature fieldDefinition, string name);
-    
+
     [LibraryImport(GdalH.GdalDll)]
+    [return: MarshalUsing(typeof(GdalDoesntOwnMarshaller<OgrFieldDefinition, OgrFieldDefinitionHandle>))]
     public static partial OgrFieldDefinition OGR_F_GetFieldDefnRef(OgrFeature feature, int index);
 
     [LibraryImport(GdalH.GdalDll)]
@@ -194,21 +205,24 @@ internal static partial class OgrApiH
     public static partial bool OGR_Fld_IsIgnored(OgrFieldDefinition fieldDefinition);
 
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_Fld_SetIgnored(OgrFieldDefinition fieldDefinition, [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
+    public static partial void OGR_Fld_SetIgnored(OgrFieldDefinition fieldDefinition,
+        [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
 
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool OGR_Fld_IsNullable(OgrFieldDefinition fieldDefinition);
 
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_Fld_SetNullable(OgrFieldDefinition fieldDefinition, [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
+    public static partial void OGR_Fld_SetNullable(OgrFieldDefinition fieldDefinition,
+        [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
 
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool OGR_Fld_IsUnique(OgrFieldDefinition fieldDefinition);
 
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_Fld_SetUnique(OgrFieldDefinition fieldDefinition, [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
+    public static partial void OGR_Fld_SetUnique(OgrFieldDefinition fieldDefinition,
+        [MarshalAs(UnmanagedType.Bool)] bool isIgnored);
 
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(Utf8StringNoFree))]
@@ -246,6 +260,7 @@ internal static partial class OgrApiH
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(Utf8StringNoFree))]
     public static partial string OGR_FldDomain_GetDescription(OgrFieldDomain domain);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial OgrFieldDomainType OGR_FldDomain_GetDomainType(OgrFieldDomain domain);
 
@@ -269,29 +284,37 @@ internal static partial class OgrApiH
 
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrCodedFieldDomain, OgrCodedFieldDomainHandle>))]
-    public static partial OgrCodedFieldDomain OGR_CodedFldDomain_Create(string name, string? description, OgrFieldType fieldType, OgrFieldSubType fieldSubType, nint enumeration);
+    public static partial OgrCodedFieldDomain OGR_CodedFldDomain_Create(string name, string? description,
+        OgrFieldType fieldType, OgrFieldSubType fieldSubType, nint enumeration);
 
     [LibraryImport(GdalH.GdalDll)]
-    public static partial OgrError OGR_G_CreateFromWkb(ReadOnlySpan<byte> wkbData, OgrSpatialReference? spatialReference,
+    public static partial OgrError OGR_G_CreateFromWkb(ReadOnlySpan<byte> wkbData,
+        OgrSpatialReference? spatialReference,
         [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
         out OgrGeometry geometry, int nBytes);
+
     [LibraryImport(GdalH.GdalDll)]
     public unsafe static partial OgrError OGR_G_CreateFromWkt(ref byte* wkbData, OgrSpatialReference? spatialReference,
         [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
         out OgrGeometry geometry);
+
     [LibraryImport(GdalH.GdalDll)]
     public unsafe static partial OgrError OGR_G_CreateFromFgf(out byte* wkbData, OgrSpatialReference? spatialReference,
         [MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
         out OgrGeometry geometry, int nBytes, out int nBytesConsumed);
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_CreateFromGML(string gmlData);
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_CreateGeometryFromJson(string jsonData);
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_CreateGeometryFromEsriJson(string jsonData);
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_CreateGeometry(OgrWkbGeometryType geometryType);
@@ -304,39 +327,57 @@ internal static partial class OgrApiH
 
     [LibraryImport(GdalH.GdalDll)]
     public static partial int OGR_G_GetDimension(OgrGeometry geometry);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial int OGR_G_CoordinateDimension(OgrGeometry geometry);
+
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool OGR_G_Is3D(OgrGeometry geometry);
+
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool OGR_G_IsMeasured(OgrGeometry geometry);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_G_Set3D(OgrGeometry geometry, [MarshalAs(UnmanagedType.Bool)] bool is3d);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_G_SetMeasured(OgrGeometry geometry, [MarshalAs(UnmanagedType.Bool)] bool isMeasured);
+
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_G_Clone(OgrGeometry geometry);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_G_GetEnvelope(OgrGeometry geometry, [NotNull] out OgrEnvelope? envelope);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_G_GetEnvelope3D(OgrGeometry geometry, [NotNull] ref OgrEnvelope3D? envelope);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial double OGR_G_GetX(OgrGeometry geometry, int index);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial double OGR_G_GetY(OgrGeometry geometry, int index);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial double OGR_G_GetZ(OgrGeometry geometry, int index);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial double OGR_G_GetM(OgrGeometry geometry, int index);
+
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_G_GetPoint(OgrGeometry geometry, int index, out double x, out double y, out double z);
+    public static partial void OGR_G_GetPoint(OgrGeometry geometry, int index, out double x, out double y,
+        out double z);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_G_SetPoint(OgrGeometry geometry, int index, double x, double y, double z);
+
     [LibraryImport(GdalH.GdalDll)]
-    public static partial void OGR_G_GetPointZM(OgrGeometry geometry, int index, out double x, out double y, out double z, out double m);
+    public static partial void OGR_G_GetPointZM(OgrGeometry geometry, int index, out double x, out double y,
+        out double z, out double m);
+
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool OGR_G_Equals(OgrGeometry geom1, OgrGeometry geom2);
@@ -347,14 +388,14 @@ internal static partial class OgrApiH
 
     [LibraryImport(GdalH.GdalDll)]
     public static partial double OGR_G_Length(OgrGeometry geometry);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(Utf8StringNoFree))]
     public static partial string OGR_L_GetName(OgrLayer layer);
 
     [LibraryImport(GdalH.GdalDll)]
     public static partial int OGR_G_GetPointCount(OgrCurve point);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial long OGR_L_GetFeatureCount(OgrLayer layer, [MarshalAs(UnmanagedType.Bool)] bool force);
 
@@ -376,7 +417,8 @@ internal static partial class OgrApiH
     public static partial OgrWkbGeometryType OGR_L_GetGeomType(OgrLayer layer);
 
     [LibraryImport(GdalH.GdalDll)]
-    public static partial nint OGR_L_GetGeometryTypes(OgrLayer layer, int geomField, int flags, out int entryCount, nint progressFunc, nint progressData);
+    public static partial nint OGR_L_GetGeometryTypes(OgrLayer layer, int geomField, int flags, out int entryCount,
+        nint progressFunc, nint progressData);
 
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(GdalDoesntOwnMarshaller<OgrGeometry, OgrGeometryHandle>))]
@@ -384,14 +426,18 @@ internal static partial class OgrApiH
 
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_L_SetSpatialFilter(OgrGeometry geometry);
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_L_SetSpatialFilterEx(OgrGeometry geometry);
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial OgrError OGR_L_SetAttributeFilter(OgrLayerHandle layer, string? query);
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial OgrError OGR_L_SetFeature(OgrFeatureHandle feature);
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
-    public static partial OgrError OGR_L_CreateFeature(OgrFeatureHandle feature);
+    public static partial OgrError OGR_L_CreateFeature(OgrLayer layer, OgrFeature feature);
 
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial OgrError OGR_L_DeleteFeature(OgrLayer layer, long featureId);
@@ -422,4 +468,33 @@ internal static partial class OgrApiH
     [LibraryImport(GdalH.GdalDll)]
     [GdalEnforceErrorHandling(false)]
     public static partial void OGR_FldDomain_Destroy(nint domain);
+
+    [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrFieldDefinition, OgrFieldDefinitionHandle>))]
+    public static partial OgrFieldDefinition OGR_Fld_Create(string name, OgrFieldType type);
+
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial OgrError OGR_L_CreateField(OgrLayer layer, OgrFieldDefinition field,
+        [MarshalAs(UnmanagedType.Bool)] bool approximateOk);
+
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_Fld_Destroy(nint handle);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    [return: MarshalUsing(typeof(GdalOwnsMarshaller<OgrFeature, OgrFeatureHandle>))]
+    public static partial OgrFeature? OGR_F_Create(OgrFeatureDefinition featureDefinition);
+
+    [LibraryImport(GdalH.GdalDll)]
+    [return: MarshalUsing(typeof(GdalDoesntOwnMarshaller<OgrFeatureDefinition, OgrFeatureDefinitionHandle>))]
+    public static partial OgrFeatureDefinition OGR_L_GetLayerDefn(OgrLayer layer);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial OgrError OGR_F_SetGeometry(OgrFeature feature, OgrGeometry geometry);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    [return:MarshalUsing(typeof(GdalDoesntOwnMarshaller<OgrGeometry, OgrGeometryHandle>))]
+    public static partial OgrGeometry OGR_F_GetGeometryRef(OgrFeature layer);
+    
+    [LibraryImport(GdalH.GdalDll)]
+    public static partial void OGR_FD_Destroy(nint handle);
 }

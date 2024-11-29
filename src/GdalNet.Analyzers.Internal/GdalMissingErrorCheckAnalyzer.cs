@@ -86,7 +86,7 @@ public class GdalMissingErrorCheckAnalyzer : DiagnosticAnalyzer
 
         if (methodSymbol.ReturnType.ToDisplayString() is "MMKiwi.GdalNet.Interop.GdalCplErr" or "MMKiwi.GdalNet.Interop.OgrError")
         {
-            if (CheckForExtensionMethod(invocationSyntax, context.Operation.SemanticModel))
+            if (CheckForExtensionMethod(invocationSyntax, context.Operation.SemanticModel!))
                 return;
             else
             {
@@ -115,11 +115,8 @@ public class GdalMissingErrorCheckAnalyzer : DiagnosticAnalyzer
         context.ReportDiagnostic(diagnostic);
     }
 
-    private bool CheckForExtensionMethod(InvocationExpressionSyntax invocationSyntax, SemanticModel? model)
+    private bool CheckForExtensionMethod(InvocationExpressionSyntax invocationSyntax, SemanticModel model)
     {
-        if (model == null)
-            return false;
-        
         // Check to see if this is a child of another invocation
         if (GetParentOfType<InvocationExpressionSyntax>(invocationSyntax) is not { } parentInvocation)
             return false;
@@ -138,7 +135,7 @@ public class GdalMissingErrorCheckAnalyzer : DiagnosticAnalyzer
         if (GetParentOfType<StatementSyntax>(invocation) is not { } parentStatement || block is null)
             return false;
 
-        ImmutableArray<StatementSyntax> blockChildren = block.Statements.ToImmutableArray();
+        ImmutableArray<StatementSyntax> blockChildren = [..block.Statements];
 
         int invokeIndex = blockChildren.IndexOf(parentStatement);
 

@@ -10,8 +10,9 @@ using MMKiwi.GdalNet.Marshallers;
 
 namespace MMKiwi.GdalNet;
 
-[NativeMarshalling(typeof(GdalMarshallerNeverOwns<OgrFieldDefinition, OgrFieldDefinitionHandle>))]
-public class OgrFieldDefinition : IConstructableWrapper<OgrFieldDefinition, OgrFieldDefinitionHandle>, IHasHandle<OgrFieldDefinitionHandle>
+[NativeMarshalling(typeof(GdalMarshaller<OgrFieldDefinition, OgrFieldDefinitionHandle>))]
+public class OgrFieldDefinition : IConstructableWrapper<OgrFieldDefinition, OgrFieldDefinitionHandle>,
+    IHasHandle<OgrFieldDefinitionHandle>, IDisposable
 {
     public virtual OgrFieldType FieldType
     {
@@ -244,6 +245,17 @@ public class OgrFieldDefinition : IConstructableWrapper<OgrFieldDefinition, OgrF
 
     internal OgrFieldDefinitionHandle Handle { get; }
 
-    static OgrFieldDefinition IConstructableWrapper<OgrFieldDefinition, OgrFieldDefinitionHandle>.Construct(OgrFieldDefinitionHandle handle) => new(handle);
+    static OgrFieldDefinition IConstructableWrapper<OgrFieldDefinition, OgrFieldDefinitionHandle>.Construct(
+        OgrFieldDefinitionHandle handle) => new(handle);
+
     OgrFieldDefinitionHandle IHasHandle<OgrFieldDefinitionHandle>.Handle => Handle;
+
+    public static OgrFieldDefinition Create(string name, OgrFieldType type)
+    {
+        var result = OgrApiH.OGR_Fld_Create(name, type);
+        GdalError.ThrowIfError();
+        return result;
+    }
+
+    public void Dispose() => Handle.Dispose();
 }

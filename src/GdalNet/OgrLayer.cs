@@ -36,6 +36,16 @@ public class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHand
         return result;
     }
 
+    public OgrFeatureDefinition FeatureDefinition
+    {
+        get
+        {
+            var result = OgrApiH.OGR_L_GetLayerDefn(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+
 
     public OgrFeatureCollection Features { get; }
 
@@ -54,6 +64,11 @@ public class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHand
     }
     static OgrLayer IConstructableWrapper<OgrLayer, OgrLayerHandle>.Construct(OgrLayerHandle handle) => new(handle);
     
-    internal OgrLayerHandle Handle { get; }
+    private OgrLayerHandle Handle { get; }
     OgrLayerHandle IHasHandle<OgrLayerHandle>.Handle => Handle;
+
+    public void CreateField(OgrFieldDefinition field, bool approximateOk)
+    {
+        OgrApiH.OGR_L_CreateField(this, field, approximateOk).ThrowIfError();
+    }
 }
