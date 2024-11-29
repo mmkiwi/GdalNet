@@ -12,14 +12,9 @@ internal abstract class GdalInternalHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
     }
 
-    //private static readonly object s_reentrantLock = new();
-
     protected sealed override bool ReleaseHandle()
     {
-        //lock (s_reentrantLock)
-        {
-            return ReleaseHandleCore();
-        }
+        return ReleaseHandleCore();
     }
 
     private protected abstract bool ReleaseHandleCore();

@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <IsPackable>false</IsPackable>
+        <LangVersion>13.0</LangVersion>
         <IsTestProject>true</IsTestProject>
-        <LangVersion>preview</LangVersion>
         <AssemblyName>MMKiwi.GdalNet.$(MSBuildProjectName)</AssemblyName>
         <RootNamespace>MMKiwi.GdalNet.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
         <NeutralLanguage>en-us</NeutralLanguage>

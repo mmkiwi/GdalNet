@@ -14,6 +14,7 @@ public static class GdalInfo
         GdalError.ThrowIfError();
         return Version.Parse(version);
     });
+
     public static Version Version => s_version.Value;
 
     private static readonly Lazy<string> s_releaseDate = new(() =>
@@ -22,6 +23,7 @@ public static class GdalInfo
         GdalError.ThrowIfError();
         return v;
     });
+
     public static string ReleaseDate => s_releaseDate.Value;
 
     private static readonly Lazy<string> s_buildInfo = new(() =>
@@ -30,9 +32,14 @@ public static class GdalInfo
         GdalError.ThrowIfError();
         return v;
     });
+
     private static bool s_isRegistered;
-    
+
+#if NET9_0_OR_GREATER
+    private static readonly Lock s_reentrantLock = new();
+#else
     private static readonly object s_reentrantLock = new();
+#endif
 
     public static string BuildInfo => s_buildInfo.Value;
 
@@ -44,6 +51,7 @@ public static class GdalInfo
             {
                 return;
             }
+
             GdalH.GDALAllRegister();
             GdalError.ThrowIfError();
             // GDALAllRegister is not re-entrant safe

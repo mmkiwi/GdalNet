@@ -69,7 +69,11 @@ public sealed partial class GdalDllFixture : IDisposable
         }
     }
 
-    static readonly object s_reentrantLock = new object();
+#if NET9_0_OR_GREATER
+    static readonly Lock s_reentrantLock = new();
+#else
+    static readonly object s_reentrantLock = new();
+#endif
 
     [LibraryImport("kernel32", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]

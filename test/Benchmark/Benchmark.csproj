@@ -1,33 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <OutputType>Exe</OutputType>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Configurations>Debug;Release</Configurations>
-    <Platforms>AnyCPU;x86</Platforms>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <OutputType>Exe</OutputType>
+        <LangVersion>13.0</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>AnyCPU;x86</Platforms>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\GDalNet\GdalNet.csproj" />
-    <ProjectReference Include="..\SampleData\SampleData.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <!-- Needed to make sure Gdal dlls get copied to benchmark directory -->
-    <None Include="$(OutDir)**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>%(RecursiveDir)\%(Filename)%(Extension)</Link>
-      <Visible>False</Visible>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\GDalNet\GdalNet.csproj"/>
+        <ProjectReference Include="..\SampleData\SampleData.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <!-- Needed to make sure Gdal dlls get copied to benchmark directory -->
+        <None Include="$(OutDir)**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>%(RecursiveDir)\%(Filename)%(Extension)</Link>
+            <Visible>False</Visible>
+        </None>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.10" />
-    <PackageReference Include="GDAL" Version="3.7.2" />
-    <PackageReference Include="GDAL.Native" Version="3.7.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" Version="0.14.0"/>
+        <PackageReference Include="GDAL" Version="3.7.2"/>
+        <PackageReference Include="GDAL.Native" Version="3.7.2"/>
+    </ItemGroup>
 
 </Project>
