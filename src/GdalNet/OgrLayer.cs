@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Marshalling;
 
 using MMKiwi.GdalNet.Error;
@@ -13,7 +14,7 @@ namespace MMKiwi.GdalNet;
 [NativeMarshalling(typeof(GdalMarshallerNeverOwns<OgrLayer,OgrLayerHandle>))]
 public class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHandle<OgrLayerHandle>
 {
-    internal OgrLayer(OgrLayerHandle handle)
+    private OgrLayer(OgrLayerHandle handle)
     {
         Handle = handle;
         Features = new OgrFeatureCollection(this);
@@ -70,5 +71,41 @@ public class OgrLayer: IConstructableWrapper<OgrLayer, OgrLayerHandle>, IHasHand
     public void CreateField(OgrFieldDefinition field, bool approximateOk)
     {
         OgrApiH.OGR_L_CreateField(this, field, approximateOk).ThrowIfError();
+    }
+
+    public unsafe void Clip(OgrLayer clipLayer, OgrLayer outputLayer, string[]? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(clipLayer);
+        ArgumentNullException.ThrowIfNull(outputLayer);
+
+
+        OgrApiH.OGR_L_Clip(this, clipLayer, outputLayer, options, nint.Zero, nint.Zero).ThrowIfError();
+        
+    }
+    
+    public unsafe void Clip<T>(OgrLayer clipLayer, OgrLayer outputLayer, string[]? options, GdalProgressCallback? progressCallback, T userData) where T : unmanaged
+    {
+        ArgumentNullException.ThrowIfNull(clipLayer);
+        ArgumentNullException.ThrowIfNull(outputLayer);
+
+        if (progressCallback is not null)
+        {
+            ProgressCallback callback = new(progressCallback);
+            OgrApiH.OGR_L_Clip(this, clipLayer, outputLayer, options, callback.Callback, null).ThrowIfError();
+        }
+        else
+        {
+            OgrApiH.OGR_L_Clip(this, clipLayer, outputLayer, options, nint.Zero, nint.Zero).ThrowIfError();
+        }
+    }
+
+    private unsafe readonly struct ProgressCallback(GdalProgressCallback callback)
+
+    {
+        public int Callback(double pctComplete, byte* messageUtf8, void* param)
+        {
+            string? message = Marshal.PtrToStringUTF8((nint)messageUtf8);
+            return callback(pctComplete, message);
+        }
     }
 }

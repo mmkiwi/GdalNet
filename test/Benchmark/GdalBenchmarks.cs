@@ -38,8 +38,8 @@ public partial class GdalBenchmarks
                 .WithIterationCount(1)
                 .WithLaunchCount(1)
                 .WithWarmupCount(1);
-            AddJob(fastJob.WithPlatform(Platform.X64).WithRuntime(NativeAotRuntime.Net80));
-            AddJob(fastJob.WithPlatform(Platform.X86).WithRuntime(CoreRuntime.Core80));
+            AddJob(fastJob.WithPlatform(Platform.X64).WithRuntime(NativeAotRuntime.Net90));
+            AddJob(fastJob.WithPlatform(Platform.X86).WithRuntime(CoreRuntime.Core90));
         }
     }
 }

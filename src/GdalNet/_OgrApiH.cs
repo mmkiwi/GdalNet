@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Marshalling;
 
 using MMKiwi.GdalNet.Error;
@@ -14,7 +15,7 @@ namespace MMKiwi.GdalNet;
 [CLSCompliant(false)]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [GdalEnforceErrorHandling]
-internal static partial class OgrApiH
+internal unsafe static partial class OgrApiH
 {
     [LibraryImport(GdalH.GdalDll)]
     public static partial int OGR_F_GetFieldCount(OgrFeature feature);
@@ -41,13 +42,13 @@ internal static partial class OgrApiH
     [LibraryImport(GdalH.GdalDll)]
     [return:MarshalUsing(typeof(GdalDoesntOwnMarshaller<OgrFeature, OgrFeatureHandle>))]
     public static partial OgrFeature OGR_F_Clone(OgrFeature feature);
-    
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial string? OGR_F_GetNativeMediaType(OgrFeature feature);
 
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial void OGR_F_SetNativeMediaType(OgrFeature feature, string? nativeMediaType);
-    
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial string? OGR_F_GetNativeData(OgrFeature feature);
 
@@ -149,25 +150,25 @@ internal static partial class OgrApiH
 
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial string OGR_F_GetStyleString(OgrFeature feature);
-    
+
     [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
     public static partial void OGR_F_SetStyleString(OgrFeature feature, string newStyleString);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial OgrError OGR_F_SetFrom(OgrFeature feature1, OgrFeature other, [MarshalAs(UnmanagedType.Bool)] bool forgiving);
 
     [LibraryImport(GdalH.GdalDll)]
     public static partial OgrError OGR_F_SetFromWithMap(OgrFeature feature1, OgrFeature other,
         [MarshalAs(UnmanagedType.Bool)] bool forgiving, int[] panMap);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     [return:MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_F_StealGeometry(OgrFeature feature);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     [return:MarshalUsing(typeof(GdalOwnsMarshaller<OgrGeometry, OgrGeometryHandle>))]
     public static partial OgrGeometry OGR_F_StealGeometryEx(OgrFeature feature, int fieldIndex);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void
         OGR_F_SetFieldIntegerList(OgrFeature fieldDefinition, int index, int count, int[]? value);
@@ -211,11 +212,11 @@ internal static partial class OgrApiH
 
     [LibraryImport(GdalH.GdalDll)]
     public static partial OgrFieldType OGR_Fld_GetType(OgrFieldDefinition fieldDefinition);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(GdalDoesntOwnMarshaller<OgrStyleTable, OgrStyleTableHandle>))]
     public static partial OgrStyleTable OGR_F_GetStyleTable(OgrFeature feature);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_F_SetStyleTable(OgrFeature feature, OgrStyleTable styleTable);
 
@@ -237,7 +238,7 @@ internal static partial class OgrApiH
     [LibraryImport(GdalH.GdalDll)]
     [return:MarshalUsing(typeof(GdalDoesntOwnMarshaller<OgrGeometryFieldDefinition, OgrGeometryFieldDefinitionHandle>))]
     public static partial OgrGeometryFieldDefinition OGR_F_GetGeomFieldDefnRef(OgrFeature hFeat, int iField);
-    
+
     [LibraryImport(GdalH.GdalDll)]
     [return: MarshalUsing(typeof(Utf8StringNoFree))]
     public static partial string OGR_Fld_GetNameRef(OgrFieldDefinition fieldDefinition);
@@ -573,13 +574,13 @@ internal static partial class OgrApiH
 
     [LibraryImport(GdalH.GdalDll)]
     public static partial void OGR_FD_Destroy(nint handle);
-}
 
-public enum OgrFeatureValidation
-{
-    Null = 0b1,
-    GeometryType = 0b10,
-    Width = 0b100,
-    AllowNullWhenDefault = 0b1000,
-    All = 0b1111
+    [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    public static partial OgrError OGR_L_Clip(OgrLayer layer, OgrLayer clip, OgrLayer result,
+        [MarshalUsing(typeof(CStringArrayMarshal))] string[]? options, GdalProgressCallbackRaw? progressCallback,
+        void* progressArgument);
+
+    [LibraryImport(GdalH.GdalDll, StringMarshalling = StringMarshalling.Utf8)]
+    public static partial OgrError OGR_L_Clip(OgrLayer layer, OgrLayer clip, OgrLayer result,
+        [MarshalUsing(typeof(CStringArrayMarshal))] string[]? options, nint func, nint param);
 }
