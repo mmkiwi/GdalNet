@@ -17,25 +17,3 @@ internal enum GdalOpenFlags
     VerboseError = 0x40,
     Internal = 0x80
 }
-
-public record GdalOpenSettings
-{
-    public GdalAccess Access { get; init; } = GdalAccess.ReadOnly;
-    public bool RasterDrivers { get; init; } = true;
-    public bool VectorDrivers { get; init; } = true;
-    public bool GnmDrivers { get; init; } = true;
-    public bool MultidimensionalRasterDrivers { get; init; } = false;
-
-    public bool SharedAccess { get; init; } = true;
-    public bool VerboseError { get; init; } = true;
-
-    internal GdalOpenFlags Flags
-        =>
-            (GdalOpenFlags)Access |
-            (RasterDrivers ? GdalOpenFlags.Raster : GdalOpenFlags.None) |
-            (VectorDrivers ? GdalOpenFlags.Vector : GdalOpenFlags.None) |
-            (GnmDrivers ? GdalOpenFlags.Gnm : GdalOpenFlags.None) |
-            (MultidimensionalRasterDrivers ? GdalOpenFlags.MultidimensionalRaster : GdalOpenFlags.None) |
-            (SharedAccess ? GdalOpenFlags.Shared : GdalOpenFlags.None) |
-            (VerboseError ? GdalOpenFlags.VerboseError : GdalOpenFlags.None);
-}

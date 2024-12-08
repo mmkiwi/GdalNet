@@ -88,7 +88,5 @@ internal static partial class OgrCoreH
 
     [LibraryImport(GdalH.GdalDll, EntryPoint = "OGRParseDate", StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial int OGRParseDate(string pszInput,
-        nint psOutput,
-        int nOptions);
+    private static partial int OGRParseDate(string pszInput, nint psOutput, int nOptions);
 }

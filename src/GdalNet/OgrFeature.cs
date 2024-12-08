@@ -54,6 +54,16 @@ public sealed class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, 
         Dispose(disposing: true);
     }
 
+    public OgrFeatureDefinition FeatureDefinition
+    {
+        get
+        {
+            var result = OgrApiH.OGR_F_GetDefnRef(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+    }
+    
     static OgrFeature IConstructableWrapper<OgrFeature, OgrFeatureHandle>.Construct(OgrFeatureHandle handle)
         => new(handle);
 
@@ -89,6 +99,37 @@ public sealed class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, 
             OgrApiH.OGR_F_SetGeometry(this, value).ThrowIfError();
         }
     }
+
+    public OgrGeometry GetGeometry(int index)
+    {
+        var result = OgrApiH.OGR_F_GetGeomFieldRef(this, index);
+        GdalError.ThrowIfError();
+        return result;
+    }
+
+    public OgrStyleTable StyleTable
+    {
+        get
+        {
+            var result = OgrApiH.OGR_F_GetStyleTable(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+        set
+        {
+            OgrApiH.OGR_F_SetStyleTable(this, value);
+            GdalError.ThrowIfError();
+        }
+    }
+
+    public OgrGeometryFieldDefinition GetGeometryFieldDefinition(int index)
+    {
+        var result = OgrApiH.OGR_F_GetGeomFieldDefnRef(this, index);
+        GdalError.ThrowIfError();
+        return result;
+    }
+
+    public void SetGeometry(int index, OgrGeometry geometry) => OgrApiH.OGR_F_SetGeomField(this, index, geometry).ThrowIfError();
     
     public bool IsSetAndNotNull(int index)
     {
@@ -163,7 +204,7 @@ public sealed class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, 
 
     public string? GetString(int index)
     {
-        string result = OgrApiH.OGR_F_GetFieldAsString(this, index);
+        string? result = OgrApiH.OGR_F_GetFieldAsString(this, index);
         GdalError.ThrowIfError();
         return result;
     }
@@ -328,5 +369,113 @@ public sealed class OgrFeature : IDisposable, IConstructableWrapper<OgrFeature, 
     {
         OgrApiH.OGR_F_UnsetField(this, index);
         GdalError.ThrowIfError();
+    }
+
+    public OgrFeature Clone()
+    {
+        var result = OgrApiH.OGR_F_Clone(this);
+        GdalError.ThrowIfError();
+        return result;
+    }
+
+    public bool IsValid(OgrFeatureValidation validation, bool emitError)
+    {
+        var result = OgrApiH.OGR_F_Validate(this, validation, emitError);
+        GdalError.ThrowIfError();
+        return result;
+    }
+
+    public string? NativeMediaType
+    {
+        get
+        {
+            var result = OgrApiH.OGR_F_GetNativeMediaType(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+        set
+        {
+            OgrApiH.OGR_F_SetNativeMediaType(this, value);
+            GdalError.ThrowIfError();
+        }
+    }
+
+    public string? NativeData
+    {
+        get
+        {
+            var result = OgrApiH.OGR_F_GetNativeData(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+        set
+        {
+            OgrApiH.OGR_F_SetNativeData(this, value);
+            GdalError.ThrowIfError();
+        }
+    }
+
+    public string StyleString
+    {
+        get
+        {
+            var result = OgrApiH.OGR_F_GetStyleString(this);
+            GdalError.ThrowIfError();
+            return result;
+        }
+
+        set
+        {
+            OgrApiH.OGR_F_SetStyleString(this, value);
+            GdalError.ThrowIfError();
+        }
+    }
+
+    public void FillUnsetWithDefault(bool notNullableOnly)
+    {
+        OgrApiH.OGR_F_FillUnsetWithDefault(this, notNullableOnly, null);
+        GdalError.ThrowIfError();
+    }
+    
+    /// <remarks>
+    /// This class doesn't implement IEquatable or the == operators because it is not immutable,
+    /// so GetHashCode can't be implemented.
+    /// </remarks>
+    public bool IsEquivalentTo(OgrFeature? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        var result = OgrApiH.OGR_F_Equal(this, other);
+        GdalError.ThrowIfError();
+        return result;
+    }
+
+    public void SetFrom(OgrFeature other, bool forgiving) =>
+        OgrApiH.OGR_F_SetFrom(this, other, forgiving).ThrowIfError();
+    
+    public void SetFrom(OgrFeature other, bool forgiving, int[] fieldMap) =>
+        OgrApiH.OGR_F_SetFromWithMap(this, other, forgiving, fieldMap).ThrowIfError();
+
+    
+    public OgrGeometry StealGeometry()
+    {
+        var result = OgrApiH.OGR_F_StealGeometry(this);
+        GdalError.ThrowIfError();
+        return result;
+    }
+    
+    public OgrGeometry StealGeometry(int geomFieldIndex)
+    {
+        var result = OgrApiH.OGR_F_StealGeometryEx(this, geomFieldIndex);
+        GdalError.ThrowIfError();
+        return result;
     }
 }
